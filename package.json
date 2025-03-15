@@ -1,0 +1,16 @@
+{
+  "name": "echo-demo-site",
+  "version": "1.0.0",
+  "description": "A simple demo website created by Echo",
+  "main": "index.js",
+  "scripts": {
+    "build": "mkdir -p dist && cp -r index.html styles.css script.js dist/"
+  },
+  "keywords": [
+    "echo",
+    "demo",
+    "netlify"
+  ],
+  "author": "Echo AI Systems",
+  "license": "MIT"
+}
