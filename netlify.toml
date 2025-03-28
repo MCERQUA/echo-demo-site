@@ -1,6 +1,8 @@
 [build]
-  publish = "dist"
+  # This will be your default build command
   command = ""
+  # This is the directory that you want to publish (default is dist folder)
+  publish = "."  # Changed to use root directory
 
 [build.environment]
   NODE_VERSION = "16"
