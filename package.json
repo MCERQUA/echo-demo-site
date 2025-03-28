@@ -4,7 +4,7 @@
   "description": "A simple demo website created by Echo",
   "main": "index.js",
   "scripts": {
-    "build": "mkdir -p dist && cp -r index.html styles.css script.js dist/"
+    "build": "mkdir -p dist && cp -r index.html styles.css script.js images dist/"
   },
   "keywords": [
     "echo",
