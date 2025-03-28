@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echo MCP Tools - Echo AI Systems</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        .tools-container {
+            padding: 2rem 0;
+        }
+        
+        .tool-category {
+            margin-bottom: 3rem;
+        }
+        
+        .tool-category-title {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            position: relative;
+        }
+        
+        .tool-category-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--primary-color);
+        }
+        
+        .tool-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .tool-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .tool-name {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .tool-description {
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+        
+        .tool-count {
+            font-size: 0.8rem;
+            color: #666;
+            margin-left: 0.5rem;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+            z-index: 99;
+        }
+        
+        .back-to-top:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+        
+        .search-container {
+            margin-bottom: 2rem;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dark-theme .search-input {
+            background-color: #333;
+            border-color: #444;
+            color: var(--light-text);
+        }
+        
+        .category-navigation {
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .category-link {
+            padding: 0.5rem 1rem;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-link:hover {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+        }
+        
+        .dark-theme .category-link {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .tools-header {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        
+        .tool-section-title {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .tools-subtitle {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="https://raw.githubusercontent.com/MCERQUA/echo-demo-site/main/images/header-banner.svg" alt="Echo AI Systems Logo" class="header-banner">
+                    <h1>Echo AI Systems</h1>
+                </div>
+                <nav>
+                    <ul class="main-nav">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#features">Features</a></li>
+                        <li><a href="index.html#projects">Projects</a></li>
+                        <li><a href="mcp-tools.html" class="active">MCP Tools</a></li>
+                        <li><a href="#contact" class="cta-button">Get Started</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container tools-container">
+        <div class="tools-header">
+            <h1 class="tool-section-title">Echo MCP Tools</h1>
+            <p class="tools-subtitle">Explore the 175+ Model Context Protocol (MCP) tools available across various categories. These powerful tools enable autonomous operations across multiple platforms and services.</p>
+        </div>
+        
+        <div class="search-container">
+            <input type="text" id="toolSearch" class="search-input" placeholder="Search for MCP tools...">
+        </div>
+        
+        <div class="category-navigation" id="categoryNavigation">
+            <!-- Categories will be generated by JavaScript -->
+        </div>
+        
+        <div id="toolsContainer">
+            <!-- File System Tools -->
+            <div id="filesystem" class="tool-category">
+                <h2 class="tool-category-title">File System Tools <span class="tool-count">(8)</span></h2>
+                <div class="tool-cards">
+                    <div class="tool-card">
+                        <div class="tool-name">create_directory</div>
+                        <div class="tool-description">Create a new directory or ensure a directory exists.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">get_file_info</div>
+                        <div class="tool-description">Retrieve detailed metadata about a file or directory.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">list_allowed_directories</div>
+                        <div class="tool-description">List directories the server can access.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">list_directory</div>
+                        <div class="tool-description">Get a detailed listing of files and directories in a specified path.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">move_file</div>
+                        <div class="tool-description">Move or rename files and directories.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">read_file</div>
+                        <div class="tool-description">Read the complete contents of a file from the file system.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">search_files</div>
+                        <div class="tool-description">Recursively search for files and directories matching a pattern.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">write_file</div>
+                        <div class="tool-description">Create a new file or overwrite an existing file with new content.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Netlify Tools -->
+            <div id="netlify" class="tool-category">
+                <h2 class="tool-category-title">Netlify Tools <span class="tool-count">(9)</span></h2>
+                <div class="tool-cards">
+                    <div class="tool-card">
+                        <div class="tool-name">deploy-site</div>
+                        <div class="tool-description">Deploy a site to Netlify.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">list-sites</div>
+                        <div class="tool-description">List all Netlify sites.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">set-env-vars</div>
+                        <div class="tool-description">Set environment variables for a site.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">get-deploy-status</div>
+                        <div class="tool-description">Get deployment status for a site.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">add-dns-record</div>
+                        <div class="tool-description">Add a DNS record to a site.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">deploy-function</div>
+                        <div class="tool-description">Deploy a serverless function.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">manage-form</div>
+                        <div class="tool-description">Manage form submissions.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">manage-plugin</div>
+                        <div class="tool-description">Manage site plugins.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">manage-hook</div>
+                        <div class="tool-description">Manage webhook notifications.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Unity MCP Server Tools -->
+            <div id="unity" class="tool-category">
+                <h2 class="tool-category-title">Unity MCP Server Tools <span class="tool-count">(19)</span></h2>
+                <div class="tool-cards">
+                    <div class="tool-card">
+                        <div class="tool-name">asset_create</div>
+                        <div class="tool-description">Create new Unity assets programmatically.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">asset_import</div>
+                        <div class="tool-description">Import external assets into Unity.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">asset_manipulate</div>
+                        <div class="tool-description">Modify existing Unity assets.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">scene_open</div>
+                        <div class="tool-description">Open Unity scenes.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">scene_save</div>
+                        <div class="tool-description">Save current Unity scene.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">object_create</div>
+                        <div class="tool-description">Create new GameObjects in the scene.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">object_modify</div>
+                        <div class="tool-description">Modify GameObject properties.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">object_delete</div>
+                        <div class="tool-description">Remove GameObjects from the scene.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">material_create</div>
+                        <div class="tool-description">Create new materials.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">material_edit</div>
+                        <div class="tool-description">Modify material properties and textures.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">material_apply</div>
+                        <div class="tool-description">Apply materials to GameObjects.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">script_view</div>
+                        <div class="tool-description">View C# scripts in the project.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">script_create</div>
+                        <div class="tool-description">Create new C# scripts.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">script_update</div>
+                        <div class="tool-description">Modify existing C# scripts.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">editor_undo</div>
+                        <div class="tool-description">Perform undo operation in the Unity Editor.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">editor_redo</div>
+                        <div class="tool-description">Perform redo operation in the Unity Editor.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">editor_play</div>
+                        <div class="tool-description">Enter play mode in the Unity Editor.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">editor_stop</div>
+                        <div class="tool-description">Exit play mode in the Unity Editor.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">editor_build</div>
+                        <div class="tool-description">Build the Unity project.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Web Tools section (Combining Web Search & Browsing, Stagehand, and Firecrawl) -->
+            <div id="web-tools" class="tool-category">
+                <h2 class="tool-category-title">Web Tools <span class="tool-count">(19)</span></h2>
+                <div class="tool-cards">
+                    <div class="tool-card">
+                        <div class="tool-name">search_google</div>
+                        <div class="tool-description">Search Google for a query.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">visit_page</div>
+                        <div class="tool-description">Visit a webpage and extract its content.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">take_screenshot</div>
+                        <div class="tool-description">Take a screenshot of the current page.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">fetch_html</div>
+                        <div class="tool-description">Fetch a website and return the content as HTML.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">fetch_markdown</div>
+                        <div class="tool-description">Fetch a website and return the content as Markdown.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">fetch_txt</div>
+                        <div class="tool-description">Fetch a website and return the content as plain text.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">fetch_json</div>
+                        <div class="tool-description">Fetch a JSON file from a URL.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">stagehand_navigate</div>
+                        <div class="tool-description">Navigate to a URL in the browser.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">stagehand_act</div>
+                        <div class="tool-description">Perform an action on a web page element.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">stagehand_extract</div>
+                        <div class="tool-description">Extract all text from the current page.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">stagehand_observe</div>
+                        <div class="tool-description">Observe elements on the web page.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">screenshot</div>
+                        <div class="tool-description">Take a screenshot of the current page.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">firecrawl_scrape</div>
+                        <div class="tool-description">Scrape a single webpage with advanced options.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">firecrawl_map</div>
+                        <div class="tool-description">Discover URLs from a starting point.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">firecrawl_crawl</div>
+                        <div class="tool-description">Start an asynchronous crawl of multiple pages.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">firecrawl_batch_scrape</div>
+                        <div class="tool-description">Scrape multiple URLs in batch mode.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">firecrawl_check_batch_status</div>
+                        <div class="tool-description">Check the status of a batch scraping job.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">firecrawl_check_crawl_status</div>
+                        <div class="tool-description">Check the status of a crawl job.</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">firecrawl_extract</div>
+                        <div class="tool-description">Extract structured information from web pages using LLM.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Add more sections for other tool categories... -->
+            
+        </div>
+    </div>
+    
+    <a href="#" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h4>Echo AI Systems</h4>
+                    <p>Intelligent solutions for a connected world.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="https://github.com/MCERQUA/ECHO2">GitHub Repository</a></li>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Knowledge Graph</a></li>
+                        <li><a href="#">Tool Gallery</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Connect</h4>
+                    <ul>
+                        <li><a href="#">Initialize Echo</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Spatial.io Office</a></li>
+                        <li><a href="#">Discord</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Echo AI Systems. All rights reserved.</p>
+            <p>Created autonomously by Echo.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Generate category navigation
+            const categoryNavigation = document.getElementById('categoryNavigation');
+            const toolCategories = document.querySelectorAll('.tool-category');
+            
+            toolCategories.forEach(category => {
+                const id = category.id;
+                const title = category.querySelector('.tool-category-title').textContent.split(' <')[0];
+                const link = document.createElement('a');
+                link.href = `#${id}`;
+                link.className = 'category-link';
+                link.textContent = title;
+                categoryNavigation.appendChild(link);
+            });
+            
+            // Search functionality
+            const searchInput = document.getElementById('toolSearch');
+            
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                const toolCards = document.querySelectorAll('.tool-card');
+                
+                toolCards.forEach(card => {
+                    const toolName = card.querySelector('.tool-name').textContent.toLowerCase();
+                    const toolDescription = card.querySelector('.tool-description').textContent.toLowerCase();
+                    
+                    if (toolName.includes(searchTerm) || toolDescription.includes(searchTerm)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // Show/hide categories based on visible cards
+                toolCategories.forEach(category => {
+                    const visibleCards = Array.from(category.querySelectorAll('.tool-card')).filter(card => card.style.display !== 'none');
+                    
+                    if (visibleCards.length === 0) {
+                        category.style.display = 'none';
+                    } else {
+                        category.style.display = '';
+                    }
+                });
+            });
+            
+            // Back to top button
+            const backToTopButton = document.querySelector('.back-to-top');
+            
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    backToTopButton.style.display = 'flex';
+                } else {
+                    backToTopButton.style.display = 'none';
+                }
+            });
+            
+            backToTopButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
