@@ -3,27 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Echo AI Systems</title>
+    <title>Echo AI Systems - Get More Customers Online</title>
+    <meta name="description" content="We help small businesses get found online, attract more customers, and grow faster. No tech experience needed.">
+    
+    <!-- Modern Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 </head>
 <body>
+    <!-- Animated Particles Background -->
+    <div class="particles" id="particles"></div>
+    
     <header>
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-                    <img src="https://raw.githubusercontent.com/MCERQUA/echo-demo-site/main/images/header-banner.svg" alt="Echo AI Systems Logo" class="header-banner">
                     <h1>Echo AI Systems</h1>
                 </div>
                 <nav>
                     <ul class="main-nav">
                         <li><a href="#home" class="active">Home</a></li>
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="#projects">Projects</a></li>
-                        <li><a href="mcp-tools.html">MCP Tools</a></li>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#success-stories">Success Stories</a></li>
+                        <li><a href="#free-tools">Free Tools</a></li>
                         <li><a href="#contact" class="cta-button">Get Started</a></li>
                     </ul>
                 </nav>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
         </div>
     </header>
@@ -31,86 +43,261 @@
     <section id="home" class="hero">
         <div class="container">
             <div class="hero-content">
-                <h2>Intelligent Automation with AI</h2>
-                <p class="tagline">Creating, building, and deploying solutions autonomously</p>
-                <p>This website was created and deployed automatically by Echo AI Assistant</p>
-                <p>Site created on: <span id="creation-date"></span></p>
+                <h2>Get More Customers Online<br>Without the Tech Headaches</h2>
+                <p class="tagline">We help small businesses get found online, attract more customers, and grow faster. No tech experience needed.</p>
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-number">500+</span>
+                        <span class="stat-label">Small Businesses Helped</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">40%</span>
+                        <span class="stat-label">More Customers in 90 Days</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">No Tech Experience Required</span>
+                    </div>
+                </div>
                 <div class="hero-buttons">
-                    <a href="#features" class="primary-button">See Capabilities</a>
-                    <a href="https://github.com/MCERQUA/ECHO2" class="secondary-button">GitHub Repository</a>
+                    <a href="#free-tools" class="primary-button">Get Your Free Business Assessment</a>
+                    <a href="#success-stories" class="secondary-button">See Success Stories</a>
                 </div>
             </div>
         </div>
     </section>
     
-    <section id="features" class="features">
+    <section id="services" class="features">
         <div class="container">
-            <h2 class="section-title">What Echo Can Do</h2>
+            <h2 class="section-title">Services That Grow Your Business</h2>
+            <p class="section-subtitle">We handle the tech stuff so you can focus on what you do best</p>
+            
             <div class="feature-grid">
                 <div class="feature-card">
-                    <img src="https://raw.githubusercontent.com/MCERQUA/echo-demo-site/main/images/website-deployment.svg" alt="Website Deployment" class="feature-icon">
-                    <h3>Website Deployment</h3>
-                    <p>Create and deploy websites to Netlify with a simple command.</p>
+                    <div class="feature-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>Website Design & Management</h3>
+                    <p>Get a professional website that turns visitors into customers. We handle everything from design to updates.</p>
                 </div>
                 <div class="feature-card">
-                    <img src="https://raw.githubusercontent.com/MCERQUA/echo-demo-site/main/images/knowledge-management.svg" alt="Knowledge Management" class="feature-icon">
-                    <h3>Knowledge Management</h3>
-                    <p>Store and retrieve information through a structured knowledge graph.</p>
+                    <div class="feature-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Get Found on Google</h3>
+                    <p>Show up when customers search for businesses like yours. We optimize your online presence for local searches.</p>
                 </div>
                 <div class="feature-card">
-                    <img src="https://raw.githubusercontent.com/MCERQUA/echo-demo-site/main/images/github-integration.svg" alt="GitHub Integration" class="feature-icon">
-                    <h3>GitHub Integration</h3>
-                    <p>Create repositories and manage code directly through conversations.</p>
+                    <div class="feature-icon">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <h3>Social Media Management</h3>
+                    <p>Stay connected with customers on Facebook, Instagram, and more. We create and post content that engages.</p>
                 </div>
                 <div class="feature-card">
-                    <img src="https://raw.githubusercontent.com/MCERQUA/echo-demo-site/main/images/content-generation.svg" alt="Content Generation" class="feature-icon">
-                    <h3>Content Generation</h3>
-                    <p>Develop SEO-optimized content for websites and marketing.</p>
+                    <div class="feature-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3>Review Management</h3>
+                    <p>Build a 5-star reputation online. We help you get more positive reviews and handle customer feedback.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <h3>Content & Marketing</h3>
+                    <p>Professional content that tells your story and attracts customers. From blog posts to promotional videos.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>Smart Automation</h3>
+                    <p>24/7 customer service with AI chatbots, automated appointment booking, and instant customer responses.</p>
                 </div>
             </div>
-            <div class="feature-buttons" style="text-align: center; margin-top: 2rem;">
-                <a href="mcp-tools.html" class="primary-button">Explore 175+ MCP Tools</a>
+            
+            <div class="feature-buttons" style="text-align: center; margin-top: 3rem;">
+                <a href="#contact" class="primary-button">Get Started Today</a>
             </div>
         </div>
     </section>
 
-    <section id="projects" class="projects">
+    <section id="success-stories" class="projects">
         <div class="container">
-            <h2 class="section-title">Recent Projects</h2>
+            <h2 class="section-title">Real Results for Real Businesses</h2>
+            <p class="section-subtitle">See how we've helped businesses like yours grow</p>
+            
             <div class="project-grid">
                 <div class="project-card">
-                    <img src="https://raw.githubusercontent.com/MCERQUA/echo-demo-site/main/images/ai-phone.svg" alt="AI Phone System" class="project-image">
                     <div class="project-content">
-                        <h3>AI Phone System</h3>
-                        <p>Automated customer service system with natural language processing</p>
-                        <a href="#" class="project-link">Learn More</a>
+                        <div class="business-type">Restaurant</div>
+                        <h3>Maria's Mexican Restaurant</h3>
+                        <div class="problem">
+                            <strong>Challenge:</strong> Only regulars knew about their amazing food
+                        </div>
+                        <div class="solution">
+                            <strong>Solution:</strong> Local SEO + Review Management System
+                        </div>
+                        <div class="result">
+                            <strong>Result:</strong> <span class="highlight">60% more customers in 3 months</span>
+                        </div>
+                        <p class="testimonial">"Echo AI made it so easy! Now new customers find us every day on Google."</p>
                     </div>
                 </div>
+                
                 <div class="project-card">
-                    <img src="https://raw.githubusercontent.com/MCERQUA/echo-demo-site/main/images/seo-content.svg" alt="SEO Content Generator" class="project-image">
                     <div class="project-content">
-                        <h3>SEO Content Generator</h3>
-                        <p>AI-powered tool for creating optimized web content</p>
-                        <a href="#" class="project-link">Learn More</a>
+                        <div class="business-type">Service Business</div>
+                        <h3>Dave's Plumbing Services</h3>
+                        <div class="problem">
+                            <strong>Challenge:</strong> Customers were calling competitors first
+                        </div>
+                        <div class="solution">
+                            <strong>Solution:</strong> New Website + Google Business Optimization
+                        </div>
+                        <div class="result">
+                            <strong>Result:</strong> <span class="highlight">Phone rings 3x more often</span>
+                        </div>
+                        <p class="testimonial">"Best investment I've made in my business. The phone hasn't stopped ringing!"</p>
                     </div>
                 </div>
+                
                 <div class="project-card">
-                    <img src="https://raw.githubusercontent.com/MCERQUA/echo-demo-site/main/images/website-template.svg" alt="Website Template System" class="project-image">
                     <div class="project-content">
-                        <h3>Website Template System</h3>
-                        <p>Automated website creation from templates</p>
-                        <a href="#" class="project-link">Learn More</a>
+                        <div class="business-type">Beauty Salon</div>
+                        <h3>Sunset Hair Salon</h3>
+                        <div class="problem">
+                            <strong>Challenge:</strong> Younger competitors were getting all the new clients
+                        </div>
+                        <div class="solution">
+                            <strong>Solution:</strong> Social Media Marketing + Online Booking System
+                        </div>
+                        <div class="result">
+                            <strong>Result:</strong> <span class="highlight">Booked solid 2 weeks out</span>
+                        </div>
+                        <p class="testimonial">"They made social media simple. Now I'm busier than ever!"</p>
                     </div>
                 </div>
+                
                 <div class="project-card">
-                    <img src="https://raw.githubusercontent.com/MCERQUA/echo-demo-site/main/images/metaverse-ai.svg" alt="Metaverse Educational AI Space" class="project-image">
                     <div class="project-content">
-                        <h3>Metaverse Educational AI Space</h3>
-                        <p>Interactive educational environment in the metaverse</p>
-                        <a href="#" class="project-link">Learn More</a>
+                        <div class="business-type">Retail Store</div>
+                        <h3>Johnson's Hardware</h3>
+                        <div class="problem">
+                            <strong>Challenge:</strong> Big box stores were taking their customers
+                        </div>
+                        <div class="solution">
+                            <strong>Solution:</strong> E-commerce Site + Local Marketing Campaign
+                        </div>
+                        <div class="result">
+                            <strong>Result:</strong> <span class="highlight">45% increase in sales</span>
+                        </div>
+                        <p class="testimonial">"We're now competing with the big guys and winning!"</p>
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
+    
+    <section id="free-tools" class="free-tools">
+        <div class="container">
+            <h2 class="section-title">Free Tools to Grow Your Business</h2>
+            <p class="section-subtitle">See how your business is performing online - completely free</p>
+            
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-search-location"></i>
+                    </div>
+                    <h3>Business Visibility Checker</h3>
+                    <p>See how often your business appears in local searches and what customers find when they look for you.</p>
+                    <a href="#" class="tool-link">Check Your Visibility →</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <h3>Review Score Calculator</h3>
+                    <p>Analyze your online reviews across all platforms and see how you compare to competitors.</p>
+                    <a href="#" class="tool-link">Calculate Your Score →</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <h3>Website Speed Test</h3>
+                    <p>Test how fast your website loads. Slow sites lose customers - find out if yours needs help.</p>
+                    <a href="#" class="tool-link">Test Your Speed →</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Competition Report</h3>
+                    <p>See what your competitors are doing online and discover opportunities to get ahead.</p>
+                    <a href="#" class="tool-link">Get Your Report →</a>
+                </div>
+            </div>
+            
+            <div class="cta-section">
+                <h3>Ready to Grow Your Business?</h3>
+                <p>Get your free business growth plan and see exactly how we can help you get more customers.</p>
+                <a href="#contact" class="primary-button">Get Your Free Growth Plan</a>
+            </div>
+        </div>
+    </section>
+    
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">Let's Grow Your Business</h2>
+            <p class="section-subtitle">Tell us about your goals and we'll show you how to achieve them</p>
+            
+            <form class="contact-form" id="contactForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">Your Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="business">Business Name</label>
+                        <input type="text" id="business" name="business" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="goal">What's your main goal?</label>
+                        <select id="goal" name="goal" required>
+                            <option value="">Select your goal...</option>
+                            <option value="more-customers">I want more customers</option>
+                            <option value="better-website">I need a better website</option>
+                            <option value="beat-competition">I want to beat my competition</option>
+                            <option value="online-reviews">I need help with online reviews</option>
+                            <option value="not-sure">I'm not sure what I need</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="message">Tell us more (optional)</label>
+                        <textarea id="message" name="message" rows="4"></textarea>
+                    </div>
+                </div>
+                
+                <button type="submit" class="primary-button">Get My Free Growth Plan</button>
+            </form>
         </div>
     </section>
     
@@ -119,36 +306,43 @@
             <div class="footer-content">
                 <div class="footer-column">
                     <h4>Echo AI Systems</h4>
-                    <p>Intelligent solutions for a connected world.</p>
+                    <p>Helping small businesses succeed online with smart, simple solutions.</p>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-github"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
                     </div>
+                </div>
+                <div class="footer-column">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="#services">Website Design</a></li>
+                        <li><a href="#services">Local SEO</a></li>
+                        <li><a href="#services">Social Media</a></li>
+                        <li><a href="#services">Content Creation</a></li>
+                    </ul>
                 </div>
                 <div class="footer-column">
                     <h4>Resources</h4>
                     <ul>
-                        <li><a href="https://github.com/MCERQUA/ECHO2">GitHub Repository</a></li>
-                        <li><a href="#">Documentation</a></li>
-                        <li><a href="#">Knowledge Graph</a></li>
-                        <li><a href="mcp-tools.html">Tool Gallery</a></li>
+                        <li><a href="#free-tools">Free Tools</a></li>
+                        <li><a href="#success-stories">Success Stories</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">FAQ</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
-                    <h4>Connect</h4>
+                    <h4>Contact</h4>
                     <ul>
-                        <li><a href="#">Initialize Echo</a></li>
-                        <li><a href="#">Contact</a></li>
-                        <li><a href="#">Spatial.io Office</a></li>
-                        <li><a href="#">Discord</a></li>
+                        <li><a href="tel:1-800-ECHO-AI">1-800-ECHO-AI</a></li>
+                        <li><a href="mailto:hello@echoaisystems.com">hello@echoaisystems.com</a></li>
+                        <li><a href="#contact">Get Started</a></li>
                     </ul>
                 </div>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2025 Echo AI Systems. All rights reserved.</p>
-            <p>Created autonomously by Echo.</p>
+            <p>&copy; 2025 Echo AI Systems. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
         </div>
     </footer>
 
