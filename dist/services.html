@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services - Echo AI Systems | Autonomous AI Development</title>
+    <meta name="description" content="Explore Echo AI Systems' comprehensive suite of AI development services. From custom AI applications to process automation and web development, we deliver cutting-edge solutions.">
+    
+    <!-- Modern Font Stack -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/services.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="images/echo-favicon.svg">
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header" id="header">
+        <div class="header-container">
+            <div class="logo-wrapper">
+                <a href="index.html" class="logo-link">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 40 40" width="40" height="40">
+                            <defs>
+                                <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:var(--accent-primary);stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:var(--accent-secondary);stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="20" cy="20" r="18" fill="url(#logo-gradient)"/>
+                            <text x="20" y="27" text-anchor="middle" fill="white" font-size="16" font-weight="bold">E</text>
+                        </svg>
+                    </div>
+                    <span class="logo-text">Echo<span class="ai-badge">AI</span></span>
+                </a>
+            </div>
+
+            <nav class="main-nav" id="mainNav">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="index.html" class="nav-link" data-hover="Home">Home</a></li>
+                    <li class="nav-item"><a href="services.html" class="nav-link active" data-hover="Services">Services</a></li>
+                    <li class="nav-item"><a href="portfolio.html" class="nav-link" data-hover="Portfolio">Portfolio</a></li>
+                    <li class="nav-item"><a href="about.html" class="nav-link" data-hover="About">About</a></li>
+                    <li class="nav-item"><a href="index.html#contact" class="nav-link" data-hover="Contact">Contact</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <svg class="sun-icon" viewBox="0 0 24 24" width="20" height="20">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24" width="20" height="20">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+                <a href="index.html#contact" class="cta-button primary">
+                    <span>Start Project</span>
+                    <svg viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M5 12h14m-7-7l7 7-7 7"/>
+                    </svg>
+                </a>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="services-hero">
+        <div class="hero-background">
+            <div class="grid-pattern"></div>
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+        </div>
+        
+        <div class="container">
+            <div class="hero-content">
+                <span class="section-label">Our Services</span>
+                <h1 class="hero-title">
+                    AI Solutions That <span class="gradient-text">Transform Business</span>
+                </h1>
+                <p class="hero-description">
+                    We leverage cutting-edge AI technology to build intelligent systems that work 24/7, 
+                    automate complex processes, and deliver exceptional user experiences.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Grid -->
+    <section class="services-section">
+        <div class="container">
+            <!-- AI Development Service -->
+            <div class="service-card" id="ai-development">
+                <div class="service-header">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 64 64" width="64" height="64">
+                            <circle cx="32" cy="32" r="28" fill="none" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+                            <circle cx="32" cy="32" r="20" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="32" cy="32" r="12" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="32" cy="32" r="4" fill="currentColor"/>
+                            <path d="M32 4v8m0 40v8m28-28h-8m-40 0H4" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="service-title">Custom AI Development</h2>
+                        <p class="service-tagline">Intelligent solutions tailored to your unique business needs</p>
+                    </div>
+                </div>
+                
+                <div class="service-content">
+                    <p class="service-description">
+                        We create sophisticated AI applications that understand your business context, 
+                        learn from your data, and deliver measurable results. Our custom AI solutions 
+                        range from intelligent chatbots to complex decision-making systems.
+                    </p>
+                    
+                    <div class="service-features">
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Natural Language Processing</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Machine Learning Models</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Computer Vision Systems</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Predictive Analytics</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>AI-Powered APIs</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Autonomous Agents</span>
+                        </div>
+                    </div>
+                    
+                    <div class="service-benefits">
+                        <h3>Key Benefits</h3>
+                        <ul>
+                            <li>Reduce operational costs by up to 60%</li>
+                            <li>Make data-driven decisions in real-time</li>
+                            <li>Scale your capabilities without scaling headcount</li>
+                            <li>Deliver personalized experiences at scale</li>
+                        </ul>
+                    </div>
+                    
+                    <a href="index.html#contact" class="service-cta">
+                        <span>Get AI Consultation</span>
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M5 12h14m-7-7l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Process Automation Service -->
+            <div class="service-card" id="automation">
+                <div class="service-header">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 64 64" width="64" height="64">
+                            <path d="M32 8v48m-16-16h32" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <circle cx="32" cy="16" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="16" cy="32" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="48" cy="32" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="32" cy="48" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="service-title">Process Automation</h2>
+                        <p class="service-tagline">Streamline operations with intelligent workflows</p>
+                    </div>
+                </div>
+                
+                <div class="service-content">
+                    <p class="service-description">
+                        Transform your manual processes into efficient, automated workflows that run 24/7. 
+                        Our automation solutions integrate seamlessly with your existing systems while 
+                        providing intelligent decision-making capabilities.
+                    </p>
+                    
+                    <div class="service-features">
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Workflow Automation</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Data Processing</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Email Automation</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Document Processing</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Integration APIs</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Real-time Monitoring</span>
+                        </div>
+                    </div>
+                    
+                    <div class="service-benefits">
+                        <h3>Key Benefits</h3>
+                        <ul>
+                            <li>Eliminate 90% of repetitive tasks</li>
+                            <li>Reduce processing time from hours to minutes</li>
+                            <li>Achieve 99.9% accuracy in data handling</li>
+                            <li>Free your team to focus on strategic work</li>
+                        </ul>
+                    </div>
+                    
+                    <a href="index.html#contact" class="service-cta">
+                        <span>Automate Your Business</span>
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M5 12h14m-7-7l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Web Development Service -->
+            <div class="service-card" id="web-development">
+                <div class="service-header">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 64 64" width="64" height="64">
+                            <rect x="8" y="12" width="48" height="36" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <path d="M8 24h48" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="16" cy="18" r="2" fill="currentColor"/>
+                            <circle cx="24" cy="18" r="2" fill="currentColor"/>
+                            <circle cx="32" cy="18" r="2" fill="currentColor"/>
+                            <path d="M20 32l4 4-4 4m8 0h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="service-title">Web & App Development</h2>
+                        <p class="service-tagline">AI-enhanced digital experiences that convert</p>
+                    </div>
+                </div>
+                
+                <div class="service-content">
+                    <p class="service-description">
+                        Build modern, AI-powered websites and applications that deliver exceptional user 
+                        experiences. Our development approach combines cutting-edge design with intelligent 
+                        features that adapt to user behavior.
+                    </p>
+                    
+                    <div class="service-features">
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Responsive Design</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>AI Chatbots</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Progressive Web Apps</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>E-commerce Solutions</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>API Development</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Cloud Deployment</span>
+                        </div>
+                    </div>
+                    
+                    <div class="service-benefits">
+                        <h3>Key Benefits</h3>
+                        <ul>
+                            <li>Launch 3x faster with AI-assisted development</li>
+                            <li>Increase conversions with smart personalization</li>
+                            <li>Scale seamlessly as your business grows</li>
+                            <li>24/7 intelligent customer support built-in</li>
+                        </ul>
+                    </div>
+                    
+                    <a href="index.html#contact" class="service-cta">
+                        <span>Start Your Project</span>
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M5 12h14m-7-7l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- AI Consulting Service -->
+            <div class="service-card" id="consulting">
+                <div class="service-header">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 64 64" width="64" height="64">
+                            <path d="M32 12v20l14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <circle cx="32" cy="32" r="24" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="32" cy="32" r="3" fill="currentColor"/>
+                            <path d="M32 8v4m0 40v4m24-24h-4m-40 0H8" stroke="currentColor" stroke-width="2" opacity="0.5"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="service-title">AI Consulting</h2>
+                        <p class="service-tagline">Strategic guidance for your AI transformation</p>
+                    </div>
+                </div>
+                
+                <div class="service-content">
+                    <p class="service-description">
+                        Navigate the AI landscape with expert guidance. We help you identify opportunities, 
+                        develop strategies, and implement AI solutions that align with your business goals 
+                        and deliver measurable ROI.
+                    </p>
+                    
+                    <div class="service-features">
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>AI Strategy Development</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Technology Assessment</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Implementation Roadmap</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Team Training</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Performance Metrics</span>
+                        </div>
+                        <div class="feature-item">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M9 11l3 3L22 4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Ongoing Support</span>
+                        </div>
+                    </div>
+                    
+                    <div class="service-benefits">
+                        <h3>Key Benefits</h3>
+                        <ul>
+                            <li>Avoid costly AI implementation mistakes</li>
+                            <li>Fast-track your AI adoption journey</li>
+                            <li>Build internal AI capabilities</li>
+                            <li>Ensure ethical and responsible AI use</li>
+                        </ul>
+                    </div>
+                    
+                    <a href="index.html#contact" class="service-cta">
+                        <span>Book Consultation</span>
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M5 12h14m-7-7l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="process-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Our Process</span>
+                <h2 class="section-title">
+                    How We <span class="gradient-text">Deliver Results</span>
+                </h2>
+            </div>
+            
+            <div class="process-timeline">
+                <div class="process-step">
+                    <div class="step-number">01</div>
+                    <h3>Discovery</h3>
+                    <p>We analyze your business needs, challenges, and opportunities to design the perfect AI solution.</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">02</div>
+                    <h3>Development</h3>
+                    <p>Our AI systems build and deploy solutions at unprecedented speed, with continuous iteration.</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">03</div>
+                    <h3>Integration</h3>
+                    <p>Seamlessly connect AI solutions with your existing systems and workflows for maximum impact.</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">04</div>
+                    <h3>Optimization</h3>
+                    <p>Continuous learning and improvement ensure your AI solutions evolve with your business.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="services-cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to Transform Your Business with AI?</h2>
+                <p class="cta-description">
+                    Let's discuss how our AI solutions can drive growth and efficiency for your organization.
+                </p>
+                <a href="index.html#contact" class="cta-button large">
+                    <span>Schedule Free Consultation</span>
+                    <div class="button-glow"></div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <svg viewBox="0 0 40 40" width="40" height="40">
+                            <circle cx="20" cy="20" r="18" fill="var(--accent-primary)"/>
+                            <text x="20" y="27" text-anchor="middle" fill="white" font-size="16" font-weight="bold">E</text>
+                        </svg>
+                        <span>Echo AI Systems</span>
+                    </div>
+                    <p class="footer-tagline">Building the future with autonomous intelligence</p>
+                    <div class="footer-contact">
+                        <a href="mailto:echoaisystems@gmail.com">echoaisystems@gmail.com</a>
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Services</h4>
+                        <ul>
+                            <li><a href="#ai-development">AI Development</a></li>
+                            <li><a href="#automation">Automation</a></li>
+                            <li><a href="#web-development">Web Development</a></li>
+                            <li><a href="#consulting">Consulting</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Company</h4>
+                        <ul>
+                            <li><a href="about.html">About Us</a></li>
+                            <li><a href="portfolio.html">Portfolio</a></li>
+                            <li><a href="https://github.com/MCERQUA/ECHO2">GitHub</a></li>
+                            <li><a href="index.html#contact">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="#">Documentation</a></li>
+                            <li><a href="#">Case Studies</a></li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="#">FAQ</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 Echo AI Systems. All rights reserved.</p>
+                <div class="footer-stats">
+                    <span>Powered by autonomous AI</span>
+                    <span class="separator">•</span>
+                    <span>Status: <span class="status-indicator online">Online</span></span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/animations.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
