@@ -21,11 +21,46 @@ body {
     font-family: var(--font-primary);
     font-size: var(--text-base);
     line-height: 1.6;
-    color: var(--primary-100);
-    background-color: var(--primary-900);
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
     overflow-x: hidden;
     min-height: 100vh;
     position: relative;
+}
+
+/* Root color scheme */
+:root {
+    /* Default (dark) theme colors */
+    --bg-primary: #0a0e27;
+    --bg-secondary: #0d1117;
+    --bg-tertiary: #161b22;
+    
+    --text-primary: #f0f6fc;
+    --text-secondary: #b1bac4;
+    --text-tertiary: #6e7681;
+    
+    --border-color: rgba(255, 255, 255, 0.1);
+    --card-bg: rgba(255, 255, 255, 0.05);
+    
+    --accent-primary-alpha: rgba(59, 130, 246, 0.1);
+    --accent-secondary-alpha: rgba(139, 92, 246, 0.1);
+}
+
+/* Light theme overrides */
+[data-theme="light"] {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f6f8fa;
+    --bg-tertiary: #e1e7ed;
+    
+    --text-primary: #0a0e27;
+    --text-secondary: #5d667a;
+    --text-tertiary: #8891a0;
+    
+    --border-color: rgba(0, 0, 0, 0.1);
+    --card-bg: rgba(0, 0, 0, 0.03);
+    
+    --accent-primary-alpha: rgba(59, 130, 246, 0.1);
+    --accent-secondary-alpha: rgba(139, 92, 246, 0.1);
 }
 
 /* Typography */
@@ -33,6 +68,7 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
     line-height: 1.2;
     letter-spacing: -0.02em;
+    color: var(--text-primary);
 }
 
 h1 { font-size: var(--text-5xl); }
@@ -44,6 +80,7 @@ h6 { font-size: var(--text-lg); }
 
 p {
     margin-bottom: 1em;
+    color: var(--text-secondary);
 }
 
 a {
@@ -93,17 +130,17 @@ table {
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--primary-800);
+    background: var(--bg-secondary);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--primary-600);
+    background: var(--text-tertiary);
     border-radius: var(--radius-md);
-    border: 2px solid var(--primary-800);
+    border: 2px solid var(--bg-secondary);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-500);
+    background: var(--text-secondary);
 }
 
 /* Selection */
@@ -165,7 +202,7 @@ table {
     left: 0;
     width: 100%;
     height: 100%;
-    background: var(--primary-900);
+    background: var(--bg-primary);
     z-index: 9999;
     display: flex;
     align-items: center;
@@ -217,7 +254,7 @@ table {
 
 .loading-text {
     font-size: var(--text-sm);
-    color: var(--primary-300);
+    color: var(--text-secondary);
     opacity: 0;
     animation: fadeIn 0.5s ease-out 0.5s forwards;
 }
@@ -345,6 +382,18 @@ section {
     font-size: var(--text-4xl);
     font-weight: 800;
     line-height: 1.1;
+    color: var(--text-primary);
+}
+
+/* Animation Keyframes */
+@keyframes rotate {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
 }
 
 /* Responsive Media Queries */
