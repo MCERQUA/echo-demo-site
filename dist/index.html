@@ -3,152 +3,323 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Echo AI Systems</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <title>Echo AI Systems - Next-Gen Autonomous Intelligence</title>
+    <meta name="description" content="Echo AI Systems - Pioneering autonomous AI solutions with 90+ MCP tools, creating the future of intelligent automation.">
+    
+    <!-- Modern Font Stack -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/index.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="images/echo-favicon.svg">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <img src="https://raw.githubusercontent.com/MCERQUA/echo-demo-site/main/images/header-banner.svg" alt="Echo AI Systems Logo" class="header-banner">
-                    <h1>Echo AI Systems</h1>
-                </div>
-                <nav>
-                    <ul class="main-nav">
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="#projects">Projects</a></li>
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#contact" class="cta-button">Get Started</a></li>
-                    </ul>
-                </nav>
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-content">
+            <div class="echo-logo-animated">
+                <svg viewBox="0 0 100 100" width="80" height="80">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="var(--accent-primary)" stroke-width="2" opacity="0.3"/>
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="var(--accent-primary)" stroke-width="2" 
+                            stroke-dasharray="283" stroke-dashoffset="283" class="progress-ring"/>
+                </svg>
+                <div class="echo-text">ECHO</div>
+            </div>
+            <div class="loading-text">Initializing AI Systems...</div>
+        </div>
+    </div>
+
+    <!-- Cursor Effects -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- Header -->
+    <header class="main-header" id="header">
+        <div class="header-container">
+            <div class="logo-wrapper">
+                <a href="index.html" class="logo-link">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 40 40" width="40" height="40">
+                            <defs>
+                                <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:var(--accent-primary);stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:var(--accent-secondary);stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="20" cy="20" r="18" fill="url(#logo-gradient)"/>
+                            <text x="20" y="27" text-anchor="middle" fill="white" font-size="16" font-weight="bold">E</text>
+                        </svg>
+                    </div>
+                    <span class="logo-text">Echo<span class="ai-badge">AI</span></span>
+                </a>
+            </div>
+
+            <nav class="main-nav" id="mainNav">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="index.html" class="nav-link active" data-hover="Home">Home</a></li>
+                    <li class="nav-item"><a href="features.html" class="nav-link" data-hover="Features">Features</a></li>
+                    <li class="nav-item"><a href="projects.html" class="nav-link" data-hover="Projects">Projects</a></li>
+                    <li class="nav-item"><a href="tools.html" class="nav-link" data-hover="Tools">Tools</a></li>
+                    <li class="nav-item"><a href="about.html" class="nav-link" data-hover="About">About</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <svg class="sun-icon" viewBox="0 0 24 24" width="20" height="20">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24" width="20" height="20">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+                <a href="#contact" class="cta-button primary">
+                    <span>Get Started</span>
+                    <svg viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M5 12h14m-7-7l7 7-7 7"/>
+                    </svg>
+                </a>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
             </div>
         </div>
     </header>
 
-    <section id="home" class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h2>Intelligent Automation with AI</h2>
-                <p class="tagline">Creating, building, and deploying solutions autonomously</p>
-                <p>This website was created and deployed automatically by Echo AI Assistant</p>
-                <p>Site created on: <span id="creation-date"></span></p>
-                <div class="hero-buttons">
-                    <a href="#features" class="primary-button">See Capabilities</a>
-                    <a href="https://github.com/MCERQUA/ECHO2" class="secondary-button">GitHub Repository</a>
+    <!-- Hero Section -->
+    <section class="hero-section" id="hero">
+        <div class="hero-background">
+            <div class="grid-pattern"></div>
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="gradient-orb orb-3"></div>
+            <canvas id="particleCanvas"></canvas>
+        </div>
+
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="badge-icon">🚀</span>
+                <span class="badge-text">Next-Gen AI</span>
+            </div>
+            
+            <h1 class="hero-title">
+                <span class="title-line-1">Autonomous Intelligence</span>
+                <span class="title-line-2">
+                    <span class="gradient-text">Redefined</span>
+                </span>
+            </h1>
+            
+            <p class="hero-description">
+                Echo AI Systems leverages 90+ MCP tools to create, build, and deploy 
+                intelligent solutions autonomously. Experience the future of AI-powered automation.
+            </p>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number" data-count="90">0</span>
+                    <span class="stat-label">MCP Tools</span>
                 </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-count="24">0</span>
+                    <span class="stat-label">Hours Uptime</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-count="100">0</span>
+                    <span class="stat-label">% Autonomous</span>
+                </div>
+            </div>
+            
+            <div class="hero-actions">
+                <a href="#demo" class="hero-button primary">
+                    <span>Watch Demo</span>
+                    <svg viewBox="0 0 24 24" width="20" height="20">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                </a>
+                <a href="https://github.com/MCERQUA/ECHO2" class="hero-button secondary">
+                    <svg viewBox="0 0 24 24" width="20" height="20">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    <span>View on GitHub</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div class="ai-brain">
+                <div class="brain-core"></div>
+                <div class="brain-ring ring-1"></div>
+                <div class="brain-ring ring-2"></div>
+                <div class="brain-ring ring-3"></div>
+                <div class="connection-line line-1"></div>
+                <div class="connection-line line-2"></div>
+                <div class="connection-line line-3"></div>
+                <div class="connection-line line-4"></div>
             </div>
         </div>
     </section>
-    
-    <section id="features" class="features">
+
+    <!-- Features Preview -->
+    <section class="features-preview" id="features">
         <div class="container">
-            <h2 class="section-title">What Echo Can Do</h2>
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <img src="https://raw.githubusercontent.com/MCERQUA/echo-demo-site/main/images/website-deployment.svg" alt="Website Deployment" class="feature-icon">
-                    <h3>Website Deployment</h3>
-                    <p>Create and deploy websites to Netlify with a simple command.</p>
+            <div class="section-header">
+                <span class="section-label">Capabilities</span>
+                <h2 class="section-title">
+                    <span>Powered by</span>
+                    <span class="gradient-text">Advanced AI</span>
+                </h2>
+            </div>
+
+            <div class="feature-cards">
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card-icon">
+                        <div class="icon-glow"></div>
+                        <svg viewBox="0 0 48 48" width="48" height="48">
+                            <circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <path d="M24 12v12l8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h3 class="card-title">Real-Time Processing</h3>
+                    <p class="card-description">Process and respond to requests instantly with advanced parallel computing</p>
+                    <a href="features.html#processing" class="card-link">
+                        Learn more
+                        <svg viewBox="0 0 24 24" width="16" height="16">
+                            <path d="M5 12h14m-7-7l7 7-7 7"/>
+                        </svg>
+                    </a>
                 </div>
-                <div class="feature-card">
-                    <img src="https://raw.githubusercontent.com/MCERQUA/echo-demo-site/main/images/knowledge-management.svg" alt="Knowledge Management" class="feature-icon">
-                    <h3>Knowledge Management</h3>
-                    <p>Store and retrieve information through a structured knowledge graph.</p>
+
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-icon">
+                        <div class="icon-glow"></div>
+                        <svg viewBox="0 0 48 48" width="48" height="48">
+                            <rect x="8" y="8" width="32" height="32" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="24" cy="24" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <line x1="24" y1="8" x2="24" y2="16" stroke="currentColor" stroke-width="2"/>
+                            <line x1="24" y1="32" x2="24" y2="40" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3 class="card-title">Knowledge Graph</h3>
+                    <p class="card-description">Persistent memory system with tiered knowledge organization</p>
+                    <a href="features.html#knowledge" class="card-link">
+                        Learn more
+                        <svg viewBox="0 0 24 24" width="16" height="16">
+                            <path d="M5 12h14m-7-7l7 7-7 7"/>
+                        </svg>
+                    </a>
                 </div>
-                <div class="feature-card">
-                    <img src="https://raw.githubusercontent.com/MCERQUA/echo-demo-site/main/images/github-integration.svg" alt="GitHub Integration" class="feature-icon">
-                    <h3>GitHub Integration</h3>
-                    <p>Create repositories and manage code directly through conversations.</p>
-                </div>
-                <div class="feature-card">
-                    <img src="https://raw.githubusercontent.com/MCERQUA/echo-demo-site/main/images/content-generation.svg" alt="Content Generation" class="feature-icon">
-                    <h3>Content Generation</h3>
-                    <p>Develop SEO-optimized content for websites and marketing.</p>
+
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card-icon">
+                        <div class="icon-glow"></div>
+                        <svg viewBox="0 0 48 48" width="48" height="48">
+                            <path d="M12 24C12 17.373 17.373 12 24 12s12 5.373 12 12-5.373 12-12 12" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <path d="M24 24l-8 8m8-8v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h3 class="card-title">Autonomous Deployment</h3>
+                    <p class="card-description">Deploy websites, apps, and services without human intervention</p>
+                    <a href="features.html#deployment" class="card-link">
+                        Learn more
+                        <svg viewBox="0 0 24 24" width="16" height="16">
+                            <path d="M5 12h14m-7-7l7 7-7 7"/>
+                        </svg>
+                    </a>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="projects" class="projects">
+    <!-- CTA Section -->
+    <section class="cta-section">
         <div class="container">
-            <h2 class="section-title">Recent Projects</h2>
-            <div class="project-grid">
-                <div class="project-card">
-                    <img src="https://raw.githubusercontent.com/MCERQUA/echo-demo-site/main/images/ai-phone.svg" alt="AI Phone System" class="project-image">
-                    <div class="project-content">
-                        <h3>AI Phone System</h3>
-                        <p>Automated customer service system with natural language processing</p>
-                        <a href="#" class="project-link">Learn More</a>
-                    </div>
-                </div>
-                <div class="project-card">
-                    <img src="https://raw.githubusercontent.com/MCERQUA/echo-demo-site/main/images/seo-content.svg" alt="SEO Content Generator" class="project-image">
-                    <div class="project-content">
-                        <h3>SEO Content Generator</h3>
-                        <p>AI-powered tool for creating optimized web content</p>
-                        <a href="#" class="project-link">Learn More</a>
-                    </div>
-                </div>
-                <div class="project-card">
-                    <img src="https://raw.githubusercontent.com/MCERQUA/echo-demo-site/main/images/website-template.svg" alt="Website Template System" class="project-image">
-                    <div class="project-content">
-                        <h3>Website Template System</h3>
-                        <p>Automated website creation from templates</p>
-                        <a href="#" class="project-link">Learn More</a>
-                    </div>
-                </div>
-                <div class="project-card">
-                    <img src="https://raw.githubusercontent.com/MCERQUA/echo-demo-site/main/images/metaverse-ai.svg" alt="Metaverse Educational AI Space" class="project-image">
-                    <div class="project-content">
-                        <h3>Metaverse Educational AI Space</h3>
-                        <p>Interactive educational environment in the metaverse</p>
-                        <a href="#" class="project-link">Learn More</a>
-                    </div>
-                </div>
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to Experience the Future?</h2>
+                <p class="cta-description">Initialize Echo and unlock the power of autonomous AI</p>
+                <a href="#contact" class="cta-button large">
+                    <span>Start Building</span>
+                    <div class="button-glow"></div>
+                </a>
             </div>
         </div>
     </section>
-    
-    <footer>
+
+    <!-- Footer -->
+    <footer class="main-footer">
         <div class="container">
             <div class="footer-content">
-                <div class="footer-column">
-                    <h4>Echo AI Systems</h4>
-                    <p>Intelligent solutions for a connected world.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-github"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <svg viewBox="0 0 40 40" width="40" height="40">
+                            <circle cx="20" cy="20" r="18" fill="var(--accent-primary)"/>
+                            <text x="20" y="27" text-anchor="middle" fill="white" font-size="16" font-weight="bold">E</text>
+                        </svg>
+                        <span>Echo AI Systems</span>
+                    </div>
+                    <p class="footer-tagline">Pioneering autonomous intelligence</p>
+                </div>
+
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Platform</h4>
+                        <ul>
+                            <li><a href="features.html">Features</a></li>
+                            <li><a href="tools.html">MCP Tools</a></li>
+                            <li><a href="projects.html">Projects</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="https://github.com/MCERQUA/ECHO2">GitHub</a></li>
+                            <li><a href="#">Documentation</a></li>
+                            <li><a href="#">API Reference</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Connect</h4>
+                        <ul>
+                            <li><a href="about.html">About</a></li>
+                            <li><a href="#contact">Contact</a></li>
+                            <li><a href="#">Discord</a></li>
+                        </ul>
                     </div>
                 </div>
-                <div class="footer-column">
-                    <h4>Resources</h4>
-                    <ul>
-                        <li><a href="https://github.com/MCERQUA/ECHO2">GitHub Repository</a></li>
-                        <li><a href="#">Documentation</a></li>
-                        <li><a href="#">Knowledge Graph</a></li>
-                        <li><a href="#">Tool Gallery</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h4>Connect</h4>
-                    <ul>
-                        <li><a href="#">Initialize Echo</a></li>
-                        <li><a href="#">Contact</a></li>
-                        <li><a href="#">Spatial.io Office</a></li>
-                        <li><a href="#">Discord</a></li>
-                    </ul>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 Echo AI Systems. Crafted with autonomous intelligence.</p>
+                <div class="footer-stats">
+                    <span>Last deployed: <span id="deployTime">Just now</span></span>
+                    <span class="separator">•</span>
+                    <span>Status: <span class="status-indicator online">Online</span></span>
                 </div>
             </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Echo AI Systems. All rights reserved.</p>
-            <p>Created autonomously by Echo.</p>
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <!-- Scripts -->
+    <script src="js/particles.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
