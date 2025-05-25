@@ -1,76 +1,581 @@
-<div class="welcome-section">
+<!-- Brand Info Section -->
+<div class="section-header">
     <h1>Brand Information</h1>
-    <p>Tell us about your company so we can create the perfect AI that knows your business inside and out.</p>
+    <p>Manage your business details, brand assets, and company information.</p>
 </div>
 
-<div class="info-grid">
-    <div class="info-card">
-        <h3>Basic Information</h3>
-        <div class="info-item">
-            <span class="info-label">Company Name</span>
-            <span class="info-value">Not set</span>
+<div class="tab-navigation">
+    <button class="tab-button active" onclick="showTab('business-details')">Business Details</button>
+    <button class="tab-button" onclick="showTab('brand-assets')">Brand Assets</button>
+    <button class="tab-button" onclick="showTab('company-info')">Company Info</button>
+    <button class="tab-button" onclick="showTab('certifications')">Certifications</button>
+</div>
+
+<!-- Business Details Tab -->
+<div id="business-details" class="tab-content active" data-section="business_info">
+    <div class="section-card">
+        <div class="card-header">
+            <h2>Basic Information</h2>
+            <button class="btn-secondary edit-button" onclick="toggleEditMode('business_info')">Edit</button>
         </div>
-        <div class="info-item">
-            <span class="info-label">Industry</span>
-            <span class="info-value">Not set</span>
+        
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Business Name</label>
+                <div class="field-value" data-field="business_name" data-table="business_info"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Legal Name</label>
+                <div class="field-value" data-field="legal_name" data-table="business_info"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Business Type</label>
+                <div class="field-value" data-field="business_type" data-table="business_info"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>EIN/Tax ID</label>
+                <div class="field-value" data-field="ein_tax_id" data-table="business_info">••••••••</div>
+            </div>
+            
+            <div class="form-group full-width">
+                <label>Primary Industry</label>
+                <div class="field-value" data-field="primary_industry" data-table="business_info"></div>
+            </div>
+            
+            <div class="form-group full-width">
+                <label>Business Description</label>
+                <div class="field-value" data-field="business_description" data-table="business_info"></div>
+            </div>
+            
+            <div class="form-group full-width">
+                <label>Unique Selling Proposition</label>
+                <div class="field-value" data-field="unique_selling_proposition" data-table="business_info"></div>
+            </div>
         </div>
-        <div class="info-item">
-            <span class="info-label">Founded</span>
-            <span class="info-value">Not set</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">Company Size</span>
-            <span class="info-value">Not set</span>
-        </div>
-    </div>
-    
-    <div class="info-card">
-        <h3>Brand Identity</h3>
-        <div class="info-item">
-            <span class="info-label">Logo</span>
-            <span class="info-value">Not uploaded</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">Brand Colors</span>
-            <span class="info-value">Not set</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">Tagline</span>
-            <span class="info-value">Not set</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">Brand Voice</span>
-            <span class="info-value">Not defined</span>
-        </div>
-    </div>
-    
-    <div class="info-card">
-        <h3>Company Details</h3>
-        <div class="info-item">
-            <span class="info-label">Mission Statement</span>
-            <span class="info-value">Not provided</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">Core Values</span>
-            <span class="info-value">Not listed</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">Services/Products</span>
-            <span class="info-value">Not detailed</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">Target Audience</span>
-            <span class="info-value">Not defined</span>
+        
+        <div class="ai-research-prompt">
+            <button class="btn-outline" onclick="triggerAIResearch('business_info')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2v4m0 12v4m10-10h-4M6 12H2"/>
+                </svg>
+                Let AI Research This Information
+            </button>
         </div>
     </div>
 </div>
 
-<div class="quick-actions">
-    <button class="action-button">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 20h9"/>
-            <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
-        </svg>
-        Edit Brand Info
-    </button>
+<!-- Brand Assets Tab -->
+<div id="brand-assets" class="tab-content" data-section="brand_assets">
+    <div class="section-card">
+        <div class="card-header">
+            <h2>Visual Identity</h2>
+            <button class="btn-secondary edit-button" onclick="toggleEditMode('brand_assets')">Edit</button>
+        </div>
+        
+        <div class="brand-assets-grid">
+            <div class="logo-upload">
+                <label>Primary Logo</label>
+                <div class="upload-area" id="logo-upload">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <p>Click to upload or drag and drop</p>
+                    <span>PNG, JPG up to 10MB</span>
+                </div>
+            </div>
+            
+            <div class="brand-colors">
+                <label>Brand Colors</label>
+                <div class="color-palette" id="brand-colors">
+                    <div class="color-add">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-grid">
+            <div class="form-group full-width">
+                <label>Tagline</label>
+                <div class="field-value" data-field="tagline" data-table="brand_assets"></div>
+            </div>
+            
+            <div class="form-group full-width">
+                <label>Brand Story</label>
+                <div class="field-value" data-field="brand_story" data-table="brand_assets"></div>
+            </div>
+            
+            <div class="form-group full-width">
+                <label>Mission Statement</label>
+                <div class="field-value" data-field="mission_statement" data-table="brand_assets"></div>
+            </div>
+            
+            <div class="form-group full-width">
+                <label>Vision Statement</label>
+                <div class="field-value" data-field="vision_statement" data-table="brand_assets"></div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Company Info Tab -->
+<div id="company-info" class="tab-content" data-section="contact_info">
+    <div class="section-card">
+        <div class="card-header">
+            <h2>Contact Information</h2>
+            <button class="btn-secondary edit-button" onclick="toggleEditMode('contact_info')">Edit</button>
+        </div>
+        
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Primary Contact Name</label>
+                <div class="field-value" data-field="primary_contact_name" data-table="contact_info"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Primary Contact Title</label>
+                <div class="field-value" data-field="primary_contact_title" data-table="contact_info"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Primary Phone</label>
+                <div class="field-value" data-field="primary_phone" data-table="contact_info"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Primary Email</label>
+                <div class="field-value" data-field="primary_email" data-table="contact_info"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Main Business Phone</label>
+                <div class="field-value" data-field="main_phone" data-table="contact_info"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>General Email</label>
+                <div class="field-value" data-field="general_email" data-table="contact_info"></div>
+            </div>
+        </div>
+        
+        <h3>Business Hours</h3>
+        <div class="business-hours-grid">
+            <div class="hours-row">
+                <span class="day">Monday</span>
+                <input type="time" class="time-input" data-day="monday" data-period="open">
+                <span>to</span>
+                <input type="time" class="time-input" data-day="monday" data-period="close">
+            </div>
+            <div class="hours-row">
+                <span class="day">Tuesday</span>
+                <input type="time" class="time-input" data-day="tuesday" data-period="open">
+                <span>to</span>
+                <input type="time" class="time-input" data-day="tuesday" data-period="close">
+            </div>
+            <div class="hours-row">
+                <span class="day">Wednesday</span>
+                <input type="time" class="time-input" data-day="wednesday" data-period="open">
+                <span>to</span>
+                <input type="time" class="time-input" data-day="wednesday" data-period="close">
+            </div>
+            <div class="hours-row">
+                <span class="day">Thursday</span>
+                <input type="time" class="time-input" data-day="thursday" data-period="open">
+                <span>to</span>
+                <input type="time" class="time-input" data-day="thursday" data-period="close">
+            </div>
+            <div class="hours-row">
+                <span class="day">Friday</span>
+                <input type="time" class="time-input" data-day="friday" data-period="open">
+                <span>to</span>
+                <input type="time" class="time-input" data-day="friday" data-period="close">
+            </div>
+            <div class="hours-row">
+                <span class="day">Saturday</span>
+                <input type="time" class="time-input" data-day="saturday" data-period="open">
+                <span>to</span>
+                <input type="time" class="time-input" data-day="saturday" data-period="close">
+            </div>
+            <div class="hours-row">
+                <span class="day">Sunday</span>
+                <input type="time" class="time-input" data-day="sunday" data-period="open">
+                <span>to</span>
+                <input type="time" class="time-input" data-day="sunday" data-period="close">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Certifications Tab -->
+<div id="certifications" class="tab-content" data-section="business_info">
+    <div class="section-card">
+        <div class="card-header">
+            <h2>Licenses & Certifications</h2>
+            <button class="btn-primary" onclick="addCertification()">Add Certification</button>
+        </div>
+        
+        <div class="certifications-list" id="certifications-list">
+            <div class="empty-state">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="12" y1="18" x2="12" y2="12"/>
+                    <line x1="9" y1="15" x2="15" y2="15"/>
+                </svg>
+                <p>No certifications added yet</p>
+            </div>
+        </div>
+        
+        <div class="insurance-section">
+            <h3>Insurance & Bonding</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Bonded</label>
+                    <select class="field-value" data-field="bonded" data-table="business_info">
+                        <option value="false">No</option>
+                        <option value="true">Yes</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Bond Amount</label>
+                    <div class="field-value" data-field="bond_amount" data-table="business_info"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.tab-navigation {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.tab-button {
+    padding: 0.75rem 1.5rem;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s;
+}
+
+.tab-button:hover {
+    color: var(--text-primary);
+}
+
+.tab-button.active {
+    color: var(--primary);
+}
+
+.tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.field-value {
+    padding: 0.75rem;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    min-height: 2.5rem;
+    transition: all 0.2s;
+}
+
+.field-value[contenteditable="true"] {
+    background: var(--surface);
+    border-color: var(--primary);
+    outline: none;
+}
+
+.field-value:empty::before {
+    content: 'Click to add';
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.ai-research-prompt {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+}
+
+.brand-assets-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.upload-area {
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 3rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.upload-area:hover {
+    border-color: var(--primary);
+    background: var(--primary-light);
+}
+
+.upload-area svg {
+    margin-bottom: 1rem;
+    color: var(--text-muted);
+}
+
+.upload-area p {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.upload-area span {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.color-palette {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.color-add {
+    width: 60px;
+    height: 60px;
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.color-add:hover {
+    border-color: var(--primary);
+}
+
+.business-hours-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.hours-row {
+    display: grid;
+    grid-template-columns: 100px 120px 30px 120px;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.hours-row .day {
+    font-weight: 500;
+}
+
+.time-input {
+    padding: 0.5rem;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+.certifications-list {
+    margin-bottom: 2rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted);
+}
+
+.empty-state svg {
+    margin-bottom: 1rem;
+}
+
+.insurance-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tab-navigation {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .brand-assets-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .hours-row {
+        grid-template-columns: 80px 100px 20px 100px;
+        font-size: 0.875rem;
+    }
+}
+</style>
+
+<script>
+function showTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Remove active from all buttons
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    // Show selected tab
+    document.getElementById(tabName).classList.add('active');
+    
+    // Mark button as active
+    event.target.classList.add('active');
+}
+
+function populateBrandInfo() {
+    // Populate business info fields
+    Object.entries(clientData.businessInfo).forEach(([key, value]) => {
+        const field = document.querySelector(`[data-field="${key}"][data-table="business_info"]`);
+        if (field && value) {
+            field.textContent = value;
+        }
+    });
+    
+    // Populate contact info fields
+    Object.entries(clientData.contactInfo).forEach(([key, value]) => {
+        const field = document.querySelector(`[data-field="${key}"][data-table="contact_info"]`);
+        if (field && value) {
+            field.textContent = value;
+        }
+    });
+    
+    // Populate brand assets fields
+    Object.entries(clientData.brandAssets).forEach(([key, value]) => {
+        const field = document.querySelector(`[data-field="${key}"][data-table="brand_assets"]`);
+        if (field && value) {
+            field.textContent = value;
+        }
+    });
+    
+    // Populate business hours
+    if (clientData.contactInfo.business_hours) {
+        Object.entries(clientData.contactInfo.business_hours).forEach(([day, hours]) => {
+            const openInput = document.querySelector(`[data-day="${day}"][data-period="open"]`);
+            const closeInput = document.querySelector(`[data-day="${day}"][data-period="close"]`);
+            if (openInput && hours.open) openInput.value = hours.open;
+            if (closeInput && hours.close) closeInput.value = hours.close;
+        });
+    }
+}
+
+function initializeBrandInfoFeatures() {
+    // Initialize logo upload
+    const logoUpload = document.getElementById('logo-upload');
+    if (logoUpload) {
+        logoUpload.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = handleLogoUpload;
+            input.click();
+        });
+        
+        // Drag and drop
+        logoUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            logoUpload.classList.add('dragover');
+        });
+        
+        logoUpload.addEventListener('dragleave', () => {
+            logoUpload.classList.remove('dragover');
+        });
+        
+        logoUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            logoUpload.classList.remove('dragover');
+            handleLogoUpload({ target: { files: e.dataTransfer.files } });
+        });
+    }
+    
+    // Initialize color picker
+    const colorAdd = document.querySelector('.color-add');
+    if (colorAdd) {
+        colorAdd.addEventListener('click', addBrandColor);
+    }
+}
+
+async function handleLogoUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // TODO: Upload to Supabase Storage
+    showNotification('Logo upload functionality coming soon!', 'info');
+}
+
+function addBrandColor() {
+    // TODO: Implement color picker
+    showNotification('Color picker functionality coming soon!', 'info');
+}
+
+function addCertification() {
+    // TODO: Implement certification modal
+    showNotification('Certification management coming soon!', 'info');
+}
+</script>
