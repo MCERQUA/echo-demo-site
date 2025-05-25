@@ -316,7 +316,46 @@
     transform: translateY(0);
 }
 
-/* Responsive Design - Maintain Full Width */
+/* Tool link styling for homepage integration */
+.tool-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, var(--accent-primary, #3b82f6), var(--accent-secondary, #8b5cf6));
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    font-size: 1rem;
+}
+
+.tool-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.3);
+}
+
+/* FIXED: Grid Container - Force Vertical Stacking */
+.tools-grid {
+    display: grid;
+    grid-template-columns: 1fr;  /* Single column layout */
+    gap: 2rem;
+    width: 100%;
+    max-width: 800px;  /* Constrain width for better readability */
+    margin: 0 auto;    /* Center the grid */
+}
+
+/* Ensure tool cards stack vertically */
+.tool-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: auto;  /* Remove minimum width constraint */
+}
+
+/* Responsive Design - Maintain Vertical Stacking */
 @media (max-width: 768px) {
     .tool-interface {
         padding: 1.5rem;
@@ -341,50 +380,16 @@
         width: 100%;
         max-width: 100%;
     }
-}
-
-/* Tool link styling for homepage integration */
-.tool-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    background: linear-gradient(135deg, var(--accent-primary, #3b82f6), var(--accent-secondary, #8b5cf6));
-    color: white;
-    font-weight: 600;
-    text-decoration: none;
-    border-radius: 0.5rem;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    border: none;
-    font-size: 1rem;
-}
-
-.tool-link:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.3);
-}
-
-/* Grid Container Adjustments for Full Width */
-.tools-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-    gap: 2rem;
-    width: 100%;
-}
-
-/* Ensure tool cards expand to use full available width */
-.tool-card {
-    width: 100%;
-    min-width: 420px;
-}
-
-@media (max-width: 768px) {
-    .tools-grid {
-        grid-template-columns: 1fr;
-    }
     
-    .tool-card {
-        min-width: 100%;
+    .tools-grid {
+        grid-template-columns: 1fr;  /* Keep single column on mobile */
+        max-width: 100%;
+    }
+}
+
+/* For larger screens, still maintain single column but with better spacing */
+@media (min-width: 1200px) {
+    .tools-grid {
+        max-width: 900px;  /* Slightly wider on large screens */
     }
 }
