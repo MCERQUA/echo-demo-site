@@ -818,8 +818,17 @@ async function saveFieldValue(field) {
     const value = field.textContent.trim();
     
     // Update local data
-    if (!clientData[table]) clientData[table] = {};
-    clientData[table][fieldName] = value;
+    const tableMap = {
+        'business_info': 'businessInfo',
+        'contact_info': 'contactInfo',
+        'brand_assets': 'brandAssets',
+        'digital_presence': 'digitalPresence',
+        'google_business_profile': 'googleBusiness'
+    };
+    
+    const dataKey = tableMap[table];
+    if (!clientData[dataKey]) clientData[dataKey] = {};
+    clientData[dataKey][fieldName] = value;
     
     // Don't save individual fields - wait for Save button
     console.log(`Field ${fieldName} updated locally to: ${value}`);
@@ -856,41 +865,67 @@ async function saveSection(section) {
             }
         });
         
-        console.log('Saving data:', saveData);
+        console.log('Saving data to table:', section);
+        console.log('Save data:', saveData);
         
-        // Save to database
+        // Save to database with better error handling
         const { data, error } = await supabaseClient
             .from(section)
-            .upsert(saveData, { onConflict: 'user_id' })
+            .upsert(saveData, { 
+                onConflict: 'user_id',
+                returning: 'representation' 
+            })
             .select();
         
         if (error) {
-            // If table doesn't exist, show helpful message
+            console.error('Supabase error:', error);
+            
+            // Handle specific error types
             if (error.code === '42P01') {
-                showNotification('Database tables not set up yet. Please run the SQL schema first.', 'warning');
-            } else {
-                throw error;
-            }
-        } else {
-            showNotification(`${formatSectionName(section)} saved successfully!`, 'success');
-            
-            // Update local data with response
-            if (data && data[0]) {
-                clientData[dataKey] = data[0];
+                showNotification('Database tables not set up yet. Please run the SQL schema in Supabase.', 'warning');
+                return;
+            } else if (error.message && error.message.includes('Invalid API key')) {
+                showNotification('Authentication error. Please check your Supabase configuration.', 'error');
+                return;
+            } else if (error.code === 'PGRST301') {
+                showNotification('Row level security issue. Please check RLS policies.', 'error');
+                return;
             }
             
-            // Recalculate completeness
-            calculateDataCompleteness();
-            
-            // Update overview if visible
-            if (currentSection === 'overview') {
-                populateOverview();
-            }
+            throw error;
+        }
+        
+        showNotification(`${formatSectionName(section)} saved successfully!`, 'success');
+        
+        // Update local data with response
+        if (data && data[0]) {
+            clientData[dataKey] = data[0];
+        }
+        
+        // Recalculate completeness
+        calculateDataCompleteness();
+        
+        // Update overview if visible
+        if (currentSection === 'overview') {
+            populateOverview();
         }
         
     } catch (error) {
         console.error('Error saving data:', error);
-        showNotification(`Error saving: ${error.message}`, 'error');
+        
+        // Show user-friendly error message
+        let errorMessage = 'Error saving data. ';
+        if (error.message) {
+            if (error.message.includes('Invalid API key')) {
+                errorMessage = 'Authentication error. Please refresh and try again.';
+            } else if (error.message.includes('JWT')) {
+                errorMessage = 'Session expired. Please log in again.';
+            } else {
+                errorMessage += error.message;
+            }
+        }
+        
+        showNotification(errorMessage, 'error');
     }
 }
 
@@ -1172,18 +1207,27 @@ async function signOut() {
 
 // Show notification
 function showNotification(message, type = 'info') {
+    // Remove any existing notifications
+    const existingNotifications = document.querySelectorAll('.notification');
+    existingNotifications.forEach(n => n.remove());
+    
     // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     notification.textContent = message;
     
+    // Style based on type
+    if (type === 'warning') {
+        notification.style.background = '#F59E0B';
+    }
+    
     // Add to page
     document.body.appendChild(notification);
     
-    // Remove after 3 seconds
+    // Remove after 5 seconds (longer for errors)
     setTimeout(() => {
         notification.remove();
-    }, 3000);
+    }, type === 'error' || type === 'warning' ? 5000 : 3000);
 }
 
 // Close dropdown when clicking outside
@@ -1211,7 +1255,7 @@ async function triggerAIResearch(researchType) {
         showNotification('AI research task queued successfully!', 'success');
     } catch (error) {
         console.error('Error queuing AI research:', error);
-        showNotification('Error queuing research task', 'error');
+        showNotification('AI research feature requires database setup', 'info');
     }
 }
 
