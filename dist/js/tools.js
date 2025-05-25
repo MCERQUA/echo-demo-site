@@ -1,8 +1,40 @@
-// Echo AI Systems - Modular Tools JavaScript
-// This file can be included on any page to enable tool functionality
+// Tools functionality for Echo AI Systems Free Business Tools
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Tools JS loaded and ready');
+    
+    // Add event listeners to all forms
+    const visibilityForm = document.getElementById('visibility-form');
+    const speedForm = document.getElementById('speed-form');
+    const competitionForm = document.getElementById('competition-form');
+    
+    if (visibilityForm) {
+        visibilityForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            checkVisibility(e);
+        });
+    }
+    
+    if (speedForm) {
+        speedForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            testSpeed(e);
+        });
+    }
+    
+    if (competitionForm) {
+        competitionForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            analyzeCompetition(e);
+        });
+    }
+});
 
 // Show/hide tools
 function showTool(toolName) {
+    console.log('Showing tool:', toolName);
+    
     // Hide all tools first
     document.querySelectorAll('.tool-interface').forEach(tool => {
         tool.classList.remove('active');
@@ -12,47 +44,59 @@ function showTool(toolName) {
     const toolElement = document.getElementById(toolName + '-tool');
     if (toolElement) {
         toolElement.classList.add('active');
-        // Scroll to the tool
+        // Smooth scroll to tool
         toolElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 }
 
 function hideTool(toolName) {
+    console.log('Hiding tool:', toolName);
+    
     const toolElement = document.getElementById(toolName + '-tool');
     const resultsElement = document.getElementById(toolName + '-results');
     const formElement = document.getElementById(toolName + '-form');
-    const loadingElement = document.getElementById(toolName + '-loading');
     
     if (toolElement) toolElement.classList.remove('active');
     if (resultsElement) {
         resultsElement.classList.remove('show');
-        resultsElement.innerHTML = ''; // Clear results
+        resultsElement.innerHTML = '';
     }
     if (formElement) formElement.reset();
-    if (loadingElement) loadingElement.classList.remove('show');
 }
 
-// Business Visibility Checker - FIXED VERSION
+// Business Visibility Checker - PROPERLY FIXED
 function checkVisibility(event) {
-    event.preventDefault();
-    const form = event.target;
+    console.log('CheckVisibility called');
+    
+    // Get form data
+    const form = event.target || document.getElementById('visibility-form');
     const formData = new FormData(form);
     
-    // Show loading and hide previous results
+    const businessName = formData.get('businessName');
+    const businessType = formData.get('businessType');
+    const city = formData.get('city');
+    
+    console.log('Form data:', { businessName, businessType, city });
+    
+    // Get elements
     const loadingElement = document.getElementById('visibility-loading');
     const resultsElement = document.getElementById('visibility-results');
     
-    if (loadingElement) loadingElement.classList.add('show');
-    if (resultsElement) {
-        resultsElement.classList.remove('show');
-        resultsElement.innerHTML = ''; // Clear previous results
+    // Show loading and hide previous results
+    if (loadingElement) {
+        loadingElement.classList.add('show');
+        loadingElement.style.display = 'block';
     }
     
-    // Simulate analysis with proper timeout
+    if (resultsElement) {
+        resultsElement.classList.remove('show');
+        resultsElement.style.display = 'none';
+        resultsElement.innerHTML = '';
+    }
+    
+    // Simulate analysis
     setTimeout(() => {
-        const businessName = formData.get('businessName');
-        const businessType = formData.get('businessType');
-        const city = formData.get('city');
+        console.log('Generating results...');
         
         // Generate realistic scores
         const googleScore = Math.floor(Math.random() * 40) + 30;
@@ -60,9 +104,11 @@ function checkVisibility(event) {
         const socialScore = Math.floor(Math.random() * 30) + 10;
         const overallScore = Math.floor((googleScore + mapsScore + socialScore) / 3);
         
-        let html = `
+        const scoreClass = overallScore > 60 ? 'score-good' : overallScore > 40 ? 'score-medium' : 'score-poor';
+        
+        const html = `
             <h3>Visibility Report for ${businessName}</h3>
-            <div class="score-display ${overallScore > 60 ? 'score-good' : overallScore > 40 ? 'score-medium' : 'score-poor'}">
+            <div class="score-display ${scoreClass}">
                 ${overallScore}%
             </div>
             <p style="text-align: center; margin-bottom: 2rem;">Overall Online Visibility Score</p>
@@ -92,45 +138,69 @@ function checkVisibility(event) {
                     <li>Encourage customers to leave reviews</li>
                 </ul>
             </div>
+            
+            <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(14, 165, 233, 0.1); border-radius: 0.5rem; text-align: center;">
+                <h4 style="margin-bottom: 0.5rem;">Want to Improve Your Score?</h4>
+                <p style="color: #94a3b8; margin-bottom: 1rem;">Get a free consultation on how to increase your online visibility and attract more customers.</p>
+                <a href="index.html#contact" class="btn">Get Your Free Growth Plan</a>
+            </div>
         `;
         
         // Hide loading and show results
-        if (loadingElement) loadingElement.classList.remove('show');
+        if (loadingElement) {
+            loadingElement.classList.remove('show');
+            loadingElement.style.display = 'none';
+        }
+        
         if (resultsElement) {
             resultsElement.innerHTML = html;
+            resultsElement.style.display = 'block';
             resultsElement.classList.add('show');
+            
+            // Scroll to results
+            resultsElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
+        
+        console.log('Results displayed successfully');
     }, 2000);
 }
 
 // Website Speed Test
 function testSpeed(event) {
-    event.preventDefault();
-    const form = event.target;
+    console.log('TestSpeed called');
+    
+    const form = event.target || document.getElementById('speed-form');
     const formData = new FormData(form);
+    const url = formData.get('websiteUrl');
     
     // Show loading
     const loadingElement = document.getElementById('speed-loading');
     const resultsElement = document.getElementById('speed-results');
     
-    if (loadingElement) loadingElement.classList.add('show');
-    if (resultsElement) resultsElement.classList.remove('show');
+    if (loadingElement) {
+        loadingElement.classList.add('show');
+        loadingElement.style.display = 'block';
+    }
+    
+    if (resultsElement) {
+        resultsElement.classList.remove('show');
+        resultsElement.style.display = 'none';
+    }
     
     setTimeout(() => {
-        const url = formData.get('websiteUrl');
-        
         // Simulate speed test results
         const loadTime = (Math.random() * 4 + 1).toFixed(2);
         const mobileScore = Math.floor(Math.random() * 40) + 40;
         const desktopScore = Math.floor(Math.random() * 30) + 60;
         const pageSize = (Math.random() * 3 + 1).toFixed(1);
         
-        let performanceRating = loadTime < 2 ? 'Excellent' : loadTime < 3 ? 'Good' : loadTime < 4 ? 'Fair' : 'Poor';
-        let overallScore = Math.floor((mobileScore + desktopScore) / 2);
+        const performanceRating = loadTime < 2 ? 'Excellent' : loadTime < 3 ? 'Good' : loadTime < 4 ? 'Fair' : 'Poor';
+        const overallScore = Math.floor((mobileScore + desktopScore) / 2);
+        const scoreClass = overallScore > 80 ? 'score-good' : overallScore > 60 ? 'score-medium' : 'score-poor';
         
-        let html = `
-            <h3>Speed Test Results</h3>
-            <div class="score-display ${overallScore > 80 ? 'score-good' : overallScore > 60 ? 'score-medium' : 'score-poor'}">
+        const html = `
+            <h3>Speed Test Results for ${url}</h3>
+            <div class="score-display ${scoreClass}">
                 ${loadTime}s
             </div>
             <p style="text-align: center; margin-bottom: 2rem;">Page Load Time</p>
@@ -171,42 +241,62 @@ function testSpeed(event) {
                     ${loadTime > 4 ? '<li>Consider upgrading your hosting</li>' : ''}
                 </ul>
             </div>
+            
+            <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(139, 92, 246, 0.1); border-radius: 0.5rem; text-align: center;">
+                <h4 style="margin-bottom: 0.5rem;">Need Help Speeding Up Your Site?</h4>
+                <p style="color: #94a3b8; margin-bottom: 1rem;">Our optimization experts can make your website lightning fast and convert more visitors.</p>
+                <a href="index.html#contact" class="btn">Get Speed Optimization Help</a>
+            </div>
         `;
         
-        if (loadingElement) loadingElement.classList.remove('show');
+        if (loadingElement) {
+            loadingElement.classList.remove('show');
+            loadingElement.style.display = 'none';
+        }
+        
         if (resultsElement) {
             resultsElement.innerHTML = html;
+            resultsElement.style.display = 'block';
             resultsElement.classList.add('show');
+            resultsElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     }, 3000);
 }
 
 // Competition Analysis
 function analyzeCompetition(event) {
-    event.preventDefault();
-    const form = event.target;
+    console.log('AnalyzeCompetition called');
+    
+    const form = event.target || document.getElementById('competition-form');
     const formData = new FormData(form);
+    
+    const businessType = formData.get('businessType');
+    const city = formData.get('city');
+    const competitor = formData.get('competitor') || 'Top Competitor';
     
     // Show loading
     const loadingElement = document.getElementById('competition-loading');
     const resultsElement = document.getElementById('competition-results');
     
-    if (loadingElement) loadingElement.classList.add('show');
-    if (resultsElement) resultsElement.classList.remove('show');
+    if (loadingElement) {
+        loadingElement.classList.add('show');
+        loadingElement.style.display = 'block';
+    }
+    
+    if (resultsElement) {
+        resultsElement.classList.remove('show');
+        resultsElement.style.display = 'none';
+    }
     
     setTimeout(() => {
-        const businessType = formData.get('businessType');
-        const city = formData.get('city');
-        const competitor = formData.get('competitor') || 'Top Competitor';
-        
         // Generate competition insights
         const competitorReviews = Math.floor(Math.random() * 100) + 50;
         const competitorRating = (Math.random() * 1.5 + 3.5).toFixed(1);
         const socialFollowers = Math.floor(Math.random() * 2000) + 500;
         const adSpend = Math.floor(Math.random() * 500) + 200;
         
-        let html = `
-            <h3>Competition Analysis for ${city}</h3>
+        const html = `
+            <h3>Competition Analysis for ${businessType} in ${city}</h3>
             
             <div class="result-item">
                 <div class="result-label">Industry Average Reviews</div>
@@ -246,31 +336,30 @@ function analyzeCompetition(event) {
                 </ul>
             </div>
             
-            <div style="margin-top: 2rem; padding: 1rem; background: rgba(99, 102, 241, 0.1); border-radius: 0.5rem;">
-                <p style="font-weight: 600; margin-bottom: 0.5rem;">Want a Detailed Competition Report?</p>
-                <p style="color: #94a3b8;">Get a comprehensive analysis with specific competitor names, their exact strategies, and a custom plan to outrank them.</p>
+            <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(99, 102, 241, 0.1); border-radius: 0.5rem; text-align: center;">
+                <h4 style="margin-bottom: 0.5rem;">Want a Detailed Competition Report?</h4>
+                <p style="color: #94a3b8; margin-bottom: 1rem;">Get a comprehensive analysis with specific competitor names, their exact strategies, and a custom plan to outrank them.</p>
+                <a href="index.html#contact" class="btn">Get Full Competition Analysis</a>
             </div>
         `;
         
-        if (loadingElement) loadingElement.classList.remove('show');
+        if (loadingElement) {
+            loadingElement.classList.remove('show');
+            loadingElement.style.display = 'none';
+        }
+        
         if (resultsElement) {
             resultsElement.innerHTML = html;
+            resultsElement.style.display = 'block';
             resultsElement.classList.add('show');
+            resultsElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     }, 2500);
 }
 
-// Initialize tools when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    // Add click handlers to tool links if they exist
-    const toolLinks = document.querySelectorAll('.tool-link');
-    toolLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const toolName = this.getAttribute('data-tool');
-            if (toolName) {
-                showTool(toolName);
-            }
-        });
-    });
-});
+// Export functions to global scope for onclick handlers
+window.showTool = showTool;
+window.hideTool = hideTool;
+window.checkVisibility = checkVisibility;
+window.testSpeed = testSpeed;
+window.analyzeCompetition = analyzeCompetition;
