@@ -194,6 +194,7 @@
         .forgot-password {
             color: #0EA5E9;
             text-decoration: none;
+            cursor: pointer;
         }
         
         .forgot-password:hover {
@@ -431,7 +432,31 @@
                     <div id="signupSuccess" class="message success-message hidden"></div>
                 </form>
                 
-                <div class="login-footer">
+                <!-- Password Reset Form (Hidden) -->
+                <form id="resetForm" class="hidden">
+                    <div class="form-group">
+                        <label for="resetEmail">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="resetEmail" 
+                            required 
+                            placeholder="your@email.com"
+                            autocomplete="email"
+                        >
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">
+                        <span>Send Reset Link</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                    </button>
+                    
+                    <div id="resetError" class="message error-message hidden"></div>
+                    <div id="resetSuccess" class="message success-message hidden"></div>
+                </form>
+                
+                <div class="login-footer" id="footerContent">
                     <p id="toggleText">
                         Don't have an account? <a href="#" id="toggleLink">Sign up</a>
                     </p>
@@ -484,27 +509,73 @@
         // Elements
         const loginForm = document.getElementById('loginForm');
         const signupForm = document.getElementById('signupForm');
-        const toggleLink = document.getElementById('toggleLink');
+        const resetForm = document.getElementById('resetForm');
         const toggleText = document.getElementById('toggleText');
+        const footerContent = document.getElementById('footerContent');
         const loginError = document.getElementById('loginError');
         const loginSuccess = document.getElementById('loginSuccess');
         const signupError = document.getElementById('signupError');
         const signupSuccess = document.getElementById('signupSuccess');
+        const resetError = document.getElementById('resetError');
+        const resetSuccess = document.getElementById('resetSuccess');
+        const forgotLink = document.getElementById('forgotLink');
         
-        // Toggle forms
-        toggleLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (loginForm.classList.contains('hidden')) {
-                loginForm.classList.remove('hidden');
-                signupForm.classList.add('hidden');
-                toggleText.innerHTML = 'Don\'t have an account? <a href="#" id="toggleLink">Sign up</a>';
-            } else {
-                loginForm.classList.add('hidden');
-                signupForm.classList.remove('hidden');
-                toggleText.innerHTML = 'Already have an account? <a href="#" id="toggleLink">Sign in</a>';
+        // Update page title and header based on current form
+        function updatePageHeader(formType) {
+            const h1 = document.querySelector('.login-box h1');
+            const p = document.querySelector('.login-box p');
+            
+            switch(formType) {
+                case 'login':
+                    h1.textContent = 'Welcome Back';
+                    p.textContent = 'Access your client dashboard to monitor your projects and results';
+                    break;
+                case 'signup':
+                    h1.textContent = 'Create Your Account';
+                    p.textContent = 'Join Echo AI Systems and start growing your business online';
+                    break;
+                case 'reset':
+                    h1.textContent = 'Reset Password';
+                    p.textContent = 'Enter your email and we\'ll send you a link to reset your password';
+                    break;
             }
-            // Re-attach event listener
-            document.getElementById('toggleLink').addEventListener('click', arguments.callee);
+        }
+        
+        // Form switching with event delegation
+        footerContent.addEventListener('click', (e) => {
+            if (e.target.id === 'toggleLink' || e.target.id === 'backToLogin') {
+                e.preventDefault();
+                
+                if (loginForm.classList.contains('hidden')) {
+                    // Show login form
+                    loginForm.classList.remove('hidden');
+                    signupForm.classList.add('hidden');
+                    resetForm.classList.add('hidden');
+                    toggleText.innerHTML = 'Don\'t have an account? <a href="#" id="toggleLink">Sign up</a>';
+                    updatePageHeader('login');
+                } else {
+                    // Show signup form
+                    loginForm.classList.add('hidden');
+                    signupForm.classList.remove('hidden');
+                    resetForm.classList.add('hidden');
+                    toggleText.innerHTML = 'Already have an account? <a href="#" id="toggleLink">Sign in</a>';
+                    updatePageHeader('signup');
+                }
+            }
+        });
+        
+        // Forgot password link handler
+        forgotLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginForm.classList.add('hidden');
+            signupForm.classList.add('hidden');
+            resetForm.classList.remove('hidden');
+            toggleText.innerHTML = '<a href="#" id="backToLogin">Back to login</a>';
+            updatePageHeader('reset');
+            
+            // Clear any previous messages
+            resetError.classList.add('hidden');
+            resetSuccess.classList.add('hidden');
         });
         
         // Login
@@ -572,6 +643,33 @@
             } catch (error) {
                 signupError.textContent = 'An error occurred. Please try again.';
                 signupError.classList.remove('hidden');
+            }
+        });
+        
+        // Password Reset
+        resetForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            resetError.classList.add('hidden');
+            resetSuccess.classList.add('hidden');
+            
+            const email = document.getElementById('resetEmail').value;
+            
+            try {
+                const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                    redirectTo: 'https://echo-demo-site.netlify.app/reset-password.html'
+                });
+                
+                if (error) {
+                    resetError.textContent = error.message;
+                    resetError.classList.remove('hidden');
+                } else {
+                    resetSuccess.textContent = 'Password reset link sent! Please check your email.';
+                    resetSuccess.classList.remove('hidden');
+                    resetForm.reset();
+                }
+            } catch (error) {
+                resetError.textContent = 'An error occurred. Please try again.';
+                resetError.classList.remove('hidden');
             }
         });
         
