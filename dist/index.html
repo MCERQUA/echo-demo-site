@@ -28,7 +28,7 @@
         /* Enhanced Tool Cards */
         .tools-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 2rem;
             margin-top: 3rem;
         }
@@ -481,45 +481,6 @@
                         
                         <div class="results" id="visibility-results"></div>
                         <a href="#" class="back-btn" onclick="hideTool('visibility')">Back to tools</a>
-                    </div>
-                </div>
-
-                <!-- Review Score Calculator -->
-                <div class="tool-card">
-                    <div class="tool-icon">⭐</div>
-                    <h3>Review Score Calculator</h3>
-                    <p>Find out your online reputation score and how to improve it</p>
-                    <button class="tool-link" onclick="showTool('reviews')">Calculate Score</button>
-                    
-                    <div id="reviews-tool" class="tool-interface">
-                        <h3>Calculate Your Review Score</h3>
-                        <form id="reviews-form" onsubmit="calculateReviews(event)">
-                            <div class="form-group">
-                                <label>Total Number of Reviews</label>
-                                <input type="number" name="totalReviews" required min="0" placeholder="50">
-                            </div>
-                            <div class="form-group">
-                                <label>Average Rating (1-5)</label>
-                                <input type="number" name="avgRating" required min="1" max="5" step="0.1" placeholder="4.5">
-                            </div>
-                            <div class="form-group">
-                                <label>Reviews in Last 3 Months</label>
-                                <input type="number" name="recentReviews" required min="0" placeholder="10">
-                            </div>
-                            <div class="form-group">
-                                <label>Response Rate (%)</label>
-                                <input type="number" name="responseRate" required min="0" max="100" placeholder="75">
-                            </div>
-                            <button type="submit" class="btn">Calculate Score</button>
-                        </form>
-                        
-                        <div class="loading" id="reviews-loading">
-                            <div class="loading-spinner"></div>
-                            <p>Calculating your reputation score...</p>
-                        </div>
-                        
-                        <div class="results" id="reviews-results"></div>
-                        <a href="#" class="back-btn" onclick="hideTool('reviews')">Back to tools</a>
                     </div>
                 </div>
 
