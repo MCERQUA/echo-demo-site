@@ -629,7 +629,7 @@
                             full_name: name,
                             company: company
                         },
-                        emailRedirectTo: 'https://echo-demo-site.netlify.app/login.html'
+                        emailRedirectTo: 'https://echoaisystem.com/login.html'
                     }
                 });
                 
@@ -656,7 +656,7 @@
             
             try {
                 const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-                    redirectTo: 'https://echo-demo-site.netlify.app/reset-password.html'
+                    redirectTo: 'https://echoaisystem.com/reset-password.html'
                 });
                 
                 if (error) {
