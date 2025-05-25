@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Login - Echo AI Systems</title>
+    <meta name="description" content="Access your Echo AI Systems client dashboard. Monitor your projects, track results, and manage your AI solutions.">
+    
+    <!-- Modern Font Stack -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/login.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="images/echo-favicon.svg">
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <!-- Simple Header -->
+    <header class="login-header">
+        <div class="header-container">
+            <a href="index.html" class="logo-link">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 40 40" width="40" height="40">
+                        <defs>
+                            <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#0EA5E9;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#6366F1;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <circle cx="20" cy="20" r="18" fill="url(#logo-gradient)"/>
+                        <text x="20" y="27" text-anchor="middle" fill="white" font-size="16" font-weight="bold">E</text>
+                    </svg>
+                </div>
+                <span class="logo-text">Echo<span class="ai-badge">AI</span></span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Login Section -->
+    <section class="login-section">
+        <div class="login-background">
+            <div class="grid-pattern"></div>
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+        </div>
+
+        <div class="login-container">
+            <div class="login-box">
+                <div class="login-header">
+                    <h1>Welcome Back</h1>
+                    <p>Access your client dashboard to monitor your projects and results</p>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            required 
+                            placeholder="your@email.com"
+                            autocomplete="email"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            required 
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                        >
+                    </div>
+
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox" name="remember" id="remember">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" class="forgot-password" id="forgotPassword">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="login-button">
+                        <span>Sign In</span>
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
+                        </svg>
+                    </button>
+
+                    <div class="error-message" id="errorMessage"></div>
+                    <div class="success-message" id="successMessage"></div>
+                </form>
+
+                <!-- Sign Up Form (Hidden by default) -->
+                <form id="signupForm" class="signup-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="signupName">Full Name</label>
+                        <input 
+                            type="text" 
+                            id="signupName" 
+                            name="name" 
+                            required 
+                            placeholder="John Doe"
+                            autocomplete="name"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signupEmail">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="signupEmail" 
+                            name="email" 
+                            required 
+                            placeholder="your@email.com"
+                            autocomplete="email"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input 
+                            type="password" 
+                            id="signupPassword" 
+                            name="password" 
+                            required 
+                            placeholder="Create a strong password"
+                            autocomplete="new-password"
+                            minlength="8"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signupCompany">Company Name</label>
+                        <input 
+                            type="text" 
+                            id="signupCompany" 
+                            name="company" 
+                            placeholder="Your Company (Optional)"
+                            autocomplete="organization"
+                        >
+                    </div>
+
+                    <button type="submit" class="login-button">
+                        <span>Create Account</span>
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
+                        </svg>
+                    </button>
+
+                    <div class="error-message" id="signupErrorMessage"></div>
+                    <div class="success-message" id="signupSuccessMessage"></div>
+                </form>
+
+                <!-- Password Reset Form (Hidden by default) -->
+                <form id="resetForm" class="reset-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="resetEmail">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="resetEmail" 
+                            name="email" 
+                            required 
+                            placeholder="your@email.com"
+                            autocomplete="email"
+                        >
+                    </div>
+
+                    <button type="submit" class="login-button">
+                        <span>Send Reset Link</span>
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" 
+                                  stroke="currentColor" stroke-width="2" fill="none"/>
+                        </svg>
+                    </button>
+
+                    <div class="error-message" id="resetErrorMessage"></div>
+                    <div class="success-message" id="resetSuccessMessage"></div>
+                </form>
+
+                <div class="login-footer">
+                    <p id="toggleText">Don't have an account? <a href="#" id="toggleForm">Sign up</a></p>
+                    <p id="backToLogin" style="display: none;"><a href="#" id="backToLoginLink">Back to login</a></p>
+                </div>
+            </div>
+
+            <div class="login-info">
+                <h2>Your Business Dashboard</h2>
+                <p>Access powerful tools and insights to grow your business online</p>
+                
+                <div class="dashboard-features">
+                    <div class="feature">
+                        <svg viewBox="0 0 24 24" width="24" height="24">
+                            <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" fill="currentColor"/>
+                        </svg>
+                        <span>Real-time Analytics</span>
+                    </div>
+                    <div class="feature">
+                        <svg viewBox="0 0 24 24" width="24" height="24">
+                            <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z" fill="currentColor"/>
+                        </svg>
+                        <span>Secure & Private</span>
+                    </div>
+                    <div class="feature">
+                        <svg viewBox="0 0 24 24" width="24" height="24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"/>
+                        </svg>
+                        <span>Track Progress</span>
+                    </div>
+                    <div class="feature">
+                        <svg viewBox="0 0 24 24" width="24" height="24">
+                            <path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 00-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2z" fill="currentColor"/>
+                        </svg>
+                        <span>Manage Services</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Supabase Configuration and Login Script -->
+    <script>
+        // Initialize Supabase client
+        const SUPABASE_URL = 'https://orhswpgngjpztcxgwbuy.supabase.co';
+        const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY_HERE'; // This needs to be set from the Supabase project
+        
+        // Note: In production, get the anon key from your Supabase project settings
+        // For now, we'll create the structure without the actual key
+        
+        // Form elements
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const resetForm = document.getElementById('resetForm');
+        const toggleForm = document.getElementById('toggleForm');
+        const toggleText = document.getElementById('toggleText');
+        const backToLogin = document.getElementById('backToLogin');
+        const backToLoginLink = document.getElementById('backToLoginLink');
+        const forgotPassword = document.getElementById('forgotPassword');
+
+        // Toggle between login and signup
+        toggleForm.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (loginForm.style.display === 'none') {
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
+                resetForm.style.display = 'none';
+                toggleText.innerHTML = 'Don\'t have an account? <a href="#" id="toggleForm">Sign up</a>';
+                backToLogin.style.display = 'none';
+            } else {
+                loginForm.style.display = 'none';
+                signupForm.style.display = 'block';
+                resetForm.style.display = 'none';
+                toggleText.innerHTML = 'Already have an account? <a href="#" id="toggleForm">Sign in</a>';
+                backToLogin.style.display = 'none';
+            }
+        });
+
+        // Show password reset form
+        forgotPassword.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginForm.style.display = 'none';
+            signupForm.style.display = 'none';
+            resetForm.style.display = 'block';
+            toggleText.style.display = 'none';
+            backToLogin.style.display = 'block';
+        });
+
+        // Back to login
+        backToLoginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginForm.style.display = 'block';
+            signupForm.style.display = 'none';
+            resetForm.style.display = 'none';
+            toggleText.style.display = 'block';
+            toggleText.innerHTML = 'Don\'t have an account? <a href="#" id="toggleForm">Sign up</a>';
+            backToLogin.style.display = 'none';
+        });
+
+        // Handle login form submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Clear previous messages
+            errorMessage.textContent = '';
+            
+            try {
+                // Here you would integrate with Supabase auth
+                // const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                
+                // For now, just show a message
+                errorMessage.textContent = 'Supabase integration pending. Contact support for access.';
+                errorMessage.style.color = '#F59E0B';
+            } catch (error) {
+                errorMessage.textContent = 'An error occurred. Please try again.';
+            }
+        });
+
+        // Handle signup form submission
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const company = document.getElementById('signupCompany').value;
+            const errorMessage = document.getElementById('signupErrorMessage');
+            
+            // Clear previous messages
+            errorMessage.textContent = '';
+            
+            try {
+                // Here you would integrate with Supabase auth
+                // const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { name, company } } });
+                
+                // For now, just show a message
+                errorMessage.textContent = 'Supabase integration pending. Contact us to set up your account.';
+                errorMessage.style.color = '#F59E0B';
+            } catch (error) {
+                errorMessage.textContent = 'An error occurred. Please try again.';
+            }
+        });
+
+        // Handle password reset form submission
+        resetForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('resetEmail').value;
+            const successMessage = document.getElementById('resetSuccessMessage');
+            const errorMessage = document.getElementById('resetErrorMessage');
+            
+            // Clear previous messages
+            successMessage.textContent = '';
+            errorMessage.textContent = '';
+            
+            try {
+                // Here you would integrate with Supabase auth
+                // const { data, error } = await supabase.auth.resetPasswordForEmail(email);
+                
+                // For now, just show a message
+                successMessage.textContent = 'If an account exists with this email, you will receive a password reset link.';
+            } catch (error) {
+                errorMessage.textContent = 'An error occurred. Please try again.';
+            }
+        });
+    </script>
+</body>
+</html>
