@@ -1,0 +1,205 @@
+/* Echo AI Systems - Business Tools CSS Module */
+/* This CSS can be included on any page to style the business tools */
+
+/* Tool Interfaces */
+.tool-interface {
+    display: none;
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 0.5rem;
+    padding: 2rem;
+    margin-top: 2rem;
+    text-align: left;
+}
+
+.tool-interface.active {
+    display: block;
+}
+
+.tool-interface h3 {
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #e2e8f0;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 0.5rem;
+    color: #e2e8f0;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #0EA5E9;
+}
+
+.form-group select option {
+    background: #1e293b;
+    color: #e2e8f0;
+}
+
+/* Results */
+.results {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: rgba(30, 41, 59, 0.5);
+    border-radius: 0.5rem;
+    display: none;
+}
+
+.results.show {
+    display: block;
+}
+
+.result-item {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.result-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.result-label {
+    font-weight: 600;
+    color: #0EA5E9;
+    margin-bottom: 0.25rem;
+}
+
+.result-value {
+    font-size: 1.125rem;
+    color: #e2e8f0;
+}
+
+.score-display {
+    font-size: 3rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.score-good {
+    color: #10B981;
+}
+
+.score-medium {
+    color: #F59E0B;
+}
+
+.score-poor {
+    color: #EF4444;
+}
+
+.recommendations {
+    background: rgba(14, 165, 233, 0.1);
+    border-left: 4px solid #0EA5E9;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    border-radius: 0.25rem;
+}
+
+.recommendations h4 {
+    margin-bottom: 0.5rem;
+    color: #e2e8f0;
+}
+
+.recommendations ul {
+    list-style-position: inside;
+    color: #94a3b8;
+}
+
+.recommendations li {
+    margin-bottom: 0.5rem;
+}
+
+.back-btn {
+    display: inline-block;
+    margin-top: 1rem;
+    color: #0EA5E9;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.back-btn:hover {
+    text-decoration: underline;
+}
+
+/* Loading animation */
+.loading {
+    display: none;
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.loading.show {
+    display: block;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #0EA5E9;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading p {
+    color: #94a3b8;
+}
+
+/* Tool buttons in cards */
+.tool-btn {
+    display: inline-block;
+    padding: 0.875rem 2rem;
+    background: linear-gradient(135deg, #6366F1, #8B5CF6);
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+}
+
+.tool-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tool-interface {
+        padding: 1.5rem;
+    }
+    
+    .score-display {
+        font-size: 2.5rem;
+    }
+}
