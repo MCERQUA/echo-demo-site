@@ -3,469 +3,727 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Client Dashboard - Echo AI Systems</title>
-    <meta name="description" content="Manage your Echo AI Systems services and track your business growth in real-time.">
+    <title>Dashboard - Echo AI Systems</title>
+    <meta name="description" content="Manage your AI solutions and monitor project progress">
     
-    <!-- Modern Font Stack -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
-    <!-- CSS Files -->
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/dashboard.css">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="images/echo-favicon.svg">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(148, 163, 184, 0.1);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            font-size: 1.25rem;
+            text-decoration: none;
+            color: #e2e8f0;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #0EA5E9, #6366F1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex: 1;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            color: #94a3b8;
+            transition: all 0.2s;
+        }
+        
+        .nav-link:hover {
+            background: rgba(30, 41, 59, 0.8);
+            color: #e2e8f0;
+        }
+        
+        .nav-link.active {
+            background: rgba(14, 165, 233, 0.1);
+            color: #0EA5E9;
+        }
+        
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: rgba(30, 41, 59, 0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #e2e8f0;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            width: 300px;
+        }
+        
+        .search-bar input {
+            background: none;
+            border: none;
+            color: #e2e8f0;
+            outline: none;
+            flex: 1;
+        }
+        
+        .search-bar input::placeholder {
+            color: #64748b;
+        }
+        
+        .user-menu {
+            position: relative;
+        }
+        
+        .user-button {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            color: #e2e8f0;
+            transition: all 0.2s;
+        }
+        
+        .user-button:hover {
+            background: rgba(15, 23, 42, 0.8);
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #0EA5E9, #6366F1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            min-width: 200px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+        
+        .dropdown.show {
+            display: block;
+        }
+        
+        .dropdown-item {
+            display: block;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            color: #e2e8f0;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .dropdown-item:hover {
+            background: rgba(14, 165, 233, 0.1);
+            color: #0EA5E9;
+        }
+        
+        .dropdown-divider {
+            height: 1px;
+            background: rgba(148, 163, 184, 0.2);
+            margin: 0.5rem 0;
+        }
+        
+        /* Content Area */
+        .content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+        
+        .welcome-section {
+            margin-bottom: 3rem;
+        }
+        
+        .welcome-section h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .welcome-section p {
+            font-size: 1.125rem;
+            color: #94a3b8;
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+        
+        .action-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #0EA5E9, #6366F1);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(14, 165, 233, 0.3);
+        }
+        
+        .action-button.secondary {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(14, 165, 233, 0.3);
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-change {
+            font-size: 0.875rem;
+            color: #10b981;
+        }
+        
+        .stat-change.negative {
+            color: #ef4444;
+        }
+        
+        /* Activity Section */
+        .section {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .view-all {
+            color: #0EA5E9;
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+        
+        .view-all:hover {
+            text-decoration: underline;
+        }
+        
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .activity-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.3);
+            border-radius: 0.5rem;
+            align-items: start;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(14, 165, 233, 0.1);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .activity-description {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+        
+        .activity-time {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                height: 100vh;
+                z-index: 100;
+                transition: left 0.3s;
+            }
+            
+            .sidebar.show {
+                left: 0;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .search-bar {
+                display: none;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Dashboard Header -->
-    <header class="dashboard-header">
-        <div class="header-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <a href="index.html" class="logo">
+            <div class="logo-icon">E</div>
+            <span>Echo <sup style="font-size: 0.75rem; color: #0EA5E9;">AI</sup></span>
+        </a>
+        
+        <nav>
+            <ul class="nav-menu">
+                <li>
+                    <a href="#" class="nav-link active">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7" rx="1"/>
+                            <rect x="14" y="3" width="7" height="7" rx="1"/>
+                            <rect x="3" y="14" width="7" height="7" rx="1"/>
+                            <rect x="14" y="14" width="7" height="7" rx="1"/>
+                        </svg>
+                        <span>Overview</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 12h18M3 6h18M3 18h18"/>
+                        </svg>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/>
+                        </svg>
+                        <span>Content</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+                            <line x1="7" y1="7" x2="7.01" y2="7"/>
+                        </svg>
+                        <span>Leads</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1m20.5-6.5L16 12l5.5 6.5M2.5 5.5L8 12l-5.5 6.5"/>
+                        </svg>
+                        <span>Services</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="10" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0110 0v4"/>
+                        </svg>
+                        <span>Billing</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <div>
+            <a href="#" class="nav-link">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                <span>Support</span>
+            </a>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header">
             <div class="header-left">
-                <button class="sidebar-toggle" id="sidebarToggle">
-                    <svg viewBox="0 0 24 24" width="24" height="24">
-                        <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <line x1="3" y1="18" x2="21" y2="18"/>
                     </svg>
                 </button>
-                <a href="index.html" class="logo-link">
-                    <div class="logo-icon">
-                        <svg viewBox="0 0 40 40" width="32" height="32">
-                            <defs>
-                                <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#0EA5E9;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#6366F1;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <circle cx="20" cy="20" r="18" fill="url(#logo-gradient)"/>
-                            <text x="20" y="27" text-anchor="middle" fill="white" font-size="16" font-weight="bold">E</text>
-                        </svg>
-                    </div>
-                    <span class="logo-text">Echo<span class="ai-badge">AI</span></span>
-                </a>
+                
+                <div class="search-bar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input type="text" placeholder="Search...">
+                </div>
             </div>
             
-            <div class="header-right">
-                <div class="notifications">
-                    <button class="notification-btn">
-                        <svg viewBox="0 0 24 24" width="20" height="20">
-                            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" 
-                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                        <span class="notification-badge">3</span>
-                    </button>
-                </div>
+            <div class="user-menu">
+                <button class="user-button" onclick="toggleDropdown()">
+                    <div class="user-avatar" id="userAvatar">JD</div>
+                    <span id="userName">John Doe</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </button>
                 
-                <div class="user-menu">
-                    <button class="user-menu-toggle" id="userMenuToggle">
-                        <div class="user-avatar">
-                            <span>JD</span>
-                        </div>
-                        <span class="user-name">John Doe</span>
-                        <svg viewBox="0 0 24 24" width="16" height="16">
-                            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none"/>
+                <div class="dropdown" id="userDropdown">
+                    <a href="#" class="dropdown-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; margin-right: 8px;">
+                            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
                         </svg>
-                    </button>
-                    
-                    <div class="user-dropdown" id="userDropdown">
-                        <a href="#profile" class="dropdown-item">
-                            <svg viewBox="0 0 24 24" width="16" height="16">
-                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" 
-                                      fill="none" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                            <span>Profile</span>
-                        </a>
-                        <a href="#settings" class="dropdown-item">
-                            <svg viewBox="0 0 24 24" width="16" height="16">
-                                <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
-                                <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                            <span>Settings</span>
-                        </a>
-                        <hr class="dropdown-divider">
-                        <a href="#" class="dropdown-item" id="logoutBtn">
-                            <svg viewBox="0 0 24 24" width="16" height="16">
-                                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" 
-                                      fill="none" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                            <span>Sign Out</span>
-                        </a>
-                    </div>
+                        Profile
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; margin-right: 8px;">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
+                        </svg>
+                        Settings
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item" onclick="signOut()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; margin-right: 8px;">
+                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                        Sign Out
+                    </a>
                 </div>
             </div>
-        </div>
-    </header>
-
-    <!-- Dashboard Layout -->
-    <div class="dashboard-layout">
-        <!-- Sidebar -->
-        <aside class="dashboard-sidebar" id="sidebar">
-            <nav class="sidebar-nav">
-                <a href="#overview" class="nav-item active">
-                    <svg viewBox="0 0 24 24" width="20" height="20">
-                        <rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
-                        <path d="M3 9h18M9 21V9" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                    <span>Overview</span>
-                </a>
-                
-                <a href="#analytics" class="nav-item">
-                    <svg viewBox="0 0 24 24" width="20" height="20">
-                        <path d="M3 3v18h18" fill="none" stroke="currentColor" stroke-width="2"/>
-                        <path d="M7 14l4-4 4 4 5-5" fill="none" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                    <span>Analytics</span>
-                </a>
-                
-                <a href="#content" class="nav-item">
-                    <svg viewBox="0 0 24 24" width="20" height="20">
-                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" 
-                              fill="none" stroke="currentColor" stroke-width="2"/>
-                        <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                    <span>Content</span>
-                </a>
-                
-                <a href="#leads" class="nav-item">
-                    <svg viewBox="0 0 24 24" width="20" height="20">
-                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z" 
-                              fill="none" stroke="currentColor" stroke-width="2"/>
-                        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" 
-                              fill="none" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                    <span>Leads</span>
-                </a>
-                
-                <a href="#services" class="nav-item">
-                    <svg viewBox="0 0 24 24" width="20" height="20">
-                        <rect x="2" y="7" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
-                        <path d="M16 3l-4 4-4-4" fill="none" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                    <span>Services</span>
-                </a>
-                
-                <a href="#billing" class="nav-item">
-                    <svg viewBox="0 0 24 24" width="20" height="20">
-                        <rect x="1" y="4" width="22" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
-                        <path d="M1 10h22" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                    <span>Billing</span>
-                </a>
-                
-                <div class="nav-divider"></div>
-                
-                <a href="#support" class="nav-item">
-                    <svg viewBox="0 0 24 24" width="20" height="20">
-                        <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
-                        <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01" 
-                              fill="none" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                    <span>Support</span>
-                </a>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="dashboard-main">
+        </header>
+        
+        <!-- Content -->
+        <main class="content">
             <!-- Welcome Section -->
             <section class="welcome-section">
-                <div class="welcome-content">
-                    <h1>Welcome back, John!</h1>
-                    <p>Your business is growing. Here's what's happening today.</p>
-                </div>
-                <div class="quick-actions">
-                    <button class="action-btn primary">
-                        <svg viewBox="0 0 24 24" width="16" height="16">
-                            <path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                        <span>New Content</span>
-                    </button>
-                    <button class="action-btn secondary">
-                        <svg viewBox="0 0 24 24" width="16" height="16">
-                            <path d="M3 12a9 9 0 1018 0 9 9 0 00-18 0M12 7v5l3 3" 
-                                  fill="none" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                        <span>Schedule Post</span>
-                    </button>
-                </div>
+                <h1>Welcome back, <span id="welcomeName">John</span>!</h1>
+                <p>Your business is growing. Here's what's happening today.</p>
             </section>
-
+            
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <button class="action-button">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    New Content
+                </button>
+                <button class="action-button secondary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                    Schedule Post
+                </button>
+            </div>
+            
             <!-- Stats Grid -->
-            <section class="stats-grid">
+            <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-header">
-                        <span class="stat-label">Website Visitors</span>
-                        <span class="stat-change positive">+12.5%</span>
-                    </div>
-                    <div class="stat-value">2,847</div>
-                    <div class="stat-footer">
-                        <span>vs last month: 2,531</span>
-                    </div>
-                    <div class="stat-chart">
-                        <svg viewBox="0 0 100 40" preserveAspectRatio="none">
-                            <path d="M0,35 L20,30 L40,25 L60,20 L80,15 L100,10" 
-                                  fill="none" 
-                                  stroke="var(--accent-primary)" 
-                                  stroke-width="2"/>
-                            <path d="M0,35 L20,30 L40,25 L60,20 L80,15 L100,10 L100,40 L0,40 Z" 
-                                  fill="var(--accent-primary)" 
-                                  opacity="0.1"/>
-                        </svg>
-                    </div>
+                    <div class="stat-label">Total Views</div>
+                    <div class="stat-value">24,563</div>
+                    <div class="stat-change">+12.5% from last month</div>
                 </div>
-
                 <div class="stat-card">
-                    <div class="stat-header">
-                        <span class="stat-label">New Leads</span>
-                        <span class="stat-change positive">+23.1%</span>
-                    </div>
-                    <div class="stat-value">156</div>
-                    <div class="stat-footer">
-                        <span>vs last month: 127</span>
-                    </div>
-                    <div class="stat-chart">
-                        <svg viewBox="0 0 100 40" preserveAspectRatio="none">
-                            <path d="M0,30 L25,25 L50,20 L75,15 L100,5" 
-                                  fill="none" 
-                                  stroke="#10B981" 
-                                  stroke-width="2"/>
-                            <path d="M0,30 L25,25 L50,20 L75,15 L100,5 L100,40 L0,40 Z" 
-                                  fill="#10B981" 
-                                  opacity="0.1"/>
-                        </svg>
-                    </div>
+                    <div class="stat-label">Active Leads</div>
+                    <div class="stat-value">142</div>
+                    <div class="stat-change">+8 new this week</div>
                 </div>
-
                 <div class="stat-card">
-                    <div class="stat-header">
-                        <span class="stat-label">Conversion Rate</span>
-                        <span class="stat-change positive">+5.4%</span>
-                    </div>
-                    <div class="stat-value">5.8%</div>
-                    <div class="stat-footer">
-                        <span>vs last month: 5.5%</span>
-                    </div>
-                    <div class="stat-chart">
-                        <svg viewBox="0 0 100 40" preserveAspectRatio="none">
-                            <path d="M0,25 L33,20 L66,22 L100,15" 
-                                  fill="none" 
-                                  stroke="#F59E0B" 
-                                  stroke-width="2"/>
-                            <path d="M0,25 L33,20 L66,22 L100,15 L100,40 L0,40 Z" 
-                                  fill="#F59E0B" 
-                                  opacity="0.1"/>
-                        </svg>
-                    </div>
+                    <div class="stat-label">Conversion Rate</div>
+                    <div class="stat-value">3.4%</div>
+                    <div class="stat-change">+0.2% from last month</div>
                 </div>
-
                 <div class="stat-card">
-                    <div class="stat-header">
-                        <span class="stat-label">Revenue</span>
-                        <span class="stat-change positive">+18.2%</span>
-                    </div>
-                    <div class="stat-value">$12,486</div>
-                    <div class="stat-footer">
-                        <span>vs last month: $10,562</span>
-                    </div>
-                    <div class="stat-chart">
-                        <svg viewBox="0 0 100 40" preserveAspectRatio="none">
-                            <path d="M0,35 L20,28 L40,22 L60,18 L80,12 L100,8" 
-                                  fill="none" 
-                                  stroke="var(--accent-secondary)" 
-                                  stroke-width="2"/>
-                            <path d="M0,35 L20,28 L40,22 L60,18 L80,12 L100,8 L100,40 L0,40 Z" 
-                                  fill="var(--accent-secondary)" 
-                                  opacity="0.1"/>
-                        </svg>
-                    </div>
+                    <div class="stat-label">Revenue</div>
+                    <div class="stat-value">$12,450</div>
+                    <div class="stat-change">+18.3% from last month</div>
                 </div>
-            </section>
-
+            </div>
+            
             <!-- Recent Activity -->
-            <section class="recent-activity">
+            <section class="section">
                 <div class="section-header">
-                    <h2>Recent Activity</h2>
+                    <h2 class="section-title">Recent Activity</h2>
                     <a href="#" class="view-all">View all</a>
                 </div>
-                
                 <div class="activity-list">
                     <div class="activity-item">
-                        <div class="activity-icon success">
-                            <svg viewBox="0 0 24 24" width="16" height="16">
-                                <path d="M9 11l3 3L22 4" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <div class="activity-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10 9 9 9 8 9"/>
                             </svg>
                         </div>
                         <div class="activity-content">
-                            <p><strong>New blog post published</strong></p>
-                            <p class="activity-desc">5 Ways to Improve Your Local SEO</p>
-                            <span class="activity-time">2 hours ago</span>
+                            <div class="activity-title">New blog post published</div>
+                            <div class="activity-description">"10 Ways AI Can Transform Your Business" is now live</div>
                         </div>
+                        <div class="activity-time">2 hours ago</div>
                     </div>
-                    
                     <div class="activity-item">
-                        <div class="activity-icon info">
-                            <svg viewBox="0 0 24 24" width="16" height="16">
-                                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z" 
-                                      fill="none" stroke="currentColor" stroke-width="2"/>
+                        <div class="activity-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
                             </svg>
                         </div>
                         <div class="activity-content">
-                            <p><strong>12 new leads captured</strong></p>
-                            <p class="activity-desc">From your contact form and chatbot</p>
-                            <span class="activity-time">5 hours ago</span>
+                            <div class="activity-title">Lead converted</div>
+                            <div class="activity-description">Sarah Johnson signed up for the Growth package</div>
                         </div>
+                        <div class="activity-time">5 hours ago</div>
                     </div>
-                    
                     <div class="activity-item">
-                        <div class="activity-icon warning">
-                            <svg viewBox="0 0 24 24" width="16" height="16">
-                                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" 
-                                      fill="none" stroke="currentColor" stroke-width="2"/>
-                                <path d="M12 9v4M12 17h.01" stroke="currentColor" stroke-width="2"/>
+                        <div class="activity-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="10" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0110 0v4"/>
                             </svg>
                         </div>
                         <div class="activity-content">
-                            <p><strong>Review response needed</strong></p>
-                            <p class="activity-desc">New 4-star review on Google</p>
-                            <span class="activity-time">1 day ago</span>
+                            <div class="activity-title">Security update completed</div>
+                            <div class="activity-description">All systems are secure and up to date</div>
                         </div>
+                        <div class="activity-time">Yesterday</div>
                     </div>
-                </div>
-            </section>
-
-            <!-- Performance Chart -->
-            <section class="performance-section">
-                <div class="section-header">
-                    <h2>Performance Overview</h2>
-                    <div class="chart-controls">
-                        <button class="control-btn active">Week</button>
-                        <button class="control-btn">Month</button>
-                        <button class="control-btn">Year</button>
-                    </div>
-                </div>
-                
-                <div class="chart-container">
-                    <canvas id="performanceChart"></canvas>
                 </div>
             </section>
         </main>
     </div>
-
-    <!-- Dashboard Scripts -->
+    
     <script>
-        // Initialize Supabase
+        // Supabase setup
         const SUPABASE_URL = 'https://orhswpgngjpztcxgwbuy.supabase.co';
-        const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY_HERE'; // This needs to be set
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9yaHN3cGduZ2pwenRjeGd3YnV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgxMzUwNjgsImV4cCI6MjA2MzcxMTA2OH0.UNn_iNSkUOa1uxmoqz3MEdRuts326XVbR9MBHLiTltY';
         
-        // Sidebar toggle
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const sidebar = document.getElementById('sidebar');
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        sidebarToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
-        });
+        // Check authentication
+        async function checkAuth() {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Update UI with user info
+            const fullName = user.user_metadata?.full_name || 'User';
+            const firstName = fullName.split(' ')[0];
+            const initials = fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+            
+            document.getElementById('userName').textContent = fullName;
+            document.getElementById('welcomeName').textContent = firstName;
+            document.getElementById('userAvatar').textContent = initials;
+        }
         
-        // User menu toggle
-        const userMenuToggle = document.getElementById('userMenuToggle');
-        const userDropdown = document.getElementById('userDropdown');
+        // Sign out
+        async function signOut() {
+            await supabaseClient.auth.signOut();
+            window.location.href = 'login.html';
+        }
         
-        userMenuToggle.addEventListener('click', () => {
-            userDropdown.classList.toggle('active');
-        });
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
+        }
+        
+        // Toggle dropdown
+        function toggleDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
         
         // Close dropdown when clicking outside
         document.addEventListener('click', (e) => {
-            if (!userMenuToggle.contains(e.target) && !userDropdown.contains(e.target)) {
-                userDropdown.classList.remove('active');
+            const userMenu = document.querySelector('.user-menu');
+            if (!userMenu.contains(e.target)) {
+                document.getElementById('userDropdown').classList.remove('show');
             }
         });
         
-        // Logout functionality
-        const logoutBtn = document.getElementById('logoutBtn');
-        logoutBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            // Add Supabase logout here
-            // await supabase.auth.signOut();
-            window.location.href = 'login.html';
-        });
-        
-        // Active nav item
-        const navItems = document.querySelectorAll('.nav-item');
-        navItems.forEach(item => {
-            item.addEventListener('click', () => {
-                navItems.forEach(nav => nav.classList.remove('active'));
-                item.classList.add('active');
-            });
-        });
-        
-        // Chart controls
-        const chartControls = document.querySelectorAll('.control-btn');
-        chartControls.forEach(btn => {
-            btn.addEventListener('click', () => {
-                chartControls.forEach(control => control.classList.remove('active'));
-                btn.classList.add('active');
-            });
-        });
-        
-        // Animate stats on load
-        window.addEventListener('load', () => {
-            const statValues = document.querySelectorAll('.stat-value');
-            statValues.forEach(stat => {
-                const value = stat.textContent;
-                if (value.includes('$')) {
-                    const num = parseInt(value.replace(/\D/g, ''));
-                    animateValue(stat, 0, num, 1500, '$', true);
-                } else if (value.includes('%')) {
-                    const num = parseFloat(value);
-                    animateValue(stat, 0, num, 1500, '%', false);
-                } else {
-                    const num = parseInt(value.replace(/,/g, ''));
-                    animateValue(stat, 0, num, 1500, '', true);
-                }
-            });
-        });
-        
-        // Animate value function
-        function animateValue(element, start, end, duration, suffix = '', addCommas = false) {
-            const range = end - start;
-            const startTime = performance.now();
-            
-            function update(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                
-                const value = start + (range * easeOutQuart(progress));
-                const displayValue = suffix === '%' ? value.toFixed(1) : Math.floor(value);
-                
-                if (addCommas && suffix !== '%') {
-                    element.textContent = suffix === '$' ? 
-                        '$' + displayValue.toLocaleString() : 
-                        displayValue.toLocaleString() + suffix;
-                } else {
-                    element.textContent = suffix === '$' ? 
-                        '$' + displayValue : 
-                        displayValue + suffix;
-                }
-                
-                if (progress < 1) {
-                    requestAnimationFrame(update);
-                }
-            }
-            
-            requestAnimationFrame(update);
-        }
-        
-        // Easing function
-        function easeOutQuart(t) {
-            return 1 - Math.pow(1 - t, 4);
-        }
+        // Initialize
+        checkAuth();
     </script>
 </body>
 </html>
