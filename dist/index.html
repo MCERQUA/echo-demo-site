@@ -21,6 +21,203 @@
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="images/echo-favicon.svg">
+    
+    <!-- Additional Styles for Better Layout -->
+    <style>
+        /* Enhanced Tool Cards */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .tool-card {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--gradient-primary);
+            border-radius: 20px;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+        }
+        
+        .tool-card:hover::before {
+            opacity: 0.1;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border-color: var(--accent-primary);
+        }
+        
+        .tool-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .tool-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .tool-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+        
+        .tool-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient-primary);
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .tool-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        /* Enhanced Success Story Cards */
+        .stories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+        
+        .story-card {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .story-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+        
+        .story-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border-color: var(--accent-primary);
+        }
+        
+        .story-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 2rem;
+        }
+        
+        .story-header h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+        
+        .result {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: var(--gradient-primary);
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 700;
+            border-radius: 25px;
+            white-space: nowrap;
+        }
+        
+        .story-content {
+            margin-bottom: 2rem;
+        }
+        
+        .story-content p {
+            margin-bottom: 0.75rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+        
+        .story-content strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        .story-quote {
+            padding: 1.25rem;
+            background: var(--bg-primary);
+            border-left: 4px solid var(--accent-primary);
+            border-radius: 10px;
+            font-style: italic;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        /* Dark mode adjustments */
+        [data-theme="dark"] .tool-card {
+            background: rgba(30, 41, 59, 0.6);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        [data-theme="dark"] .story-card {
+            background: rgba(30, 41, 59, 0.6);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        [data-theme="dark"] .story-quote {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .stories-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Preloader -->
@@ -467,7 +664,7 @@
                         </svg>
                         <span>Echo AI Systems</span>
                     </div>
-                    <p class="footer-tagline">Helping small businesses grow online</p>
+                    <p class="footer-tagline">Helping small businesses succeed online</p>
                     <div class="footer-contact">
                         <a href="mailto:echoaisystems@gmail.com">echoaisystems@gmail.com</a>
                     </div>
@@ -507,9 +704,9 @@
             <div class="footer-bottom">
                 <p>&copy; 2025 Echo AI Systems. All rights reserved.</p>
                 <div class="footer-stats">
-                    <span>Family-owned business</span>
+                    <span>500+ Small Businesses Helped</span>
                     <span class="separator">•</span>
-                    <span>Helping businesses grow online</span>
+                    <span>No Tech Experience Required</span>
                 </div>
             </div>
         </div>
