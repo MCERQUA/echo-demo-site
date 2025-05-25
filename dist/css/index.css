@@ -308,6 +308,160 @@
     gap: 1rem;
 }
 
+/* Free Tools Section */
+.tools-section {
+    padding: 80px 0;
+    background: var(--bg-primary);
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.tool-card {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.tool-card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: var(--gradient-primary);
+    border-radius: 16px;
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.3s ease;
+}
+
+.tool-card:hover::before {
+    opacity: 0.1;
+}
+
+.tool-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.tool-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.tool-card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+}
+
+.tool-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+
+.tool-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent-primary);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.tool-link:hover {
+    gap: 0.75rem;
+    color: var(--accent-secondary);
+}
+
+/* Success Stories Section */
+.success-stories {
+    padding: 80px 0;
+    background: var(--bg-secondary);
+}
+
+.stories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.story-card {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.story-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-color: var(--accent-primary-alpha);
+}
+
+.story-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1.5rem;
+}
+
+.story-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.result {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: var(--gradient-primary);
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 20px;
+}
+
+.story-content {
+    margin-bottom: 1.5rem;
+}
+
+.story-content p {
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.story-content strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.story-quote {
+    padding: 1rem;
+    background: var(--bg-primary);
+    border-left: 3px solid var(--accent-primary);
+    border-radius: 8px;
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
 /* Why Us Section */
 .why-us-section {
     padding: 80px 0;
@@ -523,6 +677,13 @@
     font-size: 1.125rem;
 }
 
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
 /* Responsive */
 @media (max-width: 1200px) {
     .hero-visual {
@@ -545,6 +706,10 @@
     .contact-info {
         padding-right: 0;
     }
+    
+    .stories-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 768px) {
@@ -560,6 +725,10 @@
         grid-template-columns: 1fr;
         gap: 2rem;
     }
+    
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Dark Mode */
@@ -573,4 +742,18 @@
 [data-theme="dark"] .form-group textarea {
     background: rgba(15, 23, 42, 0.5);
     border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .tool-card {
+    background: rgba(30, 41, 59, 0.5);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .story-card {
+    background: rgba(30, 41, 59, 0.5);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .story-quote {
+    background: rgba(15, 23, 42, 0.5);
 }
