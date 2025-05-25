@@ -1,56 +1,287 @@
-<div class="welcome-section">
-    <h1>Welcome to Your Business Dashboard!</h1>
-    <p>Let's build your company's complete digital presence together.</p>
+<!-- Overview Section -->
+<div class="section-header">
+    <h1>Dashboard Overview</h1>
+    <p>Welcome back! Here's a snapshot of your business data.</p>
 </div>
 
-<div class="progress-card">
-    <div class="progress-header">
-        <h2 class="progress-title">Profile Completion</h2>
-        <div class="progress-percentage">25%</div>
+<div class="overview-grid">
+    <!-- Data Completeness Card -->
+    <div class="stat-card">
+        <div class="stat-header">
+            <h3>Data Completeness</h3>
+            <button class="btn-secondary" onclick="showSection('brand-info')">Complete Profile</button>
+        </div>
+        <div class="completeness-meter">
+            <div class="completeness-value" data-field="completeness">0%</div>
+            <div class="completeness-bar">
+                <div class="completeness-fill" data-field="completeness-bar" style="width: 0%"></div>
+            </div>
+        </div>
+        <p class="stat-description">Your business profile is <span data-field="completeness">0</span>% complete</p>
     </div>
-    <div class="progress-bar-container">
-        <div class="progress-bar" style="width: 25%"></div>
+    
+    <!-- Quick Stats -->
+    <div class="stat-card">
+        <div class="stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+        </div>
+        <div class="stat-content">
+            <div class="stat-value" data-field="total-reviews">0</div>
+            <div class="stat-label">Total Reviews</div>
+        </div>
     </div>
-    <div class="checklist">
-        <div class="checklist-item completed">
-            <div class="checklist-checkbox">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="3">
-                    <polyline points="20 6 9 17 4 12"/>
+    
+    <div class="stat-card">
+        <div class="stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+            </svg>
+        </div>
+        <div class="stat-content">
+            <div class="stat-value" data-field="average-rating">N/A</div>
+            <div class="stat-label">Average Rating</div>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+                <path d="M16 3.13a4 4 0 010 7.75"/>
+            </svg>
+        </div>
+        <div class="stat-content">
+            <div class="stat-value" data-field="social-followers">0</div>
+            <div class="stat-label">Social Followers</div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Research Status -->
+<div class="section-card">
+    <div class="card-header">
+        <h2>AI Research Status</h2>
+        <button class="btn-primary" onclick="triggerAIResearch('full_audit')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
+            </svg>
+            Start Full Audit
+        </button>
+    </div>
+    <div class="research-status">
+        <div class="research-stat">
+            <div class="research-count pending" data-field="pending-research">0</div>
+            <div class="research-label">Pending</div>
+        </div>
+        <div class="research-stat">
+            <div class="research-count in-progress" data-field="in-progress-research">0</div>
+            <div class="research-label">In Progress</div>
+        </div>
+        <div class="research-stat">
+            <div class="research-count completed" data-field="completed-research">0</div>
+            <div class="research-label">Completed</div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="section-card">
+    <div class="card-header">
+        <h2>Recent Activity</h2>
+        <a href="#" class="link-text">View All</a>
+    </div>
+    <div class="activity-list" id="recent-activity">
+        <div class="activity-item">
+            <div class="activity-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2v4m0 12v4m10-10h-4M6 12H2"/>
                 </svg>
             </div>
-            <span class="checklist-text">Create account</span>
-        </div>
-        <div class="checklist-item">
-            <div class="checklist-checkbox"></div>
-            <span class="checklist-text">Complete brand information</span>
-        </div>
-        <div class="checklist-item">
-            <div class="checklist-checkbox"></div>
-            <span class="checklist-text">Connect social media accounts</span>
-        </div>
-        <div class="checklist-item">
-            <div class="checklist-checkbox"></div>
-            <span class="checklist-text">Set up website details</span>
-        </div>
-        <div class="checklist-item">
-            <div class="checklist-checkbox"></div>
-            <span class="checklist-text">Configure Google Business profile</span>
+            <div class="activity-content">
+                <p>No recent activity</p>
+                <span class="activity-time">Start by completing your profile</span>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="quick-actions">
-    <button class="action-button" onclick="showSection('brand-info')">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="12" y1="5" x2="12" y2="19"/>
-            <line x1="5" y1="12" x2="19" y2="12"/>
-        </svg>
-        Add Brand Info
-    </button>
-    <button class="action-button secondary" onclick="showSection('social-media')">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
-        </svg>
-        Connect Social Media
-    </button>
+<!-- Action Items -->
+<div class="section-card">
+    <div class="card-header">
+        <h2>Action Items</h2>
+        <span class="badge">3 pending</span>
+    </div>
+    <div class="action-list">
+        <div class="action-item">
+            <input type="checkbox" id="action1">
+            <label for="action1">Complete business information</label>
+        </div>
+        <div class="action-item">
+            <input type="checkbox" id="action2">
+            <label for="action2">Upload brand logo</label>
+        </div>
+        <div class="action-item">
+            <input type="checkbox" id="action3">
+            <label for="action3">Connect social media accounts</label>
+        </div>
+    </div>
 </div>
+
+<style>
+.overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.completeness-meter {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.completeness-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.completeness-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.completeness-fill {
+    height: 100%;
+    background: var(--primary);
+    transition: width 0.3s ease;
+}
+
+.stat-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-light);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.section-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.research-status {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+}
+
+.research-count {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.research-count.pending { color: #F59E0B; }
+.research-count.in-progress { color: #3B82F6; }
+.research-count.completed { color: #10B981; }
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.activity-item {
+    display: flex;
+    gap: 1rem;
+    align-items: start;
+}
+
+.activity-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--background);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.activity-time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.action-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.action-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.action-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.action-item label {
+    cursor: pointer;
+}
+</style>
