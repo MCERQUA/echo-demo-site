@@ -83,7 +83,7 @@
                             id="password" 
                             name="password" 
                             required 
-                            placeholder="Enter your password"
+                            placeholder="••••••••"
                             autocomplete="current-password"
                         >
                     </div>
@@ -255,27 +255,29 @@
 
         // Check if user is already logged in
         supabaseClient.auth.onAuthStateChange((event, session) => {
-            if (session) {
+            if (session && !window.location.pathname.includes('login.html')) {
                 // User is logged in, redirect to dashboard
                 window.location.href = 'dashboard.html';
             }
         });
 
         // Toggle between login and signup
-        toggleForm.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (loginForm.style.display === 'none') {
-                loginForm.style.display = 'block';
-                signupForm.style.display = 'none';
-                resetForm.style.display = 'none';
-                toggleText.innerHTML = 'Don\'t have an account? <a href="#" id="toggleForm">Sign up</a>';
-                backToLogin.style.display = 'none';
-            } else {
-                loginForm.style.display = 'none';
-                signupForm.style.display = 'block';
-                resetForm.style.display = 'none';
-                toggleText.innerHTML = 'Already have an account? <a href="#" id="toggleForm">Sign in</a>';
-                backToLogin.style.display = 'none';
+        document.addEventListener('click', (e) => {
+            if (e.target.id === 'toggleForm' || e.target.parentElement?.id === 'toggleForm') {
+                e.preventDefault();
+                if (loginForm.style.display === 'none') {
+                    loginForm.style.display = 'block';
+                    signupForm.style.display = 'none';
+                    resetForm.style.display = 'none';
+                    toggleText.innerHTML = 'Don\'t have an account? <a href="#" id="toggleForm">Sign up</a>';
+                    backToLogin.style.display = 'none';
+                } else {
+                    loginForm.style.display = 'none';
+                    signupForm.style.display = 'block';
+                    resetForm.style.display = 'none';
+                    toggleText.innerHTML = 'Already have an account? <a href="#" id="toggleForm">Sign in</a>';
+                    backToLogin.style.display = 'none';
+                }
             }
         });
 
@@ -353,7 +355,8 @@
                         data: {
                             full_name: name,
                             company: company
-                        }
+                        },
+                        emailRedirectTo: 'https://echo-demo-site.netlify.app/login.html'
                     }
                 });
                 
@@ -380,7 +383,7 @@
             
             try {
                 const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-                    redirectTo: window.location.origin + '/reset-password.html'
+                    redirectTo: 'https://echo-demo-site.netlify.app/reset-password.html'
                 });
                 
                 if (error) {
@@ -392,6 +395,24 @@
                 errorMessage.textContent = 'An error occurred. Please try again.';
             }
         });
+
+        // Check for auth errors in URL hash
+        if (window.location.hash) {
+            const hashParams = new URLSearchParams(window.location.hash.substring(1));
+            const error = hashParams.get('error');
+            const errorDescription = hashParams.get('error_description');
+            
+            if (error) {
+                const errorMessage = document.getElementById('errorMessage');
+                if (error === 'access_denied' && errorDescription?.includes('Email link is invalid or has expired')) {
+                    errorMessage.textContent = 'The verification link has expired. Please sign up again to receive a new verification email.';
+                } else {
+                    errorMessage.textContent = errorDescription || 'An error occurred. Please try again.';
+                }
+                // Clear the hash from URL
+                history.replaceState(null, null, window.location.pathname);
+            }
+        }
     </script>
 </body>
 </html>
