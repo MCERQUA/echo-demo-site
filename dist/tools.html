@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Free Business Tools - Echo AI Systems</title>
-    <meta name="description" content="Free tools to help your business grow online. Check your visibility, reviews, website speed, and competition.">
+    <meta name="description" content="Free tools to help your business grow online. Check your visibility, website speed, and competition.">
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -25,7 +25,7 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
         
@@ -66,7 +66,7 @@
         
         .tools-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
             gap: 2rem;
             margin-bottom: 4rem;
         }
@@ -121,14 +121,17 @@
             box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.3);
         }
         
-        /* Tool Interfaces */
+        /* Tool Interfaces - Full Width */
         .tool-interface {
             display: none;
-            background: rgba(15, 23, 42, 0.8);
-            border-radius: 0.5rem;
-            padding: 2rem;
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: 1rem;
+            padding: 2.5rem;
             margin-top: 2rem;
             text-align: left;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            width: 100%;
+            max-width: none;
         }
         
         .tool-interface.active {
@@ -162,12 +165,15 @@
             border-color: #0EA5E9;
         }
         
+        /* Results - Full Width */
         .results {
             margin-top: 2rem;
-            padding: 1.5rem;
+            padding: 2rem;
             background: rgba(30, 41, 59, 0.5);
-            border-radius: 0.5rem;
+            border-radius: 1rem;
             display: none;
+            width: 100%;
+            max-width: none;
         }
         
         .results.show {
@@ -292,6 +298,10 @@
             .tools-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .tool-interface {
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
@@ -346,46 +356,7 @@
                     </div>
                     
                     <div class="results" id="visibility-results"></div>
-                    <a href="#" class="back-btn" onclick="hideTool('visibility')">← Back to tools</a>
-                </div>
-            </div>
-            
-            <!-- Review Score Calculator -->
-            <div class="tool-card">
-                <div class="tool-icon">⭐</div>
-                <h2 class="tool-title">Review Score Calculator</h2>
-                <p class="tool-description">Find out your online reputation score and how to improve it</p>
-                <button class="btn" onclick="showTool('reviews')">Calculate Score</button>
-                
-                <div id="reviews-tool" class="tool-interface">
-                    <h3>Calculate Your Review Score</h3>
-                    <form id="reviews-form" onsubmit="calculateReviews(event)">
-                        <div class="form-group">
-                            <label>Total Number of Reviews</label>
-                            <input type="number" name="totalReviews" required min="0" placeholder="50">
-                        </div>
-                        <div class="form-group">
-                            <label>Average Rating (1-5)</label>
-                            <input type="number" name="avgRating" required min="1" max="5" step="0.1" placeholder="4.5">
-                        </div>
-                        <div class="form-group">
-                            <label>Reviews in Last 3 Months</label>
-                            <input type="number" name="recentReviews" required min="0" placeholder="10">
-                        </div>
-                        <div class="form-group">
-                            <label>Response Rate (%)</label>
-                            <input type="number" name="responseRate" required min="0" max="100" placeholder="75">
-                        </div>
-                        <button type="submit" class="btn">Calculate Score</button>
-                    </form>
-                    
-                    <div class="loading" id="reviews-loading">
-                        <div class="loading-spinner"></div>
-                        <p>Calculating your reputation score...</p>
-                    </div>
-                    
-                    <div class="results" id="reviews-results"></div>
-                    <a href="#" class="back-btn" onclick="hideTool('reviews')">← Back to tools</a>
+                    <a href="#" class="back-btn" onclick="hideTool('visibility')">&larr; Back to tools</a>
                 </div>
             </div>
             
@@ -412,7 +383,7 @@
                     </div>
                     
                     <div class="results" id="speed-results"></div>
-                    <a href="#" class="back-btn" onclick="hideTool('speed')">← Back to tools</a>
+                    <a href="#" class="back-btn" onclick="hideTool('speed')">&larr; Back to tools</a>
                 </div>
             </div>
             
@@ -455,39 +426,60 @@
                     </div>
                     
                     <div class="results" id="competition-results"></div>
-                    <a href="#" class="back-btn" onclick="hideTool('competition')">← Back to tools</a>
+                    <a href="#" class="back-btn" onclick="hideTool('competition')">&larr; Back to tools</a>
                 </div>
             </div>
         </div>
         
         <div class="back-home">
-            <a href="index.html">← Back to Echo AI Systems</a>
+            <a href="index.html">&larr; Back to Echo AI Systems</a>
         </div>
     </div>
     
     <script>
         // Show/hide tools
         function showTool(toolName) {
-            document.getElementById(toolName + '-tool').classList.add('active');
+            // Hide all tools first
+            document.querySelectorAll('.tool-interface').forEach(tool => {
+                tool.classList.remove('active');
+            });
+            
+            // Show the selected tool
+            const toolElement = document.getElementById(toolName + '-tool');
+            if (toolElement) {
+                toolElement.classList.add('active');
+                // Smooth scroll to tool
+                toolElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         }
         
         function hideTool(toolName) {
-            document.getElementById(toolName + '-tool').classList.remove('active');
-            document.getElementById(toolName + '-results').classList.remove('show');
-            document.getElementById(toolName + '-form').reset();
+            const toolElement = document.getElementById(toolName + '-tool');
+            const resultsElement = document.getElementById(toolName + '-results');
+            const formElement = document.getElementById(toolName + '-form');
+            
+            if (toolElement) toolElement.classList.remove('active');
+            if (resultsElement) resultsElement.classList.remove('show');
+            if (formElement) formElement.reset();
         }
         
-        // Business Visibility Checker
+        // Business Visibility Checker - FIXED VERSION
         function checkVisibility(event) {
             event.preventDefault();
             const form = event.target;
             const formData = new FormData(form);
             
-            // Show loading
-            document.getElementById('visibility-loading').classList.add('show');
-            document.getElementById('visibility-results').classList.remove('show');
+            // Show loading and hide previous results
+            const loadingElement = document.getElementById('visibility-loading');
+            const resultsElement = document.getElementById('visibility-results');
             
-            // Simulate analysis
+            if (loadingElement) loadingElement.classList.add('show');
+            if (resultsElement) {
+                resultsElement.classList.remove('show');
+                resultsElement.innerHTML = ''; // Clear previous results
+            }
+            
+            // Simulate analysis with proper timeout
             setTimeout(() => {
                 const businessName = formData.get('businessName');
                 const businessType = formData.get('businessType');
@@ -533,78 +525,12 @@
                     </div>
                 `;
                 
-                document.getElementById('visibility-loading').classList.remove('show');
-                document.getElementById('visibility-results').innerHTML = html;
-                document.getElementById('visibility-results').classList.add('show');
-            }, 2000);
-        }
-        
-        // Review Score Calculator
-        function calculateReviews(event) {
-            event.preventDefault();
-            const form = event.target;
-            const formData = new FormData(form);
-            
-            // Show loading
-            document.getElementById('reviews-loading').classList.add('show');
-            document.getElementById('reviews-results').classList.remove('show');
-            
-            setTimeout(() => {
-                const totalReviews = parseInt(formData.get('totalReviews'));
-                const avgRating = parseFloat(formData.get('avgRating'));
-                const recentReviews = parseInt(formData.get('recentReviews'));
-                const responseRate = parseInt(formData.get('responseRate'));
-                
-                // Calculate scores
-                let volumeScore = Math.min(100, (totalReviews / 100) * 100);
-                let ratingScore = (avgRating / 5) * 100;
-                let freshnessScore = Math.min(100, (recentReviews / (totalReviews * 0.3)) * 100);
-                let engagementScore = responseRate;
-                
-                let overallScore = Math.floor((volumeScore * 0.2 + ratingScore * 0.4 + freshnessScore * 0.2 + engagementScore * 0.2));
-                
-                let html = `
-                    <h3>Your Review Score Analysis</h3>
-                    <div class="score-display ${overallScore > 80 ? 'score-good' : overallScore > 60 ? 'score-medium' : 'score-poor'}">
-                        ${overallScore}/100
-                    </div>
-                    <p style="text-align: center; margin-bottom: 2rem;">Overall Reputation Score</p>
-                    
-                    <div class="result-item">
-                        <div class="result-label">Review Volume</div>
-                        <div class="result-value">${totalReviews} reviews - ${totalReviews > 50 ? 'Excellent' : totalReviews > 20 ? 'Good' : 'Needs more reviews'}</div>
-                    </div>
-                    
-                    <div class="result-item">
-                        <div class="result-label">Average Rating</div>
-                        <div class="result-value">${avgRating} stars - ${avgRating >= 4.5 ? 'Outstanding' : avgRating >= 4.0 ? 'Good' : 'Needs improvement'}</div>
-                    </div>
-                    
-                    <div class="result-item">
-                        <div class="result-label">Review Freshness</div>
-                        <div class="result-value">${recentReviews} recent reviews - ${freshnessScore > 70 ? 'Very active' : freshnessScore > 40 ? 'Moderately active' : 'Too few recent reviews'}</div>
-                    </div>
-                    
-                    <div class="result-item">
-                        <div class="result-label">Response Rate</div>
-                        <div class="result-value">${responseRate}% - ${responseRate > 80 ? 'Excellent engagement' : responseRate > 50 ? 'Good engagement' : 'Needs improvement'}</div>
-                    </div>
-                    
-                    <div class="recommendations">
-                        <h4>Ways to Improve Your Score:</h4>
-                        <ul>
-                            ${totalReviews < 50 ? '<li>Ask satisfied customers to leave reviews</li>' : ''}
-                            ${avgRating < 4.5 ? '<li>Address negative feedback promptly and professionally</li>' : ''}
-                            ${freshnessScore < 70 ? '<li>Implement a system to request reviews regularly</li>' : ''}
-                            ${responseRate < 80 ? '<li>Respond to all reviews within 24-48 hours</li>' : ''}
-                            <li>Make it easy for customers to leave reviews with direct links</li>
-                        </ul>
-                    </div>
-                `;
-                
-                document.getElementById('reviews-loading').classList.remove('show');
-                document.getElementById('reviews-results').innerHTML = html;
-                document.getElementById('reviews-results').classList.add('show');
+                // Hide loading and show results
+                if (loadingElement) loadingElement.classList.remove('show');
+                if (resultsElement) {
+                    resultsElement.innerHTML = html;
+                    resultsElement.classList.add('show');
+                }
             }, 2000);
         }
         
