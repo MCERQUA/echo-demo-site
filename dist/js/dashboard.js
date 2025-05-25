@@ -3,7 +3,8 @@
 const SUPABASE_URL = 'https://ibcmkwlmqhrsxpwbqiph.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImliY21rd2xtcWhyc3hwd2JxaXBoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTAxOTU2NjAsImV4cCI6MjAyNTc3MTY2MH0.SuLyV8ruJpQ3x0QJzQAqHQTUn8uBSL4SvDJUgIsz5GI';
 
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const { createClient } = supabase;
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Global variables
 let currentUser = null;
@@ -13,7 +14,7 @@ let currentSection = 'overview';
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', async () => {
     // Check authentication
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await supabaseClient.auth.getUser();
     
     if (!user) {
         window.location.href = 'login.html';
@@ -30,13 +31,27 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadClientData() {
     try {
         // Get client record
-        const { data: client, error: clientError } = await supabase
+        const { data: client, error: clientError } = await supabaseClient
             .from('clients')
             .select('*')
             .eq('user_id', currentUser.id)
             .single();
         
-        if (clientError) throw clientError;
+        if (clientError) {
+            // If no client record exists, create one
+            if (clientError.code === 'PGRST116') {
+                const { data: newClient, error: createError } = await supabaseClient
+                    .from('clients')
+                    .insert({ user_id: currentUser.id })
+                    .select()
+                    .single();
+                
+                if (createError) throw createError;
+                client = newClient;
+            } else {
+                throw clientError;
+            }
+        }
         
         // Load all related data in parallel
         const [
@@ -54,19 +69,19 @@ async function loadClientData() {
             contentLibrary,
             aiQueue
         ] = await Promise.all([
-            supabase.from('business_info').select('*').eq('client_id', client.id).single(),
-            supabase.from('contact_info').select('*').eq('client_id', client.id).single(),
-            supabase.from('brand_assets').select('*').eq('client_id', client.id).single(),
-            supabase.from('digital_presence').select('*').eq('client_id', client.id).single(),
-            supabase.from('social_media_accounts').select('*').eq('client_id', client.id),
-            supabase.from('google_business_profile').select('*').eq('client_id', client.id).single(),
-            supabase.from('online_reputation').select('*').eq('client_id', client.id),
-            supabase.from('competitors').select('*').eq('client_id', client.id),
-            supabase.from('marketing_campaigns').select('*').eq('client_id', client.id),
-            supabase.from('seo_data').select('*').eq('client_id', client.id).order('snapshot_date', { ascending: false }).limit(1),
-            supabase.from('customer_insights').select('*').eq('client_id', client.id).single(),
-            supabase.from('content_library').select('*').eq('client_id', client.id),
-            supabase.from('ai_research_queue').select('*').eq('client_id', client.id)
+            supabaseClient.from('business_info').select('*').eq('client_id', client.id).single(),
+            supabaseClient.from('contact_info').select('*').eq('client_id', client.id).single(),
+            supabaseClient.from('brand_assets').select('*').eq('client_id', client.id).single(),
+            supabaseClient.from('digital_presence').select('*').eq('client_id', client.id).single(),
+            supabaseClient.from('social_media_accounts').select('*').eq('client_id', client.id),
+            supabaseClient.from('google_business_profile').select('*').eq('client_id', client.id).single(),
+            supabaseClient.from('online_reputation').select('*').eq('client_id', client.id),
+            supabaseClient.from('competitors').select('*').eq('client_id', client.id),
+            supabaseClient.from('marketing_campaigns').select('*').eq('client_id', client.id),
+            supabaseClient.from('seo_data').select('*').eq('client_id', client.id).order('snapshot_date', { ascending: false }).limit(1),
+            supabaseClient.from('customer_insights').select('*').eq('client_id', client.id).single(),
+            supabaseClient.from('content_library').select('*').eq('client_id', client.id),
+            supabaseClient.from('ai_research_queue').select('*').eq('client_id', client.id)
         ]);
         
         // Combine all data
@@ -147,7 +162,13 @@ async function showSection(sectionName) {
     document.querySelectorAll('.nav-link').forEach(link => {
         link.classList.remove('active');
     });
-    event.target.closest('.nav-link').classList.add('active');
+    
+    // Find and activate the clicked link
+    const clickedLink = event ? event.target.closest('.nav-link') : 
+                       document.querySelector(`[onclick*="${sectionName}"]`);
+    if (clickedLink) {
+        clickedLink.classList.add('active');
+    }
     
     // Hide all sections
     document.querySelectorAll('.section-content').forEach(section => {
@@ -231,18 +252,34 @@ function populateSection(sectionName) {
 // Populate overview section
 function populateOverview() {
     // Update completeness
-    document.querySelector('[data-field="completeness"]').textContent = `${clientData.completeness}%`;
-    document.querySelector('[data-field="completeness-bar"]').style.width = `${clientData.completeness}%`;
+    const completenessElement = document.querySelector('[data-field="completeness"]');
+    const completenessBarElement = document.querySelector('[data-field="completeness-bar"]');
+    
+    if (completenessElement) {
+        completenessElement.textContent = `${clientData.completeness}%`;
+    }
+    
+    if (completenessBarElement) {
+        completenessBarElement.style.width = `${clientData.completeness}%`;
+    }
     
     // Update quick stats
-    document.querySelector('[data-field="total-reviews"]').textContent = 
-        clientData.reputation.reduce((sum, platform) => sum + (platform.total_reviews || 0), 0);
+    const totalReviewsElement = document.querySelector('[data-field="total-reviews"]');
+    if (totalReviewsElement) {
+        totalReviewsElement.textContent = 
+            clientData.reputation.reduce((sum, platform) => sum + (platform.total_reviews || 0), 0);
+    }
     
-    document.querySelector('[data-field="average-rating"]').textContent = 
-        calculateAverageRating();
+    const averageRatingElement = document.querySelector('[data-field="average-rating"]');
+    if (averageRatingElement) {
+        averageRatingElement.textContent = calculateAverageRating();
+    }
     
-    document.querySelector('[data-field="social-followers"]').textContent = 
-        clientData.socialMedia.reduce((sum, account) => sum + (account.follower_count || 0), 0).toLocaleString();
+    const socialFollowersElement = document.querySelector('[data-field="social-followers"]');
+    if (socialFollowersElement) {
+        socialFollowersElement.textContent = 
+            clientData.socialMedia.reduce((sum, account) => sum + (account.follower_count || 0), 0).toLocaleString();
+    }
     
     // Update AI research status
     updateAIResearchStatus();
@@ -263,9 +300,13 @@ function updateAIResearchStatus() {
     const inProgressResearch = clientData.aiQueue.filter(item => item.status === 'in_progress').length;
     const completedResearch = clientData.aiQueue.filter(item => item.status === 'completed').length;
     
-    document.querySelector('[data-field="pending-research"]').textContent = pendingResearch;
-    document.querySelector('[data-field="in-progress-research"]').textContent = inProgressResearch;
-    document.querySelector('[data-field="completed-research"]').textContent = completedResearch;
+    const pendingElement = document.querySelector('[data-field="pending-research"]');
+    const inProgressElement = document.querySelector('[data-field="in-progress-research"]');
+    const completedElement = document.querySelector('[data-field="completed-research"]');
+    
+    if (pendingElement) pendingElement.textContent = pendingResearch;
+    if (inProgressElement) inProgressElement.textContent = inProgressResearch;
+    if (completedElement) completedElement.textContent = completedResearch;
 }
 
 // Initialize section-specific features
@@ -283,12 +324,20 @@ function initializeSectionFeatures(sectionName) {
     }
 }
 
+// Populate brand info (placeholder for section-specific function)
+function populateBrandInfo() {
+    // This function is defined in the brand-info.html section
+    if (typeof window.populateBrandInfo === 'function') {
+        window.populateBrandInfo();
+    }
+}
+
 // Save field changes
 async function saveField(tableName, fieldName, value) {
     try {
         const updates = { [fieldName]: value };
         
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from(tableName)
             .update(updates)
             .eq('client_id', clientData.client.id);
@@ -312,7 +361,7 @@ async function saveField(tableName, fieldName, value) {
 // Record change in history
 async function recordChange(tableName, fieldName, newValue) {
     try {
-        await supabase
+        await supabaseClient
             .from('data_change_history')
             .insert({
                 client_id: clientData.client.id,
@@ -332,7 +381,7 @@ async function recordChange(tableName, fieldName, newValue) {
 // Trigger AI research
 async function triggerAIResearch(researchType, parameters = {}) {
     try {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('ai_research_queue')
             .insert({
                 client_id: clientData.client.id,
@@ -361,7 +410,8 @@ function getSourcesForResearchType(researchType) {
         'competitors': ['google_search', 'competitor_websites', 'review_platforms'],
         'reviews': ['google', 'yelp', 'facebook', 'bbb'],
         'social_media': ['facebook', 'instagram', 'linkedin', 'twitter'],
-        'seo_analysis': ['website', 'google_search_console', 'semrush']
+        'seo_analysis': ['website', 'google_search_console', 'semrush'],
+        'full_audit': ['all']
     };
     
     return sourceMap[researchType] || ['website'];
@@ -369,7 +419,7 @@ function getSourcesForResearchType(researchType) {
 
 // Load AI research queue
 async function loadAIQueue() {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
         .from('ai_research_queue')
         .select('*')
         .eq('client_id', clientData.client.id)
@@ -394,7 +444,7 @@ function toggleDropdown() {
 
 // Sign out
 async function signOut() {
-    const { error } = await supabase.auth.signOut();
+    const { error } = await supabaseClient.auth.signOut();
     if (!error) {
         window.location.href = 'login.html';
     }
@@ -477,26 +527,45 @@ async function saveAllChanges(section) {
     await saveField(section, updates);
 }
 
-// Initialize data completeness chart
-function initializeCompletenessChart() {
-    const ctx = document.getElementById('completenessChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Complete', 'Incomplete'],
-            datasets: [{
-                data: [clientData.completeness, 100 - clientData.completeness],
-                backgroundColor: ['#0EA5E9', '#E5E7EB']
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            }
-        }
-    });
+// Placeholder functions for sections not yet implemented
+function populateSocialMedia() {
+    console.log('Social media section loaded');
 }
+
+function populateWebsite() {
+    console.log('Website section loaded');
+}
+
+function populateGoogleBusiness() {
+    console.log('Google Business section loaded');
+}
+
+function populateReputation() {
+    console.log('Reputation section loaded');
+}
+
+function populateReports() {
+    console.log('Reports section loaded');
+}
+
+function populateBilling() {
+    console.log('Billing section loaded');
+}
+
+function initializeSocialMediaFeatures() {
+    console.log('Social media features initialized');
+}
+
+function initializeWebsiteFeatures() {
+    console.log('Website features initialized');
+}
+
+// Make functions globally available
+window.showSection = showSection;
+window.toggleSidebar = toggleSidebar;
+window.toggleDropdown = toggleDropdown;
+window.signOut = signOut;
+window.triggerAIResearch = triggerAIResearch;
+window.toggleEditMode = toggleEditMode;
+window.populateBrandInfo = populateBrandInfo;
+window.initializeBrandInfoFeatures = initializeBrandInfoFeatures;
