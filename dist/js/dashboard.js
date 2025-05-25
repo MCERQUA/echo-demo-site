@@ -11,6 +11,7 @@ let currentUser = null;
 let clientData = null;
 let currentSection = 'overview';
 let isCheckingAuth = true;
+let editMode = {};
 
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', async () => {
@@ -133,7 +134,7 @@ async function loadClientData() {
         
         // Load all client data from various tables
         const results = await Promise.allSettled([
-            supabaseClient.from('client_info').select('*').eq('user_id', currentUser.id).single(),
+            supabaseClient.from('clients').select('*').eq('user_id', currentUser.id).single(),
             supabaseClient.from('business_info').select('*').eq('user_id', currentUser.id).single(),
             supabaseClient.from('contact_info').select('*').eq('user_id', currentUser.id).single(),
             supabaseClient.from('brand_assets').select('*').eq('user_id', currentUser.id).single(),
@@ -286,6 +287,9 @@ async function loadSection(sectionName) {
             const html = await response.text();
             sectionElement.innerHTML = html;
             
+            // Initialize section features
+            initializeSectionFeatures(sectionName);
+            
             // Populate section with data
             populateSection(sectionName);
         } else {
@@ -313,6 +317,185 @@ function formatSectionName(name) {
     return name.split('-').map(word => 
         word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
+}
+
+// Initialize section-specific features
+function initializeSectionFeatures(sectionName) {
+    switch (sectionName) {
+        case 'brand-info':
+            // Re-run the initialization for brand info features
+            if (typeof initializeBrandInfoFeatures === 'function') {
+                initializeBrandInfoFeatures();
+            }
+            break;
+    }
+    
+    // Initialize edit mode for all field values
+    initializeEditableFields();
+}
+
+// Initialize editable fields
+function initializeEditableFields() {
+    const fieldValues = document.querySelectorAll('.field-value');
+    
+    fieldValues.forEach(field => {
+        // Skip select elements and other input types
+        if (field.tagName === 'SELECT' || field.tagName === 'INPUT') return;
+        
+        // Add click handler for editing
+        field.addEventListener('click', function() {
+            const table = this.dataset.table;
+            if (editMode[table]) {
+                startFieldEdit(this);
+            }
+        });
+        
+        // Add blur handler for saving
+        field.addEventListener('blur', function() {
+            if (this.contentEditable === 'true') {
+                saveFieldValue(this);
+            }
+        });
+        
+        // Add enter key handler
+        field.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                this.blur();
+            }
+        });
+    });
+}
+
+// Toggle edit mode for a section
+function toggleEditMode(section) {
+    editMode[section] = !editMode[section];
+    
+    const button = event.target;
+    const sectionCard = button.closest('.section-card');
+    const fields = sectionCard.querySelectorAll(`.field-value[data-table="${section}"]`);
+    
+    if (editMode[section]) {
+        // Enter edit mode
+        button.textContent = 'Save';
+        button.classList.remove('btn-secondary');
+        button.classList.add('btn-primary');
+        
+        fields.forEach(field => {
+            if (field.tagName !== 'SELECT' && field.tagName !== 'INPUT') {
+                field.style.cursor = 'text';
+                field.title = 'Click to edit';
+            }
+        });
+        
+        showNotification('Click on any field to edit', 'info');
+    } else {
+        // Exit edit mode and save all changes
+        button.textContent = 'Edit';
+        button.classList.remove('btn-primary');
+        button.classList.add('btn-secondary');
+        
+        fields.forEach(field => {
+            if (field.contentEditable === 'true') {
+                field.contentEditable = false;
+            }
+            field.style.cursor = 'default';
+            field.title = '';
+        });
+        
+        // Save all changes
+        saveSection(section);
+    }
+}
+
+// Start editing a field
+function startFieldEdit(field) {
+    field.contentEditable = true;
+    field.focus();
+    
+    // Select all text
+    const range = document.createRange();
+    range.selectNodeContents(field);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+}
+
+// Save a single field value
+async function saveFieldValue(field) {
+    field.contentEditable = false;
+    
+    const table = field.dataset.table;
+    const fieldName = field.dataset.field;
+    const value = field.textContent.trim();
+    
+    // Update local data
+    if (!clientData[table]) clientData[table] = {};
+    clientData[table][fieldName] = value;
+    
+    // Don't save individual fields - wait for Save button
+    console.log(`Field ${fieldName} updated locally to: ${value}`);
+}
+
+// Save entire section data
+async function saveSection(section) {
+    const tableMap = {
+        'business_info': 'businessInfo',
+        'contact_info': 'contactInfo',
+        'brand_assets': 'brandAssets',
+        'digital_presence': 'digitalPresence'
+    };
+    
+    const dataKey = tableMap[section];
+    if (!dataKey || !clientData[dataKey]) {
+        showNotification('No data to save', 'error');
+        return;
+    }
+    
+    try {
+        // Prepare data for save
+        const saveData = {
+            ...clientData[dataKey],
+            user_id: currentUser.id,
+            updated_at: new Date().toISOString()
+        };
+        
+        // Remove any null or undefined values
+        Object.keys(saveData).forEach(key => {
+            if (saveData[key] === null || saveData[key] === undefined || saveData[key] === '') {
+                delete saveData[key];
+            }
+        });
+        
+        console.log('Saving data:', saveData);
+        
+        // Save to database
+        const { data, error } = await supabaseClient
+            .from(section)
+            .upsert(saveData, { onConflict: 'user_id' })
+            .select();
+        
+        if (error) throw error;
+        
+        showNotification(`${formatSectionName(section)} saved successfully!`, 'success');
+        
+        // Update local data with response
+        if (data && data[0]) {
+            clientData[dataKey] = data[0];
+        }
+        
+        // Recalculate completeness
+        calculateDataCompleteness();
+        
+        // Update overview if visible
+        if (currentSection === 'overview') {
+            populateOverview();
+        }
+        
+    } catch (error) {
+        console.error('Error saving data:', error);
+        showNotification(`Error saving: ${error.message}`, 'error');
+    }
 }
 
 // Populate section with client data
@@ -351,82 +534,105 @@ function populateSection(sectionName) {
 // Populate overview section with actual data
 function populateOverview() {
     // Update profile completion
-    const completionElement = document.querySelector('[data-metric="profile-completion"]');
-    if (completionElement) {
-        completionElement.textContent = `${clientData.completeness || 0}%`;
-    }
+    const completionElements = document.querySelectorAll('[data-field="completeness"]');
+    completionElements.forEach(el => {
+        el.textContent = `${clientData.completeness || 0}%`;
+    });
     
     // Update progress bar
-    const progressBar = document.querySelector('.progress-fill');
+    const progressBar = document.querySelector('[data-field="completeness-bar"]');
     if (progressBar) {
         progressBar.style.width = `${clientData.completeness || 0}%`;
     }
     
     // Update other metrics
-    const activeServices = clientData.campaigns?.filter(c => c.status === 'active').length || 0;
-    const reportsAvailable = clientData.contentLibrary?.filter(c => c.type === 'report').length || 0;
+    const totalReviews = clientData.reputation?.reduce((sum, platform) => sum + (platform.total_reviews || 0), 0) || 0;
+    const avgRatings = clientData.reputation?.filter(p => p.average_rating).map(p => p.average_rating) || [];
+    const avgRating = avgRatings.length > 0 ? (avgRatings.reduce((a, b) => a + b, 0) / avgRatings.length).toFixed(1) : 'N/A';
+    const socialFollowers = clientData.socialMedia?.reduce((sum, account) => sum + (account.follower_count || 0), 0) || 0;
     
-    const activeServicesElement = document.querySelector('[data-metric="active-services"]');
-    if (activeServicesElement) {
-        activeServicesElement.textContent = activeServices;
-    }
-    
-    const reportsElement = document.querySelector('[data-metric="reports-available"]');
-    if (reportsElement) {
-        reportsElement.textContent = reportsAvailable;
-    }
+    updateMetric('total-reviews', totalReviews);
+    updateMetric('average-rating', avgRating);
+    updateMetric('social-followers', socialFollowers);
     
     // Update AI research status
     const pendingResearch = clientData.aiQueue?.filter(item => item.status === 'pending').length || 0;
     const inProgressResearch = clientData.aiQueue?.filter(item => item.status === 'in_progress').length || 0;
     const completedResearch = clientData.aiQueue?.filter(item => item.status === 'completed').length || 0;
     
-    const pendingElement = document.querySelector('[data-metric="pending-research"]');
-    const inProgressElement = document.querySelector('[data-metric="in-progress-research"]');
-    const completedElement = document.querySelector('[data-metric="completed-research"]');
-    
-    if (pendingElement) pendingElement.textContent = pendingResearch;
-    if (inProgressElement) inProgressElement.textContent = inProgressResearch;
-    if (completedElement) completedElement.textContent = completedResearch;
+    updateMetric('pending-research', pendingResearch);
+    updateMetric('in-progress-research', inProgressResearch);
+    updateMetric('completed-research', completedResearch);
+}
+
+// Helper function to update metrics
+function updateMetric(fieldName, value) {
+    const element = document.querySelector(`[data-field="${fieldName}"]`);
+    if (element) {
+        element.textContent = value;
+    }
 }
 
 // Populate brand info section
 function populateBrandInfo() {
-    // Business Information
-    fillFormField('business_name', clientData.businessInfo?.business_name);
-    fillFormField('legal_entity_name', clientData.businessInfo?.legal_entity_name);
-    fillFormField('primary_industry', clientData.businessInfo?.primary_industry);
-    fillFormField('secondary_industries', clientData.businessInfo?.secondary_industries?.join(', '));
-    fillFormField('services_offered', clientData.businessInfo?.services_offered?.join(', '));
-    fillFormField('business_description', clientData.businessInfo?.business_description);
+    // Populate business info fields
+    if (clientData.businessInfo) {
+        Object.entries(clientData.businessInfo).forEach(([key, value]) => {
+            const field = document.querySelector(`[data-field="${key}"][data-table="business_info"]`);
+            if (field && value !== null && value !== undefined) {
+                if (field.tagName === 'SELECT') {
+                    field.value = value;
+                } else if (Array.isArray(value)) {
+                    field.textContent = value.join(', ');
+                } else {
+                    field.textContent = value;
+                }
+            }
+        });
+    }
     
-    // Contact Information
-    fillFormField('primary_phone', clientData.contactInfo?.primary_phone);
-    fillFormField('primary_email', clientData.contactInfo?.primary_email);
-    fillFormField('headquarters_address', clientData.contactInfo?.headquarters_address);
-    fillFormField('business_hours', clientData.contactInfo?.business_hours);
-    
-    // Brand Assets
-    fillFormField('tagline', clientData.brandAssets?.tagline);
-    fillFormField('mission_statement', clientData.brandAssets?.mission_statement);
-    fillFormField('unique_value_proposition', clientData.brandAssets?.unique_value_proposition);
-    fillFormField('brand_colors', clientData.brandAssets?.brand_colors?.join(', '));
-    
-    // Display logo if available
-    if (clientData.brandAssets?.logo_primary_url) {
-        const logoElement = document.getElementById('logo-preview');
-        if (logoElement) {
-            logoElement.src = clientData.brandAssets.logo_primary_url;
-            logoElement.style.display = 'block';
+    // Populate contact info fields
+    if (clientData.contactInfo) {
+        Object.entries(clientData.contactInfo).forEach(([key, value]) => {
+            const field = document.querySelector(`[data-field="${key}"][data-table="contact_info"]`);
+            if (field && value !== null && value !== undefined) {
+                if (typeof value === 'object' && !Array.isArray(value)) {
+                    // Handle complex objects like addresses
+                    field.textContent = JSON.stringify(value);
+                } else {
+                    field.textContent = value;
+                }
+            }
+        });
+        
+        // Handle business hours specially
+        if (clientData.contactInfo.business_hours) {
+            Object.entries(clientData.contactInfo.business_hours).forEach(([day, hours]) => {
+                const openInput = document.querySelector(`[data-day="${day}"][data-period="open"]`);
+                const closeInput = document.querySelector(`[data-day="${day}"][data-period="close"]`);
+                if (openInput && hours.open) openInput.value = hours.open;
+                if (closeInput && hours.close) closeInput.value = hours.close;
+            });
         }
     }
-}
-
-// Helper function to fill form fields
-function fillFormField(fieldId, value) {
-    const field = document.getElementById(fieldId);
-    if (field && value !== undefined && value !== null) {
-        field.value = value;
+    
+    // Populate brand assets fields
+    if (clientData.brandAssets) {
+        Object.entries(clientData.brandAssets).forEach(([key, value]) => {
+            const field = document.querySelector(`[data-field="${key}"][data-table="brand_assets"]`);
+            if (field && value !== null && value !== undefined) {
+                if (Array.isArray(value)) {
+                    field.textContent = value.join(', ');
+                } else {
+                    field.textContent = value;
+                }
+            }
+        });
+    }
+    
+    // Call the section's own populate function if it exists
+    if (typeof window.populateBrandInfo === 'function') {
+        window.populateBrandInfo();
     }
 }
 
@@ -471,29 +677,23 @@ function populateSocialMedia() {
 
 // Populate website section
 function populateWebsite() {
-    fillFormField('primary_domain', clientData.digitalPresence?.primary_domain);
-    fillFormField('website_platform', clientData.digitalPresence?.website_platform);
-    fillFormField('hosting_provider', clientData.digitalPresence?.hosting_provider);
-    fillFormField('ssl_status', clientData.digitalPresence?.ssl_status);
-    fillFormField('google_analytics_id', clientData.digitalPresence?.google_analytics_id);
-    fillFormField('google_search_console_verified', clientData.digitalPresence?.google_search_console_verified ? 'Yes' : 'No');
+    if (clientData.digitalPresence) {
+        Object.entries(clientData.digitalPresence).forEach(([key, value]) => {
+            fillFormField(key, value);
+        });
+    }
 }
 
 // Populate Google Business section
 function populateGoogleBusiness() {
-    fillFormField('gmb_profile_name', clientData.googleBusiness?.profile_name);
-    fillFormField('gmb_primary_category', clientData.googleBusiness?.primary_category);
-    fillFormField('gmb_secondary_categories', clientData.googleBusiness?.secondary_categories?.join(', '));
-    
-    const reviewsElement = document.querySelector('[data-metric="total-reviews"]');
-    if (reviewsElement) {
-        reviewsElement.textContent = clientData.googleBusiness?.total_reviews || 0;
+    if (clientData.googleBusiness) {
+        Object.entries(clientData.googleBusiness).forEach(([key, value]) => {
+            fillFormField(`gmb_${key}`, value);
+        });
     }
     
-    const ratingElement = document.querySelector('[data-metric="average-rating"]');
-    if (ratingElement) {
-        ratingElement.textContent = clientData.googleBusiness?.average_rating || 'N/A';
-    }
+    updateMetric('total-reviews', clientData.googleBusiness?.total_reviews || 0);
+    updateMetric('average-rating', clientData.googleBusiness?.average_rating || 'N/A');
 }
 
 // Populate reputation section
@@ -563,84 +763,17 @@ function populateBilling() {
     console.log('Billing section loaded');
 }
 
-// Save functions for form data
-async function saveBusinessInfo() {
-    const formData = {
-        business_name: document.getElementById('business_name').value,
-        legal_entity_name: document.getElementById('legal_entity_name').value,
-        primary_industry: document.getElementById('primary_industry').value,
-        secondary_industries: document.getElementById('secondary_industries').value.split(',').map(s => s.trim()).filter(s => s),
-        services_offered: document.getElementById('services_offered').value.split(',').map(s => s.trim()).filter(s => s),
-        business_description: document.getElementById('business_description').value,
-        user_id: currentUser.id
-    };
-    
-    try {
-        const { data, error } = await supabaseClient
-            .from('business_info')
-            .upsert(formData)
-            .eq('user_id', currentUser.id);
-            
-        if (error) throw error;
-        
-        showNotification('Business information saved successfully!', 'success');
-        clientData.businessInfo = { ...clientData.businessInfo, ...formData };
-        calculateDataCompleteness();
-    } catch (error) {
-        console.error('Error saving business info:', error);
-        showNotification('Error saving business information', 'error');
-    }
-}
-
-async function saveContactInfo() {
-    const formData = {
-        primary_phone: document.getElementById('primary_phone').value,
-        primary_email: document.getElementById('primary_email').value,
-        headquarters_address: document.getElementById('headquarters_address').value,
-        business_hours: document.getElementById('business_hours').value,
-        user_id: currentUser.id
-    };
-    
-    try {
-        const { data, error } = await supabaseClient
-            .from('contact_info')
-            .upsert(formData)
-            .eq('user_id', currentUser.id);
-            
-        if (error) throw error;
-        
-        showNotification('Contact information saved successfully!', 'success');
-        clientData.contactInfo = { ...clientData.contactInfo, ...formData };
-        calculateDataCompleteness();
-    } catch (error) {
-        console.error('Error saving contact info:', error);
-        showNotification('Error saving contact information', 'error');
-    }
-}
-
-async function saveBrandAssets() {
-    const formData = {
-        tagline: document.getElementById('tagline').value,
-        mission_statement: document.getElementById('mission_statement').value,
-        unique_value_proposition: document.getElementById('unique_value_proposition').value,
-        brand_colors: document.getElementById('brand_colors').value.split(',').map(s => s.trim()).filter(s => s),
-        user_id: currentUser.id
-    };
-    
-    try {
-        const { data, error } = await supabaseClient
-            .from('brand_assets')
-            .upsert(formData)
-            .eq('user_id', currentUser.id);
-            
-        if (error) throw error;
-        
-        showNotification('Brand assets saved successfully!', 'success');
-        clientData.brandAssets = { ...clientData.brandAssets, ...formData };
-        calculateDataCompleteness();
-    } catch (error) {
-        console.error('Error saving brand assets:', error);
-        showNotification('Error saving brand assets', 'error');
+// Helper function to fill form fields
+function fillFormField(fieldId, value) {
+    const field = document.getElementById(fieldId);
+    if (field && value !== undefined && value !== null) {
+        if (field.tagName === 'SELECT') {
+            field.value = value;
+        } else if (field.type === 'checkbox') {
+            field.checked = value;
+        } else {
+            field.value = value;
+        }
     }
 }
 
@@ -686,6 +819,28 @@ document.addEventListener('click', (e) => {
     }
 });
 
+// AI Research trigger
+async function triggerAIResearch(researchType) {
+    try {
+        const { data, error } = await supabaseClient
+            .from('ai_research_queue')
+            .insert({
+                client_id: currentUser.id,
+                research_type: researchType,
+                status: 'pending',
+                priority: 5,
+                created_at: new Date().toISOString()
+            });
+        
+        if (error) throw error;
+        
+        showNotification('AI research task queued successfully!', 'success');
+    } catch (error) {
+        console.error('Error queuing AI research:', error);
+        showNotification('Error queuing research task', 'error');
+    }
+}
+
 // Placeholder functions for features not yet implemented
 function connectSocialAccount() {
     showNotification('Social media connection feature coming soon!', 'info');
@@ -704,9 +859,8 @@ window.showSection = showSection;
 window.toggleSidebar = toggleSidebar;
 window.toggleDropdown = toggleDropdown;
 window.signOut = signOut;
-window.saveBusinessInfo = saveBusinessInfo;
-window.saveContactInfo = saveContactInfo;
-window.saveBrandAssets = saveBrandAssets;
+window.toggleEditMode = toggleEditMode;
+window.triggerAIResearch = triggerAIResearch;
 window.connectSocialAccount = connectSocialAccount;
 window.viewReport = viewReport;
 window.downloadReport = downloadReport;
