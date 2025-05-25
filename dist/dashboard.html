@@ -12,418 +12,8 @@
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #0f172a;
-            color: #e2e8f0;
-            min-height: 100vh;
-            display: flex;
-        }
-        
-        /* Sidebar */
-        .sidebar {
-            width: 280px;
-            background: rgba(30, 41, 59, 0.5);
-            backdrop-filter: blur(20px);
-            border-right: 1px solid rgba(148, 163, 184, 0.1);
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-weight: 600;
-            font-size: 1.25rem;
-            text-decoration: none;
-            color: #e2e8f0;
-        }
-        
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #0EA5E9, #6366F1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-        }
-        
-        .nav-menu {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            flex: 1;
-        }
-        
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            text-decoration: none;
-            color: #94a3b8;
-            transition: all 0.2s;
-        }
-        
-        .nav-link:hover {
-            background: rgba(30, 41, 59, 0.8);
-            color: #e2e8f0;
-        }
-        
-        .nav-link.active {
-            background: rgba(14, 165, 233, 0.1);
-            color: #0EA5E9;
-        }
-        
-        .nav-icon {
-            width: 20px;
-            height: 20px;
-        }
-        
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* Header */
-        .header {
-            background: rgba(30, 41, 59, 0.3);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: #e2e8f0;
-            cursor: pointer;
-            padding: 0.5rem;
-        }
-        
-        .search-bar {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            background: rgba(15, 23, 42, 0.5);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            border-radius: 0.5rem;
-            padding: 0.5rem 1rem;
-            width: 300px;
-        }
-        
-        .search-bar input {
-            background: none;
-            border: none;
-            color: #e2e8f0;
-            outline: none;
-            flex: 1;
-        }
-        
-        .search-bar input::placeholder {
-            color: #64748b;
-        }
-        
-        .user-menu {
-            position: relative;
-        }
-        
-        .user-button {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            background: rgba(15, 23, 42, 0.5);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            border-radius: 0.5rem;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            color: #e2e8f0;
-            transition: all 0.2s;
-        }
-        
-        .user-button:hover {
-            background: rgba(15, 23, 42, 0.8);
-        }
-        
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #0EA5E9, #6366F1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-        }
-        
-        .dropdown {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            margin-top: 0.5rem;
-            background: rgba(30, 41, 59, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            border-radius: 0.5rem;
-            padding: 0.5rem;
-            min-width: 200px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-            display: none;
-        }
-        
-        .dropdown.show {
-            display: block;
-        }
-        
-        .dropdown-item {
-            display: block;
-            padding: 0.5rem 1rem;
-            border-radius: 0.25rem;
-            color: #e2e8f0;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-        
-        .dropdown-item:hover {
-            background: rgba(14, 165, 233, 0.1);
-            color: #0EA5E9;
-        }
-        
-        .dropdown-divider {
-            height: 1px;
-            background: rgba(148, 163, 184, 0.2);
-            margin: 0.5rem 0;
-        }
-        
-        /* Content Area */
-        .content {
-            flex: 1;
-            padding: 2rem;
-            overflow-y: auto;
-        }
-        
-        .welcome-section {
-            margin-bottom: 3rem;
-        }
-        
-        .welcome-section h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        
-        .welcome-section p {
-            font-size: 1.125rem;
-            color: #94a3b8;
-        }
-        
-        /* Quick Actions */
-        .quick-actions {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 3rem;
-        }
-        
-        .action-button {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            background: linear-gradient(135deg, #0EA5E9, #6366F1);
-            color: white;
-            border: none;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-        }
-        
-        .action-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(14, 165, 233, 0.3);
-        }
-        
-        .action-button.secondary {
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-        }
-        
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-        
-        .stat-card {
-            background: rgba(30, 41, 59, 0.5);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            transition: all 0.3s;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(14, 165, 233, 0.3);
-        }
-        
-        .stat-label {
-            font-size: 0.875rem;
-            color: #94a3b8;
-            margin-bottom: 0.5rem;
-        }
-        
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #e2e8f0;
-            margin-bottom: 0.5rem;
-        }
-        
-        .stat-change {
-            font-size: 0.875rem;
-            color: #10b981;
-        }
-        
-        .stat-change.negative {
-            color: #ef4444;
-        }
-        
-        /* Activity Section */
-        .section {
-            background: rgba(30, 41, 59, 0.5);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
-        
-        .view-all {
-            color: #0EA5E9;
-            text-decoration: none;
-            font-size: 0.875rem;
-        }
-        
-        .view-all:hover {
-            text-decoration: underline;
-        }
-        
-        .activity-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .activity-item {
-            display: flex;
-            gap: 1rem;
-            padding: 1rem;
-            background: rgba(15, 23, 42, 0.3);
-            border-radius: 0.5rem;
-            align-items: start;
-        }
-        
-        .activity-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(14, 165, 233, 0.1);
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        
-        .activity-content {
-            flex: 1;
-        }
-        
-        .activity-title {
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-        }
-        
-        .activity-description {
-            font-size: 0.875rem;
-            color: #94a3b8;
-        }
-        
-        .activity-time {
-            font-size: 0.75rem;
-            color: #64748b;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                position: fixed;
-                left: -280px;
-                height: 100vh;
-                z-index: 100;
-                transition: left 0.3s;
-            }
-            
-            .sidebar.show {
-                left: 0;
-            }
-            
-            .menu-toggle {
-                display: block;
-            }
-            
-            .search-bar {
-                display: none;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <!-- Dashboard CSS -->
+    <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
     <!-- Sidebar -->
@@ -436,7 +26,7 @@
         <nav>
             <ul class="nav-menu">
                 <li>
-                    <a href="#" class="nav-link active">
+                    <a class="nav-link active" onclick="showSection('overview')">
                         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="3" width="7" height="7" rx="1"/>
                             <rect x="14" y="3" width="7" height="7" rx="1"/>
@@ -447,41 +37,63 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="nav-link">
+                    <a class="nav-link" onclick="showSection('brand-info')">
                         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 12h18M3 6h18M3 18h18"/>
+                            <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
                         </svg>
-                        <span>Analytics</span>
+                        <span>Brand Info</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="nav-link">
+                    <a class="nav-link" onclick="showSection('social-media')">
                         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/>
+                            <path d="M21 5.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM12 12a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM21 18.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+                            <path d="M16 5.5h-5.5V12M7 12h5.5M16 18.5h-5.5V12"/>
                         </svg>
-                        <span>Content</span>
+                        <span>Social Media</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="nav-link">
+                    <a class="nav-link" onclick="showSection('website')">
                         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
-                            <line x1="7" y1="7" x2="7.01" y2="7"/>
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
                         </svg>
-                        <span>Leads</span>
+                        <span>Website</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="nav-link">
+                    <a class="nav-link" onclick="showSection('google-business')">
                         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="3"/>
-                            <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1m20.5-6.5L16 12l5.5 6.5M2.5 5.5L8 12l-5.5 6.5"/>
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
                         </svg>
-                        <span>Services</span>
+                        <span>Google Business</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="nav-link">
+                    <a class="nav-link" onclick="showSection('reputation')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                        <span>Reputation</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link" onclick="showSection('reports')">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10 9 9 9 8 9"/>
+                        </svg>
+                        <span>Reports</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link" onclick="showSection('billing')">
                         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="11" width="18" height="10" rx="2" ry="2"/>
                             <path d="M7 11V7a5 5 0 0110 0v4"/>
@@ -493,7 +105,7 @@
         </nav>
         
         <div>
-            <a href="#" class="nav-link">
+            <a class="nav-link" onclick="showSection('support')">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10"/>
                     <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/>
@@ -565,165 +177,36 @@
         
         <!-- Content -->
         <main class="content">
-            <!-- Welcome Section -->
-            <section class="welcome-section">
-                <h1>Welcome back, <span id="welcomeName">John</span>!</h1>
-                <p>Your business is growing. Here's what's happening today.</p>
-            </section>
+            <!-- Overview Section -->
+            <section id="overview-section" class="section-content active" data-loaded="true"></section>
             
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <button class="action-button">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="5" x2="12" y2="19"/>
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                    </svg>
-                    New Content
-                </button>
-                <button class="action-button secondary">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                        <line x1="16" y1="2" x2="16" y2="6"/>
-                        <line x1="8" y1="2" x2="8" y2="6"/>
-                        <line x1="3" y1="10" x2="21" y2="10"/>
-                    </svg>
-                    Schedule Post
-                </button>
-            </div>
+            <!-- Brand Info Section -->
+            <section id="brand-info-section" class="section-content"></section>
             
-            <!-- Stats Grid -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Total Views</div>
-                    <div class="stat-value">24,563</div>
-                    <div class="stat-change">+12.5% from last month</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Active Leads</div>
-                    <div class="stat-value">142</div>
-                    <div class="stat-change">+8 new this week</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Conversion Rate</div>
-                    <div class="stat-value">3.4%</div>
-                    <div class="stat-change">+0.2% from last month</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Revenue</div>
-                    <div class="stat-value">$12,450</div>
-                    <div class="stat-change">+18.3% from last month</div>
-                </div>
-            </div>
+            <!-- Social Media Section -->
+            <section id="social-media-section" class="section-content"></section>
             
-            <!-- Recent Activity -->
-            <section class="section">
-                <div class="section-header">
-                    <h2 class="section-title">Recent Activity</h2>
-                    <a href="#" class="view-all">View all</a>
-                </div>
-                <div class="activity-list">
-                    <div class="activity-item">
-                        <div class="activity-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2">
-                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-                                <polyline points="14 2 14 8 20 8"/>
-                                <line x1="16" y1="13" x2="8" y2="13"/>
-                                <line x1="16" y1="17" x2="8" y2="17"/>
-                                <polyline points="10 9 9 9 8 9"/>
-                            </svg>
-                        </div>
-                        <div class="activity-content">
-                            <div class="activity-title">New blog post published</div>
-                            <div class="activity-description">"10 Ways AI Can Transform Your Business" is now live</div>
-                        </div>
-                        <div class="activity-time">2 hours ago</div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2">
-                                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
-                                <polyline points="22 4 12 14.01 9 11.01"/>
-                            </svg>
-                        </div>
-                        <div class="activity-content">
-                            <div class="activity-title">Lead converted</div>
-                            <div class="activity-description">Sarah Johnson signed up for the Growth package</div>
-                        </div>
-                        <div class="activity-time">5 hours ago</div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2">
-                                <rect x="3" y="11" width="18" height="10" rx="2" ry="2"/>
-                                <path d="M7 11V7a5 5 0 0110 0v4"/>
-                            </svg>
-                        </div>
-                        <div class="activity-content">
-                            <div class="activity-title">Security update completed</div>
-                            <div class="activity-description">All systems are secure and up to date</div>
-                        </div>
-                        <div class="activity-time">Yesterday</div>
-                    </div>
-                </div>
-            </section>
+            <!-- Website Section -->
+            <section id="website-section" class="section-content"></section>
+            
+            <!-- Google Business Section -->
+            <section id="google-business-section" class="section-content"></section>
+            
+            <!-- Reputation Section -->
+            <section id="reputation-section" class="section-content"></section>
+            
+            <!-- Reports Section -->
+            <section id="reports-section" class="section-content"></section>
+            
+            <!-- Billing Section -->
+            <section id="billing-section" class="section-content"></section>
+            
+            <!-- Support Section -->
+            <section id="support-section" class="section-content"></section>
         </main>
     </div>
     
-    <script>
-        // Supabase setup
-        const SUPABASE_URL = 'https://orhswpgngjpztcxgwbuy.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9yaHN3cGduZ2pwenRjeGd3YnV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgxMzUwNjgsImV4cCI6MjA2MzcxMTA2OH0.UNn_iNSkUOa1uxmoqz3MEdRuts326XVbR9MBHLiTltY';
-        
-        const { createClient } = supabase;
-        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        // Check authentication
-        async function checkAuth() {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            
-            if (!user) {
-                window.location.href = 'login.html';
-                return;
-            }
-            
-            // Update UI with user info
-            const fullName = user.user_metadata?.full_name || 'User';
-            const firstName = fullName.split(' ')[0];
-            const initials = fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-            
-            document.getElementById('userName').textContent = fullName;
-            document.getElementById('welcomeName').textContent = firstName;
-            document.getElementById('userAvatar').textContent = initials;
-        }
-        
-        // Sign out
-        async function signOut() {
-            await supabaseClient.auth.signOut();
-            window.location.href = 'login.html';
-        }
-        
-        // Toggle sidebar
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('show');
-        }
-        
-        // Toggle dropdown
-        function toggleDropdown() {
-            const dropdown = document.getElementById('userDropdown');
-            dropdown.classList.toggle('show');
-        }
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            const userMenu = document.querySelector('.user-menu');
-            if (!userMenu.contains(e.target)) {
-                document.getElementById('userDropdown').classList.remove('show');
-            }
-        });
-        
-        // Initialize
-        checkAuth();
-    </script>
+    <!-- Dashboard JavaScript -->
+    <script src="js/dashboard.js"></script>
 </body>
 </html>
