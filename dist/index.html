@@ -93,113 +93,14 @@
             font-size: 1rem;
         }
         
-        /* Enhanced Success Story Cards */
-        .stories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-            gap: 2.5rem;
-            margin-top: 3rem;
-        }
-        
-        .story-card {
-            background: var(--card-bg);
-            padding: 2.5rem;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .story-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--gradient-primary);
-        }
-        
-        .story-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            border-color: var(--accent-primary);
-        }
-        
-        .story-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 2rem;
-        }
-        
-        .story-header h3 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            line-height: 1.2;
-        }
-        
-        .result {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            background: var(--gradient-primary);
-            color: white;
-            font-size: 0.875rem;
-            font-weight: 700;
-            border-radius: 25px;
-            white-space: nowrap;
-        }
-        
-        .story-content {
-            margin-bottom: 2rem;
-        }
-        
-        .story-content p {
-            margin-bottom: 0.75rem;
-            color: var(--text-secondary);
-            line-height: 1.7;
-            font-size: 1rem;
-        }
-        
-        .story-content strong {
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-        
-        .story-quote {
-            padding: 1.25rem;
-            background: var(--bg-primary);
-            border-left: 4px solid var(--accent-primary);
-            border-radius: 10px;
-            font-style: italic;
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
-        
         /* Dark mode adjustments */
         [data-theme="dark"] .tool-card {
             background: rgba(30, 41, 59, 0.6);
             border-color: rgba(255, 255, 255, 0.1);
         }
         
-        [data-theme="dark"] .story-card {
-            background: rgba(30, 41, 59, 0.6);
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-        
-        [data-theme="dark"] .story-quote {
-            background: rgba(15, 23, 42, 0.6);
-        }
-        
         /* Responsive adjustments */
         @media (max-width: 768px) {
-            .stories-grid {
-                grid-template-columns: 1fr;
-            }
-            
             .tools-grid {
                 grid-template-columns: 1fr;
                 max-width: 100%;
@@ -259,7 +160,7 @@
                 <ul class="nav-list">
                     <li class="nav-item"><a href="index.html" class="nav-link active" data-hover="Home">Home</a></li>
                     <li class="nav-item"><a href="services.html" class="nav-link" data-hover="Services">Services</a></li>
-                    <li class="nav-item"><a href="portfolio.html" class="nav-link" data-hover="Success Stories">Success Stories</a></li>
+                    <li class="nav-item"><a href="portfolio.html" class="nav-link" data-hover="Portfolio">Portfolio</a></li>
                     <li class="nav-item"><a href="about.html" class="nav-link" data-hover="About">About</a></li>
                     <li class="nav-item"><a href="#contact" class="nav-link" data-hover="Contact">Contact</a></li>
                     <li class="nav-item"><a href="login.html" class="nav-link" data-hover="Client Login">Client Login</a></li>
@@ -270,8 +171,7 @@
                 <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
                     <svg class="sun-icon" viewBox="0 0 24 24" width="20" height="20">
                         <circle cx="12" cy="12" r="5"/>
-                        <line x1="12" y1="1" x2="12" y2="3"/>
-                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="12" y1="1" x2="12" y2="23"/>
                         <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
                         <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
                         <line x1="1" y1="12" x2="3" y2="12"/>
@@ -329,16 +229,16 @@
             
             <div class="hero-stats">
                 <div class="stat-item">
-                    <span class="stat-number" data-count="500">0</span>
-                    <span class="stat-label">Small Businesses Helped</span>
+                    <span class="stat-number" data-count="24">0</span>
+                    <span class="stat-label">Hour Response Time</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number" data-count="40">0</span>
-                    <span class="stat-label">% More Customers</span>
+                    <span class="stat-number" data-count="30">0</span>
+                    <span class="stat-label">Day Money-Back Guarantee</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-number" data-count="100">0</span>
-                    <span class="stat-label">% Tech-Free</span>
+                    <span class="stat-label">% Personalized Service</span>
                 </div>
             </div>
             
@@ -569,66 +469,6 @@
         </div>
     </section>
 
-    <!-- Success Stories -->
-    <section class="success-stories">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-label">Real Results for Real Businesses</span>
-                <h2 class="section-title">
-                    <span>Success Stories From</span>
-                    <span class="gradient-text">Businesses Like Yours</span>
-                </h2>
-            </div>
-
-            <div class="stories-grid">
-                <div class="story-card">
-                    <div class="story-header">
-                        <h3>Maria's Mexican Restaurant</h3>
-                        <span class="result">60% More Customers</span>
-                    </div>
-                    <div class="story-content">
-                        <p class="problem"><strong>Problem:</strong> Only regulars knew about them</p>
-                        <p class="solution"><strong>Solution:</strong> Local SEO + review system</p>
-                        <p class="outcome"><strong>Result:</strong> 60% more customers in 3 months</p>
-                    </div>
-                    <div class="story-quote">
-                        "Echo made it so easy! Now new customers find us every day."
-                    </div>
-                </div>
-
-                <div class="story-card">
-                    <div class="story-header">
-                        <h3>Dave's Plumbing Services</h3>
-                        <span class="result">3x More Calls</span>
-                    </div>
-                    <div class="story-content">
-                        <p class="problem"><strong>Problem:</strong> Customers calling competitors first</p>
-                        <p class="solution"><strong>Solution:</strong> Website + Google Business optimization</p>
-                        <p class="outcome"><strong>Result:</strong> Phone rings 3x more often</p>
-                    </div>
-                    <div class="story-quote">
-                        "I don't know how they did it, but my phone won't stop ringing!"
-                    </div>
-                </div>
-
-                <div class="story-card">
-                    <div class="story-header">
-                        <h3>Sunset Hair Salon</h3>
-                        <span class="result">Booked Solid</span>
-                    </div>
-                    <div class="story-content">
-                        <p class="problem"><strong>Problem:</strong> Young competitors getting all the business</p>
-                        <p class="solution"><strong>Solution:</strong> Social media + online booking</p>
-                        <p class="outcome"><strong>Result:</strong> Booked solid 2 weeks out</p>
-                    </div>
-                    <div class="story-quote">
-                        "We went from empty chairs to a waiting list!"
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Contact Section -->
     <section class="contact-section" id="contact">
         <div class="container">
@@ -723,7 +563,7 @@
         <div class="container">
             <div class="cta-content">
                 <h2 class="cta-title">Get Started in 5 Minutes</h2>
-                <p class="cta-description">Join hundreds of small businesses already growing with Echo AI Systems</p>
+                <p class="cta-description">Join forward-thinking businesses who trust Echo AI Systems to grow their online presence</p>
                 <a href="#contact" class="cta-button large">
                     <span>Get Your Free Business Growth Plan</span>
                     <div class="button-glow"></div>
@@ -764,7 +604,7 @@
                         <h4>Company</h4>
                         <ul>
                             <li><a href="about.html">About Us</a></li>
-                            <li><a href="portfolio.html">Success Stories</a></li>
+                            <li><a href="portfolio.html">Portfolio</a></li>
                             <li><a href="#tools">Free Tools</a></li>
                             <li><a href="#contact">Contact</a></li>
                         </ul>
@@ -784,7 +624,7 @@
             <div class="footer-bottom">
                 <p>&copy; 2025 Echo AI Systems. All rights reserved.</p>
                 <div class="footer-stats">
-                    <span>500+ Small Businesses Helped</span>
+                    <span>Personalized Service</span>
                     <span class="separator">•</span>
                     <span>No Tech Experience Required</span>
                 </div>
