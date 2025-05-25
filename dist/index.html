@@ -25,12 +25,15 @@
     
     <!-- Additional Styles for Better Layout -->
     <style>
-        /* Enhanced Tool Cards */
+        /* Enhanced Tool Cards - FIXED FOR VERTICAL STACKING */
         .tools-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: 1fr;  /* Single column layout */
             gap: 2rem;
             margin-top: 3rem;
+            max-width: 800px;  /* Constrain width for better readability */
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .tool-card {
@@ -42,6 +45,7 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: visible;
+            width: 100%;
         }
         
         .tool-card::before {
@@ -198,6 +202,14 @@
             
             .tools-grid {
                 grid-template-columns: 1fr;
+                max-width: 100%;
+            }
+        }
+
+        /* On larger screens, maintain single column for tools */
+        @media (min-width: 1200px) {
+            .tools-grid {
+                max-width: 900px;
             }
         }
     </style>
