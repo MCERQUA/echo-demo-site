@@ -21,23 +21,34 @@ function hideTool(toolName) {
     const toolElement = document.getElementById(toolName + '-tool');
     const resultsElement = document.getElementById(toolName + '-results');
     const formElement = document.getElementById(toolName + '-form');
+    const loadingElement = document.getElementById(toolName + '-loading');
     
     if (toolElement) toolElement.classList.remove('active');
-    if (resultsElement) resultsElement.classList.remove('show');
+    if (resultsElement) {
+        resultsElement.classList.remove('show');
+        resultsElement.innerHTML = ''; // Clear results
+    }
     if (formElement) formElement.reset();
+    if (loadingElement) loadingElement.classList.remove('show');
 }
 
-// Business Visibility Checker
+// Business Visibility Checker - FIXED VERSION
 function checkVisibility(event) {
     event.preventDefault();
     const form = event.target;
     const formData = new FormData(form);
     
-    // Show loading
-    document.getElementById('visibility-loading').classList.add('show');
-    document.getElementById('visibility-results').classList.remove('show');
+    // Show loading and hide previous results
+    const loadingElement = document.getElementById('visibility-loading');
+    const resultsElement = document.getElementById('visibility-results');
     
-    // Simulate analysis
+    if (loadingElement) loadingElement.classList.add('show');
+    if (resultsElement) {
+        resultsElement.classList.remove('show');
+        resultsElement.innerHTML = ''; // Clear previous results
+    }
+    
+    // Simulate analysis with proper timeout
     setTimeout(() => {
         const businessName = formData.get('businessName');
         const businessType = formData.get('businessType');
@@ -83,78 +94,12 @@ function checkVisibility(event) {
             </div>
         `;
         
-        document.getElementById('visibility-loading').classList.remove('show');
-        document.getElementById('visibility-results').innerHTML = html;
-        document.getElementById('visibility-results').classList.add('show');
-    }, 2000);
-}
-
-// Review Score Calculator
-function calculateReviews(event) {
-    event.preventDefault();
-    const form = event.target;
-    const formData = new FormData(form);
-    
-    // Show loading
-    document.getElementById('reviews-loading').classList.add('show');
-    document.getElementById('reviews-results').classList.remove('show');
-    
-    setTimeout(() => {
-        const totalReviews = parseInt(formData.get('totalReviews'));
-        const avgRating = parseFloat(formData.get('avgRating'));
-        const recentReviews = parseInt(formData.get('recentReviews'));
-        const responseRate = parseInt(formData.get('responseRate'));
-        
-        // Calculate scores
-        let volumeScore = Math.min(100, (totalReviews / 100) * 100);
-        let ratingScore = (avgRating / 5) * 100;
-        let freshnessScore = Math.min(100, (recentReviews / (totalReviews * 0.3)) * 100);
-        let engagementScore = responseRate;
-        
-        let overallScore = Math.floor((volumeScore * 0.2 + ratingScore * 0.4 + freshnessScore * 0.2 + engagementScore * 0.2));
-        
-        let html = `
-            <h3>Your Review Score Analysis</h3>
-            <div class="score-display ${overallScore > 80 ? 'score-good' : overallScore > 60 ? 'score-medium' : 'score-poor'}">
-                ${overallScore}/100
-            </div>
-            <p style="text-align: center; margin-bottom: 2rem;">Overall Reputation Score</p>
-            
-            <div class="result-item">
-                <div class="result-label">Review Volume</div>
-                <div class="result-value">${totalReviews} reviews - ${totalReviews > 50 ? 'Excellent' : totalReviews > 20 ? 'Good' : 'Needs more reviews'}</div>
-            </div>
-            
-            <div class="result-item">
-                <div class="result-label">Average Rating</div>
-                <div class="result-value">${avgRating} stars - ${avgRating >= 4.5 ? 'Outstanding' : avgRating >= 4.0 ? 'Good' : 'Needs improvement'}</div>
-            </div>
-            
-            <div class="result-item">
-                <div class="result-label">Review Freshness</div>
-                <div class="result-value">${recentReviews} recent reviews - ${freshnessScore > 70 ? 'Very active' : freshnessScore > 40 ? 'Moderately active' : 'Too few recent reviews'}</div>
-            </div>
-            
-            <div class="result-item">
-                <div class="result-label">Response Rate</div>
-                <div class="result-value">${responseRate}% - ${responseRate > 80 ? 'Excellent engagement' : responseRate > 50 ? 'Good engagement' : 'Needs improvement'}</div>
-            </div>
-            
-            <div class="recommendations">
-                <h4>Ways to Improve Your Score:</h4>
-                <ul>
-                    ${totalReviews < 50 ? '<li>Ask satisfied customers to leave reviews</li>' : ''}
-                    ${avgRating < 4.5 ? '<li>Address negative feedback promptly and professionally</li>' : ''}
-                    ${freshnessScore < 70 ? '<li>Implement a system to request reviews regularly</li>' : ''}
-                    ${responseRate < 80 ? '<li>Respond to all reviews within 24-48 hours</li>' : ''}
-                    <li>Make it easy for customers to leave reviews with direct links</li>
-                </ul>
-            </div>
-        `;
-        
-        document.getElementById('reviews-loading').classList.remove('show');
-        document.getElementById('reviews-results').innerHTML = html;
-        document.getElementById('reviews-results').classList.add('show');
+        // Hide loading and show results
+        if (loadingElement) loadingElement.classList.remove('show');
+        if (resultsElement) {
+            resultsElement.innerHTML = html;
+            resultsElement.classList.add('show');
+        }
     }, 2000);
 }
 
@@ -165,8 +110,11 @@ function testSpeed(event) {
     const formData = new FormData(form);
     
     // Show loading
-    document.getElementById('speed-loading').classList.add('show');
-    document.getElementById('speed-results').classList.remove('show');
+    const loadingElement = document.getElementById('speed-loading');
+    const resultsElement = document.getElementById('speed-results');
+    
+    if (loadingElement) loadingElement.classList.add('show');
+    if (resultsElement) resultsElement.classList.remove('show');
     
     setTimeout(() => {
         const url = formData.get('websiteUrl');
@@ -225,9 +173,11 @@ function testSpeed(event) {
             </div>
         `;
         
-        document.getElementById('speed-loading').classList.remove('show');
-        document.getElementById('speed-results').innerHTML = html;
-        document.getElementById('speed-results').classList.add('show');
+        if (loadingElement) loadingElement.classList.remove('show');
+        if (resultsElement) {
+            resultsElement.innerHTML = html;
+            resultsElement.classList.add('show');
+        }
     }, 3000);
 }
 
@@ -238,8 +188,11 @@ function analyzeCompetition(event) {
     const formData = new FormData(form);
     
     // Show loading
-    document.getElementById('competition-loading').classList.add('show');
-    document.getElementById('competition-results').classList.remove('show');
+    const loadingElement = document.getElementById('competition-loading');
+    const resultsElement = document.getElementById('competition-results');
+    
+    if (loadingElement) loadingElement.classList.add('show');
+    if (resultsElement) resultsElement.classList.remove('show');
     
     setTimeout(() => {
         const businessType = formData.get('businessType');
@@ -299,9 +252,11 @@ function analyzeCompetition(event) {
             </div>
         `;
         
-        document.getElementById('competition-loading').classList.remove('show');
-        document.getElementById('competition-results').innerHTML = html;
-        document.getElementById('competition-results').classList.add('show');
+        if (loadingElement) loadingElement.classList.remove('show');
+        if (resultsElement) {
+            resultsElement.innerHTML = html;
+            resultsElement.classList.add('show');
+        }
     }, 2500);
 }
 
