@@ -32,6 +32,7 @@
     justify-content: center;
     position: relative;
     padding: 2rem;
+    padding-top: 6rem; /* Account for fixed header */
 }
 
 .login-background {
@@ -66,6 +67,7 @@
     background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .login-header p {
@@ -103,6 +105,8 @@
     font-size: 1rem;
     color: var(--text-primary);
     transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .form-group input:focus,
@@ -114,6 +118,15 @@
 
 .form-group input::placeholder {
     color: var(--text-tertiary);
+}
+
+.form-group input[type="password"] {
+    font-family: inherit;
+    letter-spacing: 0.1em;
+}
+
+.form-group input[type="password"]::placeholder {
+    letter-spacing: normal;
 }
 
 .form-options {
@@ -128,12 +141,14 @@
     align-items: center;
     gap: 0.5rem;
     cursor: pointer;
+    color: var(--text-secondary);
 }
 
 .remember-me input[type="checkbox"] {
     width: 1rem;
     height: 1rem;
     accent-color: var(--accent-primary);
+    cursor: pointer;
 }
 
 .forgot-password {
@@ -144,6 +159,7 @@
 
 .forgot-password:hover {
     color: var(--accent-secondary);
+    text-decoration: underline;
 }
 
 .login-button {
@@ -161,11 +177,16 @@
     gap: 0.5rem;
     transition: all 0.3s ease;
     margin-top: 0.5rem;
+    width: 100%;
 }
 
 .login-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 20px -5px rgba(14, 165, 233, 0.3);
+}
+
+.login-button:active {
+    transform: translateY(0);
 }
 
 .login-button svg {
@@ -215,6 +236,7 @@
 
 .login-footer a:hover {
     color: var(--accent-secondary);
+    text-decoration: underline;
 }
 
 /* Login Info Section */
@@ -265,6 +287,7 @@
     width: 24px;
     height: 24px;
     color: var(--accent-primary);
+    flex-shrink: 0;
 }
 
 .dashboard-features .feature span {
@@ -277,6 +300,7 @@
     .login-container {
         grid-template-columns: 1fr;
         gap: 2rem;
+        max-width: 500px;
     }
     
     .login-info {
@@ -295,6 +319,7 @@
 @media (max-width: 480px) {
     .login-section {
         padding: 1rem;
+        padding-top: 5rem;
     }
     
     .login-box {
@@ -305,5 +330,13 @@
         flex-direction: column;
         gap: 1rem;
         align-items: flex-start;
+    }
+    
+    .remember-me {
+        order: 2;
+    }
+    
+    .forgot-password {
+        order: 1;
     }
 }
