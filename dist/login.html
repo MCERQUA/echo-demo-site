@@ -24,6 +24,42 @@
     
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        /* Quick inline fixes for immediate resolution */
+        .login-form .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        .login-form .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #e2e8f0;
+        }
+        
+        .login-form .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 0.5rem;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .login-form .form-group input:focus {
+            outline: none;
+            border-color: #0EA5E9;
+            background: rgba(15, 23, 42, 0.8);
+        }
+        
+        .login-form .form-group input::placeholder {
+            color: rgba(148, 163, 184, 0.6);
+        }
+    </style>
 </head>
 <body>
     <!-- Simple Header -->
@@ -83,7 +119,7 @@
                             id="password" 
                             name="password" 
                             required 
-                            placeholder="••••••••"
+                            placeholder="Enter your password"
                             autocomplete="current-password"
                         >
                     </div>
