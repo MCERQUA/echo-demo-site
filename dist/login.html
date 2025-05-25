@@ -4,34 +4,142 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Client Login - Echo AI Systems</title>
-    <meta name="description" content="Access your Echo AI Systems client dashboard. Monitor your projects, track results, and manage your AI solutions.">
+    <meta name="description" content="Access your Echo AI Systems client dashboard.">
     
-    <!-- Modern Font Stack -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
-    <!-- CSS Files -->
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/login.css">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="images/echo-favicon.svg">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
-        /* Quick inline fixes for immediate resolution */
-        .login-form .form-group {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: #e2e8f0;
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #0EA5E9, #6366F1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+        
+        /* Main Content */
+        .main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Background Effects */
+        .bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(14, 165, 233, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(14, 165, 233, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.3;
+        }
+        
+        .bg-glow {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.3), transparent);
+            filter: blur(100px);
+            top: -200px;
+            right: -200px;
+        }
+        
+        /* Login Container */
+        .login-container {
+            position: relative;
+            z-index: 10;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            max-width: 1000px;
+            width: 100%;
+        }
+        
+        /* Login Box */
+        .login-box {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 1rem;
+            padding: 3rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .login-box h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #0EA5E9, #6366F1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .login-box p {
+            color: #94a3b8;
+            margin-bottom: 2rem;
+        }
+        
+        /* Form Styles */
+        .form-group {
             margin-bottom: 1.25rem;
         }
         
-        .login-form .form-group label {
+        .form-group label {
             display: block;
             margin-bottom: 0.5rem;
             font-size: 0.875rem;
@@ -39,7 +147,7 @@
             color: #e2e8f0;
         }
         
-        .login-form .form-group input {
+        .form-group input {
             width: 100%;
             padding: 0.75rem 1rem;
             background: rgba(15, 23, 42, 0.6);
@@ -50,56 +158,203 @@
             transition: all 0.2s;
         }
         
-        .login-form .form-group input:focus {
+        .form-group input:focus {
             outline: none;
             border-color: #0EA5E9;
             background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
         }
         
-        .login-form .form-group input::placeholder {
+        .form-group input::placeholder {
             color: rgba(148, 163, 184, 0.6);
+        }
+        
+        /* Form Options */
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #94a3b8;
+        }
+        
+        .remember-me input {
+            width: 16px;
+            height: 16px;
+            accent-color: #0EA5E9;
+        }
+        
+        .forgot-password {
+            color: #0EA5E9;
+            text-decoration: none;
+        }
+        
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+        
+        /* Button */
+        .btn-primary {
+            width: 100%;
+            padding: 0.875rem 2rem;
+            background: linear-gradient(135deg, #0EA5E9, #6366F1);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(14, 165, 233, 0.3);
+        }
+        
+        /* Messages */
+        .message {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+        
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .success-message {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Footer */
+        .login-footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+        
+        .login-footer a {
+            color: #0EA5E9;
+            text-decoration: none;
+        }
+        
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Info Section */
+        .info-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .info-section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        
+        .info-section > p {
+            font-size: 1.125rem;
+            color: #94a3b8;
+            margin-bottom: 3rem;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: rgba(30, 41, 59, 0.3);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .feature:hover {
+            background: rgba(30, 41, 59, 0.5);
+            border-color: #0EA5E9;
+            transform: translateX(5px);
+        }
+        
+        .feature svg {
+            width: 24px;
+            height: 24px;
+            color: #0EA5E9;
+            flex-shrink: 0;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .login-container {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+            
+            .info-section {
+                display: none;
+            }
+            
+            .login-box {
+                padding: 2rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Simple Header -->
-    <header class="login-header">
-        <div class="header-container">
-            <a href="index.html" class="logo-link">
-                <div class="logo-icon">
-                    <svg viewBox="0 0 40 40" width="40" height="40">
-                        <defs>
-                            <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#0EA5E9;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#6366F1;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                        <circle cx="20" cy="20" r="18" fill="url(#logo-gradient)"/>
-                        <text x="20" y="27" text-anchor="middle" fill="white" font-size="16" font-weight="bold">E</text>
-                    </svg>
-                </div>
-                <span class="logo-text">Echo<span class="ai-badge">AI</span></span>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">E</div>
+                <span>Echo AI Systems</span>
             </a>
         </div>
     </header>
 
-    <!-- Login Section -->
-    <section class="login-section">
-        <div class="login-background">
-            <div class="grid-pattern"></div>
-            <div class="gradient-orb orb-1"></div>
-            <div class="gradient-orb orb-2"></div>
-        </div>
-
+    <!-- Main Content -->
+    <main class="main">
+        <div class="bg-grid"></div>
+        <div class="bg-glow"></div>
+        
         <div class="login-container">
+            <!-- Login Form -->
             <div class="login-box">
-                <div class="login-header">
-                    <h1>Welcome Back</h1>
-                    <p>Access your client dashboard to monitor your projects and results</p>
-                </div>
-
-                <!-- Login Form -->
-                <form id="loginForm" class="login-form">
+                <h1>Welcome Back</h1>
+                <p>Access your client dashboard to monitor your projects and results</p>
+                
+                <form id="loginForm">
                     <div class="form-group">
                         <label for="email">Email Address</label>
                         <input 
@@ -111,7 +366,7 @@
                             autocomplete="email"
                         >
                     </div>
-
+                    
                     <div class="form-group">
                         <label for="password">Password</label>
                         <input 
@@ -123,232 +378,143 @@
                             autocomplete="current-password"
                         >
                     </div>
-
+                    
                     <div class="form-options">
                         <label class="remember-me">
-                            <input type="checkbox" name="remember" id="remember">
+                            <input type="checkbox" name="remember">
                             <span>Remember me</span>
                         </label>
-                        <a href="#" class="forgot-password" id="forgotPassword">Forgot password?</a>
+                        <a href="#" class="forgot-password" id="forgotLink">Forgot password?</a>
                     </div>
-
-                    <button type="submit" class="login-button">
+                    
+                    <button type="submit" class="btn-primary">
                         <span>Sign In</span>
-                        <svg viewBox="0 0 24 24" width="20" height="20">
-                            <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14m-7-7l7 7-7 7"/>
                         </svg>
                     </button>
-
-                    <div class="error-message" id="errorMessage"></div>
-                    <div class="success-message" id="successMessage"></div>
+                    
+                    <div id="loginError" class="message error-message hidden"></div>
+                    <div id="loginSuccess" class="message success-message hidden"></div>
                 </form>
-
-                <!-- Sign Up Form (Hidden by default) -->
-                <form id="signupForm" class="signup-form" style="display: none;">
+                
+                <!-- Signup Form (Hidden) -->
+                <form id="signupForm" class="hidden">
                     <div class="form-group">
                         <label for="signupName">Full Name</label>
-                        <input 
-                            type="text" 
-                            id="signupName" 
-                            name="name" 
-                            required 
-                            placeholder="John Doe"
-                            autocomplete="name"
-                        >
+                        <input type="text" id="signupName" required placeholder="John Doe">
                     </div>
-
+                    
                     <div class="form-group">
                         <label for="signupEmail">Email Address</label>
-                        <input 
-                            type="email" 
-                            id="signupEmail" 
-                            name="email" 
-                            required 
-                            placeholder="your@email.com"
-                            autocomplete="email"
-                        >
+                        <input type="email" id="signupEmail" required placeholder="your@email.com">
                     </div>
-
+                    
                     <div class="form-group">
                         <label for="signupPassword">Password</label>
-                        <input 
-                            type="password" 
-                            id="signupPassword" 
-                            name="password" 
-                            required 
-                            placeholder="Create a strong password"
-                            autocomplete="new-password"
-                            minlength="8"
-                        >
+                        <input type="password" id="signupPassword" required placeholder="Create a strong password" minlength="8">
                     </div>
-
+                    
                     <div class="form-group">
-                        <label for="signupCompany">Company Name</label>
-                        <input 
-                            type="text" 
-                            id="signupCompany" 
-                            name="company" 
-                            placeholder="Your Company (Optional)"
-                            autocomplete="organization"
-                        >
+                        <label for="signupCompany">Company Name (Optional)</label>
+                        <input type="text" id="signupCompany" placeholder="Your Company">
                     </div>
-
-                    <button type="submit" class="login-button">
+                    
+                    <button type="submit" class="btn-primary">
                         <span>Create Account</span>
-                        <svg viewBox="0 0 24 24" width="20" height="20">
-                            <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14m-7-7l7 7-7 7"/>
                         </svg>
                     </button>
-
-                    <div class="error-message" id="signupErrorMessage"></div>
-                    <div class="success-message" id="signupSuccessMessage"></div>
+                    
+                    <div id="signupError" class="message error-message hidden"></div>
+                    <div id="signupSuccess" class="message success-message hidden"></div>
                 </form>
-
-                <!-- Password Reset Form (Hidden by default) -->
-                <form id="resetForm" class="reset-form" style="display: none;">
-                    <div class="form-group">
-                        <label for="resetEmail">Email Address</label>
-                        <input 
-                            type="email" 
-                            id="resetEmail" 
-                            name="email" 
-                            required 
-                            placeholder="your@email.com"
-                            autocomplete="email"
-                        >
-                    </div>
-
-                    <button type="submit" class="login-button">
-                        <span>Send Reset Link</span>
-                        <svg viewBox="0 0 24 24" width="20" height="20">
-                            <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" 
-                                  stroke="currentColor" stroke-width="2" fill="none"/>
-                        </svg>
-                    </button>
-
-                    <div class="error-message" id="resetErrorMessage"></div>
-                    <div class="success-message" id="resetSuccessMessage"></div>
-                </form>
-
+                
                 <div class="login-footer">
-                    <p id="toggleText">Don't have an account? <a href="#" id="toggleForm">Sign up</a></p>
-                    <p id="backToLogin" style="display: none;"><a href="#" id="backToLoginLink">Back to login</a></p>
+                    <p id="toggleText">
+                        Don't have an account? <a href="#" id="toggleLink">Sign up</a>
+                    </p>
                 </div>
             </div>
-
-            <div class="login-info">
+            
+            <!-- Info Section -->
+            <div class="info-section">
                 <h2>Your Business Dashboard</h2>
                 <p>Access powerful tools and insights to grow your business online</p>
                 
-                <div class="dashboard-features">
+                <div class="features">
                     <div class="feature">
-                        <svg viewBox="0 0 24 24" width="24" height="24">
-                            <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" fill="currentColor"/>
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
                         </svg>
                         <span>Real-time Analytics</span>
                     </div>
                     <div class="feature">
-                        <svg viewBox="0 0 24 24" width="24" height="24">
-                            <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z" fill="currentColor"/>
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
                         </svg>
                         <span>Secure & Private</span>
                     </div>
                     <div class="feature">
-                        <svg viewBox="0 0 24 24" width="24" height="24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"/>
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                         </svg>
                         <span>Track Progress</span>
                     </div>
                     <div class="feature">
-                        <svg viewBox="0 0 24 24" width="24" height="24">
-                            <path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 00-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2z" fill="currentColor"/>
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 00-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2z"/>
                         </svg>
                         <span>Manage Services</span>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </main>
 
-    <!-- Supabase Configuration and Login Script -->
     <script>
-        // Initialize Supabase client
+        // Supabase setup
         const SUPABASE_URL = 'https://orhswpgngjpztcxgwbuy.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9yaHN3cGduZ2pwenRjeGd3YnV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgxMzUwNjgsImV4cCI6MjA2MzcxMTA2OH0.UNn_iNSkUOa1uxmoqz3MEdRuts326XVbR9MBHLiTltY';
         
         const { createClient } = supabase;
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        // Form elements
+        // Elements
         const loginForm = document.getElementById('loginForm');
         const signupForm = document.getElementById('signupForm');
-        const resetForm = document.getElementById('resetForm');
-        const toggleForm = document.getElementById('toggleForm');
+        const toggleLink = document.getElementById('toggleLink');
         const toggleText = document.getElementById('toggleText');
-        const backToLogin = document.getElementById('backToLogin');
-        const backToLoginLink = document.getElementById('backToLoginLink');
-        const forgotPassword = document.getElementById('forgotPassword');
-
-        // Check if user is already logged in
-        supabaseClient.auth.onAuthStateChange((event, session) => {
-            if (session && !window.location.pathname.includes('login.html')) {
-                // User is logged in, redirect to dashboard
-                window.location.href = 'dashboard.html';
-            }
-        });
-
-        // Toggle between login and signup
-        document.addEventListener('click', (e) => {
-            if (e.target.id === 'toggleForm' || e.target.parentElement?.id === 'toggleForm') {
-                e.preventDefault();
-                if (loginForm.style.display === 'none') {
-                    loginForm.style.display = 'block';
-                    signupForm.style.display = 'none';
-                    resetForm.style.display = 'none';
-                    toggleText.innerHTML = 'Don\'t have an account? <a href="#" id="toggleForm">Sign up</a>';
-                    backToLogin.style.display = 'none';
-                } else {
-                    loginForm.style.display = 'none';
-                    signupForm.style.display = 'block';
-                    resetForm.style.display = 'none';
-                    toggleText.innerHTML = 'Already have an account? <a href="#" id="toggleForm">Sign in</a>';
-                    backToLogin.style.display = 'none';
-                }
-            }
-        });
-
-        // Show password reset form
-        forgotPassword.addEventListener('click', (e) => {
+        const loginError = document.getElementById('loginError');
+        const loginSuccess = document.getElementById('loginSuccess');
+        const signupError = document.getElementById('signupError');
+        const signupSuccess = document.getElementById('signupSuccess');
+        
+        // Toggle forms
+        toggleLink.addEventListener('click', (e) => {
             e.preventDefault();
-            loginForm.style.display = 'none';
-            signupForm.style.display = 'none';
-            resetForm.style.display = 'block';
-            toggleText.style.display = 'none';
-            backToLogin.style.display = 'block';
+            if (loginForm.classList.contains('hidden')) {
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                toggleText.innerHTML = 'Don\'t have an account? <a href="#" id="toggleLink">Sign up</a>';
+            } else {
+                loginForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+                toggleText.innerHTML = 'Already have an account? <a href="#" id="toggleLink">Sign in</a>';
+            }
+            // Re-attach event listener
+            document.getElementById('toggleLink').addEventListener('click', arguments.callee);
         });
-
-        // Back to login
-        backToLoginLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            loginForm.style.display = 'block';
-            signupForm.style.display = 'none';
-            resetForm.style.display = 'none';
-            toggleText.style.display = 'block';
-            toggleText.innerHTML = 'Don\'t have an account? <a href="#" id="toggleForm">Sign up</a>';
-            backToLogin.style.display = 'none';
-        });
-
-        // Handle login form submission
+        
+        // Login
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            loginError.classList.add('hidden');
+            loginSuccess.classList.add('hidden');
+            
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const errorMessage = document.getElementById('errorMessage');
-            const successMessage = document.getElementById('successMessage');
-            
-            // Clear previous messages
-            errorMessage.textContent = '';
-            successMessage.textContent = '';
             
             try {
                 const { data, error } = await supabaseClient.auth.signInWithPassword({
@@ -357,31 +523,31 @@
                 });
                 
                 if (error) {
-                    errorMessage.textContent = error.message;
+                    loginError.textContent = error.message;
+                    loginError.classList.remove('hidden');
                 } else {
-                    successMessage.textContent = 'Login successful! Redirecting...';
+                    loginSuccess.textContent = 'Login successful! Redirecting...';
+                    loginSuccess.classList.remove('hidden');
                     setTimeout(() => {
                         window.location.href = 'dashboard.html';
                     }, 1500);
                 }
             } catch (error) {
-                errorMessage.textContent = 'An error occurred. Please try again.';
+                loginError.textContent = 'An error occurred. Please try again.';
+                loginError.classList.remove('hidden');
             }
         });
-
-        // Handle signup form submission
+        
+        // Signup
         signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            signupError.classList.add('hidden');
+            signupSuccess.classList.add('hidden');
+            
             const name = document.getElementById('signupName').value;
             const email = document.getElementById('signupEmail').value;
             const password = document.getElementById('signupPassword').value;
             const company = document.getElementById('signupCompany').value;
-            const errorMessage = document.getElementById('signupErrorMessage');
-            const successMessage = document.getElementById('signupSuccessMessage');
-            
-            // Clear previous messages
-            errorMessage.textContent = '';
-            successMessage.textContent = '';
             
             try {
                 const { data, error } = await supabaseClient.auth.signUp({
@@ -397,55 +563,27 @@
                 });
                 
                 if (error) {
-                    errorMessage.textContent = error.message;
+                    signupError.textContent = error.message;
+                    signupError.classList.remove('hidden');
                 } else {
-                    successMessage.textContent = 'Account created! Please check your email to verify your account.';
+                    signupSuccess.textContent = 'Account created! Please check your email to verify your account.';
+                    signupSuccess.classList.remove('hidden');
                 }
             } catch (error) {
-                errorMessage.textContent = 'An error occurred. Please try again.';
+                signupError.textContent = 'An error occurred. Please try again.';
+                signupError.classList.remove('hidden');
             }
         });
-
-        // Handle password reset form submission
-        resetForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('resetEmail').value;
-            const successMessage = document.getElementById('resetSuccessMessage');
-            const errorMessage = document.getElementById('resetErrorMessage');
-            
-            // Clear previous messages
-            successMessage.textContent = '';
-            errorMessage.textContent = '';
-            
-            try {
-                const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-                    redirectTo: 'https://echo-demo-site.netlify.app/reset-password.html'
-                });
-                
-                if (error) {
-                    errorMessage.textContent = error.message;
-                } else {
-                    successMessage.textContent = 'Password reset link sent! Check your email.';
-                }
-            } catch (error) {
-                errorMessage.textContent = 'An error occurred. Please try again.';
-            }
-        });
-
-        // Check for auth errors in URL hash
+        
+        // Check for auth errors in URL
         if (window.location.hash) {
             const hashParams = new URLSearchParams(window.location.hash.substring(1));
             const error = hashParams.get('error');
             const errorDescription = hashParams.get('error_description');
             
             if (error) {
-                const errorMessage = document.getElementById('errorMessage');
-                if (error === 'access_denied' && errorDescription?.includes('Email link is invalid or has expired')) {
-                    errorMessage.textContent = 'The verification link has expired. Please sign up again to receive a new verification email.';
-                } else {
-                    errorMessage.textContent = errorDescription || 'An error occurred. Please try again.';
-                }
-                // Clear the hash from URL
+                loginError.textContent = errorDescription || 'An error occurred. Please try again.';
+                loginError.classList.remove('hidden');
                 history.replaceState(null, null, window.location.pathname);
             }
         }
