@@ -44,7 +44,7 @@ function toggleDropdown() {
 }
 
 // Show section
-function showSection(sectionName) {
+async function showSection(sectionName) {
     // Hide all sections
     const sections = document.querySelectorAll('.section-content');
     sections.forEach(section => {
@@ -60,6 +60,10 @@ function showSection(sectionName) {
     // Show selected section
     const selectedSection = document.getElementById(`${sectionName}-section`);
     if (selectedSection) {
+        // Load content if not already loaded
+        if (selectedSection.dataset.loaded !== 'true') {
+            await loadSectionContent(sectionName);
+        }
         selectedSection.classList.add('active');
     }
     
@@ -79,7 +83,7 @@ function showSection(sectionName) {
 // Load section content dynamically
 async function loadSectionContent(sectionName) {
     const contentDiv = document.getElementById(`${sectionName}-section`);
-    if (!contentDiv || contentDiv.dataset.loaded === 'true') {
+    if (!contentDiv) {
         return;
     }
     
@@ -104,12 +108,9 @@ document.addEventListener('click', (e) => {
 });
 
 // Initialize on page load
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     checkAuth();
     
-    // Pre-load section content
-    const sections = ['overview', 'brand-info', 'social-media', 'website', 'google-business', 'reputation', 'reports', 'billing', 'support'];
-    sections.forEach(section => {
-        loadSectionContent(section);
-    });
+    // Load the initial overview section content
+    await loadSectionContent('overview');
 });
