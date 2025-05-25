@@ -132,53 +132,10 @@ async function loadClientData() {
     try {
         console.log('Loading client data for user:', currentUser.id);
         
-        // Load all client data from various tables
-        const results = await Promise.allSettled([
-            supabaseClient.from('clients').select('*').eq('user_id', currentUser.id).single(),
-            supabaseClient.from('business_info').select('*').eq('user_id', currentUser.id).single(),
-            supabaseClient.from('contact_info').select('*').eq('user_id', currentUser.id).single(),
-            supabaseClient.from('brand_assets').select('*').eq('user_id', currentUser.id).single(),
-            supabaseClient.from('digital_presence').select('*').eq('user_id', currentUser.id).single(),
-            supabaseClient.from('social_media_accounts').select('*').eq('client_id', currentUser.id),
-            supabaseClient.from('google_business_profile').select('*').eq('user_id', currentUser.id).single(),
-            supabaseClient.from('reputation_management').select('*').eq('client_id', currentUser.id),
-            supabaseClient.from('competitor_analysis').select('*').eq('client_id', currentUser.id),
-            supabaseClient.from('campaign_data').select('*').eq('client_id', currentUser.id),
-            supabaseClient.from('seo_data').select('*').eq('client_id', currentUser.id).single(),
-            supabaseClient.from('customer_insights').select('*').eq('client_id', currentUser.id).single(),
-            supabaseClient.from('content_library').select('*').eq('client_id', currentUser.id),
-            supabaseClient.from('ai_research_queue').select('*').eq('client_id', currentUser.id)
-        ]);
-        
-        // Process results
-        clientData = {
-            client: results[0].status === 'fulfilled' && results[0].value.data ? results[0].value.data : { id: currentUser.id },
-            businessInfo: results[1].status === 'fulfilled' && results[1].value.data ? results[1].value.data : {},
-            contactInfo: results[2].status === 'fulfilled' && results[2].value.data ? results[2].value.data : {},
-            brandAssets: results[3].status === 'fulfilled' && results[3].value.data ? results[3].value.data : {},
-            digitalPresence: results[4].status === 'fulfilled' && results[4].value.data ? results[4].value.data : {},
-            socialMedia: results[5].status === 'fulfilled' && results[5].value.data ? results[5].value.data : [],
-            googleBusiness: results[6].status === 'fulfilled' && results[6].value.data ? results[6].value.data : {},
-            reputation: results[7].status === 'fulfilled' && results[7].value.data ? results[7].value.data : [],
-            competitors: results[8].status === 'fulfilled' && results[8].value.data ? results[8].value.data : [],
-            campaigns: results[9].status === 'fulfilled' && results[9].value.data ? results[9].value.data : [],
-            seoData: results[10].status === 'fulfilled' && results[10].value.data ? results[10].value.data : {},
-            customerInsights: results[11].status === 'fulfilled' && results[11].value.data ? results[11].value.data : {},
-            contentLibrary: results[12].status === 'fulfilled' && results[12].value.data ? results[12].value.data : [],
-            aiQueue: results[13].status === 'fulfilled' && results[13].value.data ? results[13].value.data : []
-        };
-        
-        // Calculate completeness
-        calculateDataCompleteness();
-        
-        console.log('Client data loaded:', clientData);
-        
-    } catch (error) {
-        console.error('Error loading client data:', error);
-        // Use minimal fallback data
+        // Create default empty data structure
         clientData = {
             client: { id: currentUser.id },
-            businessInfo: { business_name: currentUser.email.split('@')[0] },
+            businessInfo: {},
             contactInfo: {},
             brandAssets: {},
             digitalPresence: {},
@@ -193,6 +150,52 @@ async function loadClientData() {
             aiQueue: [],
             completeness: 0
         };
+        
+        // Try to load from database (tables might not exist yet)
+        try {
+            const results = await Promise.allSettled([
+                supabaseClient.from('clients').select('*').eq('user_id', currentUser.id).single(),
+                supabaseClient.from('business_info').select('*').eq('user_id', currentUser.id).single(),
+                supabaseClient.from('contact_info').select('*').eq('user_id', currentUser.id).single(),
+                supabaseClient.from('brand_assets').select('*').eq('user_id', currentUser.id).single(),
+                supabaseClient.from('digital_presence').select('*').eq('user_id', currentUser.id).single(),
+                supabaseClient.from('social_media_accounts').select('*').eq('client_id', currentUser.id),
+                supabaseClient.from('google_business_profile').select('*').eq('user_id', currentUser.id).single(),
+                supabaseClient.from('reputation_management').select('*').eq('client_id', currentUser.id),
+                supabaseClient.from('competitor_analysis').select('*').eq('client_id', currentUser.id),
+                supabaseClient.from('campaign_data').select('*').eq('client_id', currentUser.id),
+                supabaseClient.from('seo_data').select('*').eq('client_id', currentUser.id).single(),
+                supabaseClient.from('customer_insights').select('*').eq('client_id', currentUser.id).single(),
+                supabaseClient.from('content_library').select('*').eq('client_id', currentUser.id),
+                supabaseClient.from('ai_research_queue').select('*').eq('client_id', currentUser.id)
+            ]);
+            
+            // Process results (update only if data exists)
+            if (results[0].status === 'fulfilled' && results[0].value.data) clientData.client = results[0].value.data;
+            if (results[1].status === 'fulfilled' && results[1].value.data) clientData.businessInfo = results[1].value.data;
+            if (results[2].status === 'fulfilled' && results[2].value.data) clientData.contactInfo = results[2].value.data;
+            if (results[3].status === 'fulfilled' && results[3].value.data) clientData.brandAssets = results[3].value.data;
+            if (results[4].status === 'fulfilled' && results[4].value.data) clientData.digitalPresence = results[4].value.data;
+            if (results[5].status === 'fulfilled' && results[5].value.data) clientData.socialMedia = results[5].value.data;
+            if (results[6].status === 'fulfilled' && results[6].value.data) clientData.googleBusiness = results[6].value.data;
+            if (results[7].status === 'fulfilled' && results[7].value.data) clientData.reputation = results[7].value.data;
+            if (results[8].status === 'fulfilled' && results[8].value.data) clientData.competitors = results[8].value.data;
+            if (results[9].status === 'fulfilled' && results[9].value.data) clientData.campaigns = results[9].value.data;
+            if (results[10].status === 'fulfilled' && results[10].value.data) clientData.seoData = results[10].value.data;
+            if (results[11].status === 'fulfilled' && results[11].value.data) clientData.customerInsights = results[11].value.data;
+            if (results[12].status === 'fulfilled' && results[12].value.data) clientData.contentLibrary = results[12].value.data;
+            if (results[13].status === 'fulfilled' && results[13].value.data) clientData.aiQueue = results[13].value.data;
+        } catch (dbError) {
+            console.log('Database tables may not exist yet. Using default data structure.');
+        }
+        
+        // Calculate completeness
+        calculateDataCompleteness();
+        
+        console.log('Client data loaded:', clientData);
+        
+    } catch (error) {
+        console.error('Error loading client data:', error);
     }
 }
 
@@ -281,9 +284,28 @@ async function loadSection(sectionName) {
     const sectionElement = document.getElementById(`${sectionName}-section`);
     
     try {
-        // Load the section template
-        const response = await fetch(`sections/${sectionName}.html`);
-        if (response.ok) {
+        // Try different paths for local vs deployed
+        let response;
+        const paths = [
+            `sections/${sectionName}.html`,
+            `./sections/${sectionName}.html`,
+            `/sections/${sectionName}.html`,
+            `https://echoaisystem.com/sections/${sectionName}.html`
+        ];
+        
+        for (const path of paths) {
+            try {
+                response = await fetch(path);
+                if (response.ok) {
+                    console.log(`Loaded section from: ${path}`);
+                    break;
+                }
+            } catch (e) {
+                // Try next path
+            }
+        }
+        
+        if (response && response.ok) {
             const html = await response.text();
             sectionElement.innerHTML = html;
             
@@ -292,24 +314,390 @@ async function loadSection(sectionName) {
             
             // Populate section with data
             populateSection(sectionName);
+            
+            // Run any embedded scripts
+            const scripts = sectionElement.querySelectorAll('script');
+            scripts.forEach(script => {
+                const newScript = document.createElement('script');
+                newScript.textContent = script.textContent;
+                document.body.appendChild(newScript);
+                document.body.removeChild(newScript);
+            });
         } else {
-            // Fallback if template doesn't exist
-            sectionElement.innerHTML = `
-                <div class="section-header">
-                    <h1>${formatSectionName(sectionName)}</h1>
-                    <p>This section is being developed. Check back soon!</p>
-                </div>
-            `;
+            throw new Error('Could not load section template');
         }
     } catch (error) {
         console.error(`Error loading section ${sectionName}:`, error);
-        sectionElement.innerHTML = `
-            <div class="error-message">
-                <h2>Section Under Construction</h2>
-                <p>This section is being developed. Please check back soon!</p>
+        
+        // Show a working empty state instead of error
+        const emptyStates = {
+            'overview': createOverviewSection(),
+            'brand-info': createBrandInfoSection(),
+            'social-media': createSocialMediaSection(),
+            'website': createWebsiteSection(),
+            'google-business': createGoogleBusinessSection(),
+            'reputation': createReputationSection(),
+            'reports': createReportsSection(),
+            'billing': createBillingSection(),
+            'support': createSupportSection()
+        };
+        
+        sectionElement.innerHTML = emptyStates[sectionName] || `
+            <div class="section-header">
+                <h1>${formatSectionName(sectionName)}</h1>
+                <p>This section is being developed. Check back soon!</p>
             </div>
         `;
+        
+        // Initialize features even for generated sections
+        initializeSectionFeatures(sectionName);
+        populateSection(sectionName);
     }
+}
+
+// Create overview section dynamically
+function createOverviewSection() {
+    return `
+        <div class="section-header">
+            <h1>Dashboard Overview</h1>
+            <p>Welcome back! Here's a snapshot of your business data.</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Profile Completion</h3>
+                <div class="stat-value">${clientData.completeness || 0}%</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${clientData.completeness || 0}%"></div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <h3>Active Services</h3>
+                <div class="stat-value" data-field="active-services">0</div>
+                <p class="stat-label">Services running</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3>Reports Available</h3>
+                <div class="stat-value" data-field="reports-available">0</div>
+                <p class="stat-label">Ready to view</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3>Next Review</h3>
+                <div class="stat-value">--</div>
+                <p class="stat-label">Not scheduled</p>
+            </div>
+        </div>
+        
+        <div class="quick-actions">
+            <h2>Quick Actions</h2>
+            <div class="action-buttons">
+                <button class="action-btn" onclick="showSection('brand-info')">
+                    Update Brand Info
+                </button>
+                <button class="action-btn" onclick="showSection('social-media')">
+                    Connect Social Media
+                </button>
+                <button class="action-btn" onclick="showSection('website')">
+                    Website Settings
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+// Create brand info section dynamically
+function createBrandInfoSection() {
+    return `
+        <div class="section-header">
+            <h1>Brand Information</h1>
+            <p>Manage your business details, brand assets, and company information.</p>
+        </div>
+        
+        <div class="section-card">
+            <div class="card-header">
+                <h2>Business Information</h2>
+                <button class="btn-secondary edit-button" onclick="toggleEditMode('business_info')">Edit</button>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Business Name</label>
+                    <div class="field-value" data-field="business_name" data-table="business_info">Click Edit to add</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Primary Industry</label>
+                    <div class="field-value" data-field="primary_industry" data-table="business_info">Click Edit to add</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Business Type</label>
+                    <div class="field-value" data-field="business_type" data-table="business_info">Click Edit to add</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Founded Date</label>
+                    <div class="field-value" data-field="founded_date" data-table="business_info">Click Edit to add</div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label>Business Description</label>
+                    <div class="field-value" data-field="business_description" data-table="business_info">Click Edit to add</div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label>Services Offered</label>
+                    <div class="field-value" data-field="services_offered" data-table="business_info">Click Edit to add</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section-card">
+            <div class="card-header">
+                <h2>Contact Information</h2>
+                <button class="btn-secondary edit-button" onclick="toggleEditMode('contact_info')">Edit</button>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Primary Phone</label>
+                    <div class="field-value" data-field="primary_phone" data-table="contact_info">Click Edit to add</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Primary Email</label>
+                    <div class="field-value" data-field="primary_email" data-table="contact_info">Click Edit to add</div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label>Business Address</label>
+                    <div class="field-value" data-field="headquarters_address" data-table="contact_info">Click Edit to add</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section-card">
+            <div class="card-header">
+                <h2>Brand Assets</h2>
+                <button class="btn-secondary edit-button" onclick="toggleEditMode('brand_assets')">Edit</button>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Tagline</label>
+                    <div class="field-value" data-field="tagline" data-table="brand_assets">Click Edit to add</div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label>Mission Statement</label>
+                    <div class="field-value" data-field="mission_statement" data-table="brand_assets">Click Edit to add</div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label>Vision Statement</label>
+                    <div class="field-value" data-field="vision_statement" data-table="brand_assets">Click Edit to add</div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Create other sections similarly...
+function createSocialMediaSection() {
+    return `
+        <div class="section-header">
+            <h1>Social Media</h1>
+            <p>Manage your social media accounts and presence.</p>
+        </div>
+        
+        <div class="section-card">
+            <div class="card-header">
+                <h2>Connected Accounts</h2>
+                <button class="btn-primary" onclick="connectSocialAccount()">Connect Account</button>
+            </div>
+            
+            <div id="social-accounts-list">
+                <div class="empty-state">
+                    <p>No social media accounts connected yet.</p>
+                    <button class="btn-primary" onclick="connectSocialAccount()">
+                        Connect Your First Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function createWebsiteSection() {
+    return `
+        <div class="section-header">
+            <h1>Website</h1>
+            <p>Manage your website and domain information.</p>
+        </div>
+        
+        <div class="section-card">
+            <div class="card-header">
+                <h2>Website Details</h2>
+                <button class="btn-secondary edit-button" onclick="toggleEditMode('digital_presence')">Edit</button>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Primary Domain</label>
+                    <div class="field-value" data-field="primary_domain" data-table="digital_presence">Click Edit to add</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Website Platform</label>
+                    <div class="field-value" data-field="website_platform" data-table="digital_presence">Click Edit to add</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Hosting Provider</label>
+                    <div class="field-value" data-field="hosting_provider" data-table="digital_presence">Click Edit to add</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>SSL Status</label>
+                    <div class="field-value" data-field="ssl_status" data-table="digital_presence">Click Edit to add</div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function createGoogleBusinessSection() {
+    return `
+        <div class="section-header">
+            <h1>Google Business</h1>
+            <p>Manage your Google Business Profile.</p>
+        </div>
+        
+        <div class="section-card">
+            <div class="card-header">
+                <h2>Profile Information</h2>
+                <button class="btn-secondary edit-button" onclick="toggleEditMode('google_business_profile')">Edit</button>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Profile Name</label>
+                    <div class="field-value" data-field="profile_name" data-table="google_business_profile">Click Edit to add</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Primary Category</label>
+                    <div class="field-value" data-field="primary_category" data-table="google_business_profile">Click Edit to add</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Total Reviews</label>
+                    <div class="field-value" data-field="total_reviews" data-table="google_business_profile">0</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Average Rating</label>
+                    <div class="field-value" data-field="average_rating" data-table="google_business_profile">N/A</div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function createReputationSection() {
+    return `
+        <div class="section-header">
+            <h1>Reputation</h1>
+            <p>Monitor and manage your online reputation.</p>
+        </div>
+        
+        <div class="section-card">
+            <div class="card-header">
+                <h2>Review Platforms</h2>
+            </div>
+            
+            <div id="reputation-platforms">
+                <div class="empty-state">
+                    <p>No reputation data available yet.</p>
+                    <button class="btn-primary" onclick="triggerAIResearch('reputation')">
+                        Start AI Research
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function createReportsSection() {
+    return `
+        <div class="section-header">
+            <h1>Reports</h1>
+            <p>View and download your reports.</p>
+        </div>
+        
+        <div class="section-card">
+            <div class="card-header">
+                <h2>Available Reports</h2>
+            </div>
+            
+            <div id="reports-list">
+                <div class="empty-state">
+                    <p>No reports available yet.</p>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function createBillingSection() {
+    return `
+        <div class="section-header">
+            <h1>Billing</h1>
+            <p>Manage your subscription and billing.</p>
+        </div>
+        
+        <div class="section-card">
+            <div class="card-header">
+                <h2>Subscription Details</h2>
+            </div>
+            
+            <div class="billing-info">
+                <p>Billing features coming soon!</p>
+            </div>
+        </div>
+    `;
+}
+
+function createSupportSection() {
+    return `
+        <div class="section-header">
+            <h1>Support</h1>
+            <p>Get help and support for your dashboard.</p>
+        </div>
+        
+        <div class="section-card">
+            <div class="card-header">
+                <h2>How Can We Help?</h2>
+            </div>
+            
+            <div class="support-options">
+                <div class="support-item">
+                    <h3>Documentation</h3>
+                    <p>Check out our guides and documentation.</p>
+                    <a href="/docs" class="btn-primary">View Docs</a>
+                </div>
+                
+                <div class="support-item">
+                    <h3>Contact Support</h3>
+                    <p>Email us at support@echoaisystem.com</p>
+                    <a href="mailto:support@echoaisystem.com" class="btn-secondary">Email Support</a>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 // Format section name for display
@@ -443,7 +831,8 @@ async function saveSection(section) {
         'business_info': 'businessInfo',
         'contact_info': 'contactInfo',
         'brand_assets': 'brandAssets',
-        'digital_presence': 'digitalPresence'
+        'digital_presence': 'digitalPresence',
+        'google_business_profile': 'googleBusiness'
     };
     
     const dataKey = tableMap[section];
@@ -475,21 +864,28 @@ async function saveSection(section) {
             .upsert(saveData, { onConflict: 'user_id' })
             .select();
         
-        if (error) throw error;
-        
-        showNotification(`${formatSectionName(section)} saved successfully!`, 'success');
-        
-        // Update local data with response
-        if (data && data[0]) {
-            clientData[dataKey] = data[0];
-        }
-        
-        // Recalculate completeness
-        calculateDataCompleteness();
-        
-        // Update overview if visible
-        if (currentSection === 'overview') {
-            populateOverview();
+        if (error) {
+            // If table doesn't exist, show helpful message
+            if (error.code === '42P01') {
+                showNotification('Database tables not set up yet. Please run the SQL schema first.', 'warning');
+            } else {
+                throw error;
+            }
+        } else {
+            showNotification(`${formatSectionName(section)} saved successfully!`, 'success');
+            
+            // Update local data with response
+            if (data && data[0]) {
+                clientData[dataKey] = data[0];
+            }
+            
+            // Recalculate completeness
+            calculateDataCompleteness();
+            
+            // Update overview if visible
+            if (currentSection === 'overview') {
+                populateOverview();
+            }
         }
         
     } catch (error) {
@@ -540,29 +936,17 @@ function populateOverview() {
     });
     
     // Update progress bar
-    const progressBar = document.querySelector('[data-field="completeness-bar"]');
+    const progressBar = document.querySelector('.progress-fill');
     if (progressBar) {
         progressBar.style.width = `${clientData.completeness || 0}%`;
     }
     
     // Update other metrics
-    const totalReviews = clientData.reputation?.reduce((sum, platform) => sum + (platform.total_reviews || 0), 0) || 0;
-    const avgRatings = clientData.reputation?.filter(p => p.average_rating).map(p => p.average_rating) || [];
-    const avgRating = avgRatings.length > 0 ? (avgRatings.reduce((a, b) => a + b, 0) / avgRatings.length).toFixed(1) : 'N/A';
-    const socialFollowers = clientData.socialMedia?.reduce((sum, account) => sum + (account.follower_count || 0), 0) || 0;
+    const activeServices = clientData.campaigns?.filter(c => c.status === 'active').length || 0;
+    const reportsAvailable = clientData.contentLibrary?.filter(c => c.type === 'report').length || 0;
     
-    updateMetric('total-reviews', totalReviews);
-    updateMetric('average-rating', avgRating);
-    updateMetric('social-followers', socialFollowers);
-    
-    // Update AI research status
-    const pendingResearch = clientData.aiQueue?.filter(item => item.status === 'pending').length || 0;
-    const inProgressResearch = clientData.aiQueue?.filter(item => item.status === 'in_progress').length || 0;
-    const completedResearch = clientData.aiQueue?.filter(item => item.status === 'completed').length || 0;
-    
-    updateMetric('pending-research', pendingResearch);
-    updateMetric('in-progress-research', inProgressResearch);
-    updateMetric('completed-research', completedResearch);
+    updateMetric('active-services', activeServices);
+    updateMetric('reports-available', reportsAvailable);
 }
 
 // Helper function to update metrics
@@ -598,22 +982,16 @@ function populateBrandInfo() {
             if (field && value !== null && value !== undefined) {
                 if (typeof value === 'object' && !Array.isArray(value)) {
                     // Handle complex objects like addresses
-                    field.textContent = JSON.stringify(value);
+                    if (value.street) {
+                        field.textContent = `${value.street}, ${value.city}, ${value.state} ${value.zip}`;
+                    } else {
+                        field.textContent = JSON.stringify(value);
+                    }
                 } else {
                     field.textContent = value;
                 }
             }
         });
-        
-        // Handle business hours specially
-        if (clientData.contactInfo.business_hours) {
-            Object.entries(clientData.contactInfo.business_hours).forEach(([day, hours]) => {
-                const openInput = document.querySelector(`[data-day="${day}"][data-period="open"]`);
-                const closeInput = document.querySelector(`[data-day="${day}"][data-period="close"]`);
-                if (openInput && hours.open) openInput.value = hours.open;
-                if (closeInput && hours.close) closeInput.value = hours.close;
-            });
-        }
     }
     
     // Populate brand assets fields
@@ -629,14 +1007,9 @@ function populateBrandInfo() {
             }
         });
     }
-    
-    // Call the section's own populate function if it exists
-    if (typeof window.populateBrandInfo === 'function') {
-        window.populateBrandInfo();
-    }
 }
 
-// Populate social media section
+// Populate other sections
 function populateSocialMedia() {
     const container = document.getElementById('social-accounts-list');
     if (!container) return;
@@ -675,28 +1048,28 @@ function populateSocialMedia() {
     }
 }
 
-// Populate website section
 function populateWebsite() {
     if (clientData.digitalPresence) {
         Object.entries(clientData.digitalPresence).forEach(([key, value]) => {
-            fillFormField(key, value);
+            const field = document.querySelector(`[data-field="${key}"][data-table="digital_presence"]`);
+            if (field && value !== null && value !== undefined) {
+                field.textContent = value;
+            }
         });
     }
 }
 
-// Populate Google Business section
 function populateGoogleBusiness() {
     if (clientData.googleBusiness) {
         Object.entries(clientData.googleBusiness).forEach(([key, value]) => {
-            fillFormField(`gmb_${key}`, value);
+            const field = document.querySelector(`[data-field="${key}"][data-table="google_business_profile"]`);
+            if (field && value !== null && value !== undefined) {
+                field.textContent = value;
+            }
         });
     }
-    
-    updateMetric('total-reviews', clientData.googleBusiness?.total_reviews || 0);
-    updateMetric('average-rating', clientData.googleBusiness?.average_rating || 'N/A');
 }
 
-// Populate reputation section
 function populateReputation() {
     const container = document.getElementById('reputation-platforms');
     if (!container) return;
@@ -721,12 +1094,14 @@ function populateReputation() {
         container.innerHTML = `
             <div class="empty-state">
                 <p>No reputation data available yet.</p>
+                <button class="btn-primary" onclick="triggerAIResearch('reputation')">
+                    Start AI Research
+                </button>
             </div>
         `;
     }
 }
 
-// Populate reports section
 function populateReports() {
     const container = document.getElementById('reports-list');
     if (!container) return;
@@ -757,7 +1132,6 @@ function populateReports() {
     }
 }
 
-// Populate billing section
 function populateBilling() {
     // This would connect to your billing system
     console.log('Billing section loaded');
