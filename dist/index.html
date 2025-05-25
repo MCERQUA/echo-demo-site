@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="css/animations.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/tools.css">
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="images/echo-favicon.svg">
@@ -40,7 +41,7 @@
             text-align: center;
             transition: all 0.3s ease;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
         }
         
         .tool-card::before {
@@ -86,24 +87,6 @@
             line-height: 1.6;
             margin-bottom: 1.5rem;
             font-size: 1rem;
-        }
-        
-        .tool-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            background: var(--gradient-primary);
-            color: white;
-            font-weight: 600;
-            text-decoration: none;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-        
-        .tool-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
         }
         
         /* Enhanced Success Story Cards */
@@ -458,32 +441,156 @@
             </div>
 
             <div class="tools-grid">
+                <!-- Business Visibility Checker -->
                 <div class="tool-card">
                     <div class="tool-icon">🔍</div>
                     <h3>Business Visibility Checker</h3>
                     <p>See how often you appear in local searches and what customers find</p>
-                    <a href="#" class="tool-link">Check Now - Free</a>
+                    <button class="tool-link" onclick="showTool('visibility')">Check Now - Free</button>
+                    
+                    <div id="visibility-tool" class="tool-interface">
+                        <h3>Check Your Business Visibility</h3>
+                        <form id="visibility-form" onsubmit="checkVisibility(event)">
+                            <div class="form-group">
+                                <label>Business Name</label>
+                                <input type="text" name="businessName" required placeholder="Your Business Name">
+                            </div>
+                            <div class="form-group">
+                                <label>Business Type</label>
+                                <select name="businessType" required>
+                                    <option value="">Select your business type</option>
+                                    <option value="restaurant">Restaurant</option>
+                                    <option value="retail">Retail Store</option>
+                                    <option value="service">Service Business</option>
+                                    <option value="contractor">Contractor</option>
+                                    <option value="healthcare">Healthcare</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>City</label>
+                                <input type="text" name="city" required placeholder="Your City">
+                            </div>
+                            <button type="submit" class="btn">Analyze Visibility</button>
+                        </form>
+                        
+                        <div class="loading" id="visibility-loading">
+                            <div class="loading-spinner"></div>
+                            <p>Analyzing your online presence...</p>
+                        </div>
+                        
+                        <div class="results" id="visibility-results"></div>
+                        <a href="#" class="back-btn" onclick="hideTool('visibility')">Back to tools</a>
+                    </div>
                 </div>
 
+                <!-- Review Score Calculator -->
                 <div class="tool-card">
                     <div class="tool-icon">⭐</div>
                     <h3>Review Score Calculator</h3>
                     <p>Find out your online reputation score and how to improve it</p>
-                    <a href="#" class="tool-link">Calculate Score</a>
+                    <button class="tool-link" onclick="showTool('reviews')">Calculate Score</button>
+                    
+                    <div id="reviews-tool" class="tool-interface">
+                        <h3>Calculate Your Review Score</h3>
+                        <form id="reviews-form" onsubmit="calculateReviews(event)">
+                            <div class="form-group">
+                                <label>Total Number of Reviews</label>
+                                <input type="number" name="totalReviews" required min="0" placeholder="50">
+                            </div>
+                            <div class="form-group">
+                                <label>Average Rating (1-5)</label>
+                                <input type="number" name="avgRating" required min="1" max="5" step="0.1" placeholder="4.5">
+                            </div>
+                            <div class="form-group">
+                                <label>Reviews in Last 3 Months</label>
+                                <input type="number" name="recentReviews" required min="0" placeholder="10">
+                            </div>
+                            <div class="form-group">
+                                <label>Response Rate (%)</label>
+                                <input type="number" name="responseRate" required min="0" max="100" placeholder="75">
+                            </div>
+                            <button type="submit" class="btn">Calculate Score</button>
+                        </form>
+                        
+                        <div class="loading" id="reviews-loading">
+                            <div class="loading-spinner"></div>
+                            <p>Calculating your reputation score...</p>
+                        </div>
+                        
+                        <div class="results" id="reviews-results"></div>
+                        <a href="#" class="back-btn" onclick="hideTool('reviews')">Back to tools</a>
+                    </div>
                 </div>
 
+                <!-- Website Speed Test -->
                 <div class="tool-card">
                     <div class="tool-icon">⚡</div>
                     <h3>Website Speed Test</h3>
                     <p>See if your website is losing customers because it's too slow</p>
-                    <a href="#" class="tool-link">Test Speed</a>
+                    <button class="tool-link" onclick="showTool('speed')">Test Speed</button>
+                    
+                    <div id="speed-tool" class="tool-interface">
+                        <h3>Test Your Website Speed</h3>
+                        <form id="speed-form" onsubmit="testSpeed(event)">
+                            <div class="form-group">
+                                <label>Website URL</label>
+                                <input type="url" name="websiteUrl" required placeholder="https://yourbusiness.com">
+                            </div>
+                            <button type="submit" class="btn">Test Speed</button>
+                        </form>
+                        
+                        <div class="loading" id="speed-loading">
+                            <div class="loading-spinner"></div>
+                            <p>Testing your website speed...</p>
+                        </div>
+                        
+                        <div class="results" id="speed-results"></div>
+                        <a href="#" class="back-btn" onclick="hideTool('speed')">Back to tools</a>
+                    </div>
                 </div>
 
+                <!-- Competition Report -->
                 <div class="tool-card">
                     <div class="tool-icon">🏆</div>
                     <h3>Competition Report</h3>
                     <p>See what your competitors are doing online and how to beat them</p>
-                    <a href="#" class="tool-link">Get Report</a>
+                    <button class="tool-link" onclick="showTool('competition')">Get Report</button>
+                    
+                    <div id="competition-tool" class="tool-interface">
+                        <h3>Analyze Your Competition</h3>
+                        <form id="competition-form" onsubmit="analyzeCompetition(event)">
+                            <div class="form-group">
+                                <label>Your Business Type</label>
+                                <select name="businessType" required>
+                                    <option value="">Select your business type</option>
+                                    <option value="restaurant">Restaurant</option>
+                                    <option value="retail">Retail Store</option>
+                                    <option value="service">Service Business</option>
+                                    <option value="contractor">Contractor</option>
+                                    <option value="healthcare">Healthcare</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Your City</label>
+                                <input type="text" name="city" required placeholder="Your City">
+                            </div>
+                            <div class="form-group">
+                                <label>Main Competitor (Optional)</label>
+                                <input type="text" name="competitor" placeholder="Competitor Business Name">
+                            </div>
+                            <button type="submit" class="btn">Analyze Competition</button>
+                        </form>
+                        
+                        <div class="loading" id="competition-loading">
+                            <div class="loading-spinner"></div>
+                            <p>Analyzing your competition...</p>
+                        </div>
+                        
+                        <div class="results" id="competition-results"></div>
+                        <a href="#" class="back-btn" onclick="hideTool('competition')">Back to tools</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -716,5 +823,6 @@
     <script src="js/particles.js"></script>
     <script src="js/animations.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/tools.js"></script>
 </body>
 </html>
