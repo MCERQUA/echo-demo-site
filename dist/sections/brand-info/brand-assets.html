@@ -1,0 +1,145 @@
+<!-- Brand Assets Tab -->
+<div id="brand-assets" class="tab-content" data-section="brand_assets">
+    <div class="section-card">
+        <div class="card-header">
+            <h2>Visual Identity</h2>
+            <button class="btn-secondary edit-button" onclick="toggleEditMode('brand_assets')">Edit</button>
+        </div>
+        
+        <div class="brand-assets-grid">
+            <div class="logo-upload">
+                <label>Primary Logo</label>
+                <div class="upload-area" id="logo-upload">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <p>Click to upload or drag and drop</p>
+                    <span>PNG, JPG up to 10MB</span>
+                </div>
+            </div>
+            
+            <div class="brand-colors">
+                <label>Brand Colors</label>
+                <div class="color-palette" id="brand-colors">
+                    <div class="color-add">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-grid">
+            <div class="form-group full-width">
+                <label>Tagline</label>
+                <div class="field-value" data-field="tagline" data-table="brand_assets"></div>
+            </div>
+            
+            <div class="form-group full-width">
+                <label>Brand Story</label>
+                <div class="field-value" data-field="brand_story" data-table="brand_assets"></div>
+            </div>
+            
+            <div class="form-group full-width">
+                <label>Mission Statement</label>
+                <div class="field-value" data-field="mission_statement" data-table="brand_assets"></div>
+            </div>
+            
+            <div class="form-group full-width">
+                <label>Vision Statement</label>
+                <div class="field-value" data-field="vision_statement" data-table="brand_assets"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.brand-assets-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.upload-area {
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 3rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.upload-area:hover,
+.upload-area.dragover {
+    border-color: var(--primary);
+    background: rgba(29, 78, 216, 0.05);
+}
+
+.upload-area svg {
+    margin-bottom: 1rem;
+    color: var(--text-muted);
+}
+
+.upload-area p {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.upload-area span {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.upload-area img {
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+.color-palette {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.color-add {
+    width: 60px;
+    height: 60px;
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.color-add:hover {
+    border-color: var(--primary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .brand-assets-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+// Initialize upload handlers when this tab loads
+document.addEventListener('DOMContentLoaded', () => {
+    if (window.brandAssetsUpload) {
+        window.brandAssetsUpload.loadBrandAssets();
+    }
+});
+</script>
