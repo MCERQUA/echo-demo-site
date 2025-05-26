@@ -3,7 +3,7 @@
     <div class="section-card">
         <div class="card-header">
             <h2>Basic Information</h2>
-            <button class="btn-secondary edit-button" onclick="toggleEditMode('business_info')">Edit</button>
+            <button class="btn-secondary edit-button" onclick="toggleBrandEditMode('business_info')">Edit</button>
         </div>
         
         <div class="mobile-form-container">
@@ -53,6 +53,20 @@
         </div>
     </div>
 </div>
+
+<script>
+// Load data when this tab is shown
+(function() {
+    console.log('Business details tab loaded');
+    
+    // Load brand data if the function exists
+    if (window.loadBrandData) {
+        setTimeout(() => {
+            window.loadBrandData();
+        }, 100);
+    }
+})();
+</script>
 
 <style>
 /* Mobile-first form container */
