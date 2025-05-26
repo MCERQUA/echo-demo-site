@@ -1,46 +1,10 @@
 // Dashboard JavaScript - Enhanced for Client Information Management
 // Initialize Supabase client with CORRECT credentials
 const SUPABASE_URL = 'https://orhswpgngjpztcxgwbuy.supabase.co';
-// This anon key appears to be incorrect or expired - it's causing the "Invalid API key" error
-// You need to get the correct anon key from your Supabase dashboard
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9yaHN3cGduZ2pwenRjeGd3YnV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI5MDM0NjIsImV4cCI6MjA0ODQ3OTQ2Mn0.vTt4L2h7B6U-2OYzfbYhcFRZUdPU9LM5SA7AHZHFxts';
-
-// IMPORTANT: The API key above is causing the authentication errors!
-// To fix this, you need to:
-// 1. Go to your Supabase dashboard
-// 2. Go to Settings > API
-// 3. Copy the "anon public" key
-// 4. Replace the SUPABASE_ANON_KEY above with the correct key
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9yaHN3cGduZ2pwenRjeGd3YnV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgxMzUwNjgsImV4cCI6MjA2MzcxMTA2OH0.UNn_iNSkUOa1uxmoqz3MEdRuts326XVbR9MBHLiTltY';
 
 const { createClient } = supabase;
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// Show prominent error message if API key is invalid
-window.addEventListener('DOMContentLoaded', () => {
-    // Add a warning banner
-    const warningBanner = document.createElement('div');
-    warningBanner.id = 'api-key-warning';
-    warningBanner.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        background: #ef4444;
-        color: white;
-        padding: 15px;
-        text-align: center;
-        z-index: 10000;
-        font-weight: bold;
-        display: none;
-    `;
-    warningBanner.innerHTML = `
-        ⚠️ Invalid Supabase API Key Detected! 
-        <a href="https://app.supabase.com/project/orhswpgngjpztcxgwbuy/settings/api" target="_blank" style="color: white; text-decoration: underline;">
-            Click here to get the correct API key from your Supabase dashboard
-        </a>
-    `;
-    document.body.appendChild(warningBanner);
-});
 
 // Global variables
 let currentUser = null;
@@ -73,20 +37,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // Hide loading state
         hideLoadingState();
-        
-        // Test the API key by making a simple request
-        const testResponse = await fetch(`${SUPABASE_URL}/rest/v1/`, {
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': `Bearer ${session.access_token}`
-            }
-        });
-        
-        if (testResponse.status === 401) {
-            // Show the API key warning
-            document.getElementById('api-key-warning').style.display = 'block';
-            console.error('Invalid API key detected! Please update SUPABASE_ANON_KEY in dashboard.js');
-        }
         
         // Load client data from database
         await loadClientData();
@@ -213,6 +163,10 @@ async function loadClientData() {
             console.log('Loaded business info:', businessData);
         } else if (businessError) {
             console.error('Error loading business info:', businessError);
+            // If table doesn't exist, that's okay - just use empty data
+            if (businessError.code !== '42P01') {
+                showNotification('Error loading data. Some features may be limited.', 'warning');
+            }
         }
         
         // Calculate completeness
@@ -909,9 +863,7 @@ async function saveSection(section) {
                 showNotification('Database tables not set up yet. Please contact support.', 'warning');
                 return;
             } else if (error.message && error.message.includes('Invalid API key')) {
-                showNotification('Invalid API key. Please contact support to fix this issue.', 'error');
-                // Show the API key warning
-                document.getElementById('api-key-warning').style.display = 'block';
+                showNotification('Authentication error. Please refresh the page and try again.', 'error');
                 return;
             } else if (error.code === 'PGRST301') {
                 showNotification('Permission denied. Please contact support.', 'error');
@@ -923,11 +875,12 @@ async function saveSection(section) {
         
         showNotification(`${formatSectionName(section)} saved successfully!`, 'success');
         
-        // Since we can't use select(), we'll keep our local data
+        // Update local data with what we saved
         clientData[dataKey] = saveData;
         
         // Recalculate completeness
         calculateDataCompleteness();
+        updateUserInterface();
         
         // Update overview if visible
         if (currentSection === 'overview') {
@@ -941,9 +894,7 @@ async function saveSection(section) {
         let errorMessage = 'Error saving data. ';
         if (error.message) {
             if (error.message.includes('Invalid API key')) {
-                errorMessage = 'Invalid API key. The Supabase API key needs to be updated.';
-                // Show the API key warning
-                document.getElementById('api-key-warning').style.display = 'block';
+                errorMessage = 'Authentication error. Please refresh the page and try again.';
             } else if (error.message.includes('JWT')) {
                 errorMessage = 'Session expired. Please log in again.';
             } else {
