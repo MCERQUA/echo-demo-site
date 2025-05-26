@@ -175,9 +175,9 @@ async function loadSection(sectionName) {
     }
 }
 
-// Enhanced sidebar controls
+// Enhanced sidebar controls - FIXED
 function toggleSidebar() {
-    console.log('Toggling sidebar, current state:', sidebarOpen);
+    console.log('Toggling sidebar, current state:', sidebarOpen, 'isMobile:', isMobile);
     if (sidebarOpen) {
         closeSidebar();
     } else {
@@ -194,7 +194,9 @@ function openSidebar() {
         return;
     }
     
-    console.log('Opening sidebar');
+    console.log('Opening sidebar, isMobile:', isMobile);
+    
+    // Remove collapsed class to show sidebar
     sidebar.classList.remove('collapsed');
     
     if (isMobile && overlay) {
@@ -215,18 +217,19 @@ function closeSidebar() {
         return;
     }
     
-    console.log('Closing sidebar');
+    console.log('Closing sidebar, isMobile:', isMobile);
     
     if (isMobile) {
+        // Add collapsed class to hide sidebar on mobile
         sidebar.classList.add('collapsed');
         if (overlay) {
             overlay.classList.remove('show');
         }
         // Re-enable body scroll
         document.body.style.overflow = '';
+        sidebarOpen = false;
     }
-    
-    sidebarOpen = false;
+    // Don't close sidebar on desktop
 }
 
 function toggleDropdown() {
