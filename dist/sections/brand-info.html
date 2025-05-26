@@ -6,8 +6,8 @@
 
 <div class="tab-navigation">
     <button class="tab-button active" onclick="showTab('business-details')">Business Details</button>
+    <button class="tab-button" onclick="showTab('contact-info')">Contact Information</button>
     <button class="tab-button" onclick="showTab('brand-assets')">Brand Assets</button>
-    <button class="tab-button" onclick="showTab('company-info')">Company Info</button>
     <button class="tab-button" onclick="showTab('certifications')">Certifications</button>
 </div>
 
@@ -67,6 +67,222 @@
     </div>
 </div>
 
+<!-- Contact Information Tab (Enhanced) -->
+<div id="contact-info" class="tab-content" data-section="contact_info">
+    <div class="section-card">
+        <div class="card-header">
+            <h2>Contact Information</h2>
+            <button class="btn-secondary edit-button" onclick="toggleEditMode('contact_info')">Edit</button>
+        </div>
+        
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Primary Phone</label>
+                <div class="field-value" data-field="primary_phone" data-table="contact_info"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Secondary Phone</label>
+                <div class="field-value" data-field="secondary_phone" data-table="contact_info"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Primary Email</label>
+                <div class="field-value" data-field="primary_email" data-table="contact_info"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Secondary Email</label>
+                <div class="field-value" data-field="secondary_email" data-table="contact_info"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Website URL</label>
+                <div class="field-value" data-field="website_url" data-table="contact_info"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Preferred Contact Method</label>
+                <select class="field-value" data-field="preferred_contact_method" data-table="contact_info">
+                    <option value="email">Email</option>
+                    <option value="phone">Phone</option>
+                    <option value="text">Text Message</option>
+                    <option value="in_person">In Person</option>
+                </select>
+            </div>
+        </div>
+        
+        <h3 class="subsection-title">Addresses</h3>
+        <div class="address-section">
+            <div class="address-card">
+                <h4>Headquarters Address</h4>
+                <div class="address-fields" data-address-type="headquarters">
+                    <input type="text" placeholder="Street Address" data-field="street" class="address-input">
+                    <input type="text" placeholder="City" data-field="city" class="address-input">
+                    <input type="text" placeholder="State" data-field="state" class="address-input address-state">
+                    <input type="text" placeholder="ZIP Code" data-field="zip" class="address-input address-zip">
+                    <input type="text" placeholder="Country" data-field="country" class="address-input" value="United States">
+                </div>
+            </div>
+            
+            <div class="address-card">
+                <h4>Mailing Address</h4>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="mailing-same-as-hq" onchange="toggleSameAddress('mailing')">
+                    Same as headquarters
+                </label>
+                <div class="address-fields" data-address-type="mailing">
+                    <input type="text" placeholder="Street Address" data-field="street" class="address-input">
+                    <input type="text" placeholder="City" data-field="city" class="address-input">
+                    <input type="text" placeholder="State" data-field="state" class="address-input address-state">
+                    <input type="text" placeholder="ZIP Code" data-field="zip" class="address-input address-zip">
+                    <input type="text" placeholder="Country" data-field="country" class="address-input" value="United States">
+                </div>
+            </div>
+            
+            <div class="address-card">
+                <h4>Billing Address</h4>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="billing-same-as-hq" onchange="toggleSameAddress('billing')">
+                    Same as headquarters
+                </label>
+                <div class="address-fields" data-address-type="billing">
+                    <input type="text" placeholder="Street Address" data-field="street" class="address-input">
+                    <input type="text" placeholder="City" data-field="city" class="address-input">
+                    <input type="text" placeholder="State" data-field="state" class="address-input address-state">
+                    <input type="text" placeholder="ZIP Code" data-field="zip" class="address-input address-zip">
+                    <input type="text" placeholder="Country" data-field="country" class="address-input" value="United States">
+                </div>
+            </div>
+        </div>
+        
+        <h3 class="subsection-title">Business Hours</h3>
+        <div class="business-hours-grid">
+            <div class="hours-row">
+                <span class="day">Monday</span>
+                <input type="time" class="time-input" data-day="monday" data-period="open">
+                <span>to</span>
+                <input type="time" class="time-input" data-day="monday" data-period="close">
+                <label class="checkbox-label">
+                    <input type="checkbox" data-day="monday" data-period="closed" onchange="toggleDayClosed('monday')">
+                    Closed
+                </label>
+            </div>
+            <div class="hours-row">
+                <span class="day">Tuesday</span>
+                <input type="time" class="time-input" data-day="tuesday" data-period="open">
+                <span>to</span>
+                <input type="time" class="time-input" data-day="tuesday" data-period="close">
+                <label class="checkbox-label">
+                    <input type="checkbox" data-day="tuesday" data-period="closed" onchange="toggleDayClosed('tuesday')">
+                    Closed
+                </label>
+            </div>
+            <div class="hours-row">
+                <span class="day">Wednesday</span>
+                <input type="time" class="time-input" data-day="wednesday" data-period="open">
+                <span>to</span>
+                <input type="time" class="time-input" data-day="wednesday" data-period="close">
+                <label class="checkbox-label">
+                    <input type="checkbox" data-day="wednesday" data-period="closed" onchange="toggleDayClosed('wednesday')">
+                    Closed
+                </label>
+            </div>
+            <div class="hours-row">
+                <span class="day">Thursday</span>
+                <input type="time" class="time-input" data-day="thursday" data-period="open">
+                <span>to</span>
+                <input type="time" class="time-input" data-day="thursday" data-period="close">
+                <label class="checkbox-label">
+                    <input type="checkbox" data-day="thursday" data-period="closed" onchange="toggleDayClosed('thursday')">
+                    Closed
+                </label>
+            </div>
+            <div class="hours-row">
+                <span class="day">Friday</span>
+                <input type="time" class="time-input" data-day="friday" data-period="open">
+                <span>to</span>
+                <input type="time" class="time-input" data-day="friday" data-period="close">
+                <label class="checkbox-label">
+                    <input type="checkbox" data-day="friday" data-period="closed" onchange="toggleDayClosed('friday')">
+                    Closed
+                </label>
+            </div>
+            <div class="hours-row">
+                <span class="day">Saturday</span>
+                <input type="time" class="time-input" data-day="saturday" data-period="open">
+                <span>to</span>
+                <input type="time" class="time-input" data-day="saturday" data-period="close">
+                <label class="checkbox-label">
+                    <input type="checkbox" data-day="saturday" data-period="closed" onchange="toggleDayClosed('saturday')">
+                    Closed
+                </label>
+            </div>
+            <div class="hours-row">
+                <span class="day">Sunday</span>
+                <input type="time" class="time-input" data-day="sunday" data-period="open">
+                <span>to</span>
+                <input type="time" class="time-input" data-day="sunday" data-period="close">
+                <label class="checkbox-label">
+                    <input type="checkbox" data-day="sunday" data-period="closed" onchange="toggleDayClosed('sunday')">
+                    Closed
+                </label>
+            </div>
+        </div>
+        
+        <h3 class="subsection-title">Emergency Contact</h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Emergency Contact Name</label>
+                <input type="text" class="field-value input-field" data-field="emergency_name" data-table="contact_info_emergency">
+            </div>
+            
+            <div class="form-group">
+                <label>Emergency Phone</label>
+                <input type="text" class="field-value input-field" data-field="emergency_phone" data-table="contact_info_emergency">
+            </div>
+            
+            <div class="form-group">
+                <label>Emergency Email</label>
+                <input type="text" class="field-value input-field" data-field="emergency_email" data-table="contact_info_emergency">
+            </div>
+            
+            <div class="form-group">
+                <label>Relationship</label>
+                <input type="text" class="field-value input-field" data-field="emergency_relationship" data-table="contact_info_emergency">
+            </div>
+        </div>
+        
+        <h3 class="subsection-title">Social Media Links</h3>
+        <div class="social-links-grid">
+            <div class="social-input-group">
+                <span class="social-icon">📘</span>
+                <input type="url" placeholder="Facebook URL" data-social="facebook" class="social-input">
+            </div>
+            <div class="social-input-group">
+                <span class="social-icon">🐦</span>
+                <input type="url" placeholder="Twitter/X URL" data-social="twitter" class="social-input">
+            </div>
+            <div class="social-input-group">
+                <span class="social-icon">💼</span>
+                <input type="url" placeholder="LinkedIn URL" data-social="linkedin" class="social-input">
+            </div>
+            <div class="social-input-group">
+                <span class="social-icon">📷</span>
+                <input type="url" placeholder="Instagram URL" data-social="instagram" class="social-input">
+            </div>
+            <div class="social-input-group">
+                <span class="social-icon">📹</span>
+                <input type="url" placeholder="YouTube URL" data-social="youtube" class="social-input">
+            </div>
+            <div class="social-input-group">
+                <span class="social-icon">🎵</span>
+                <input type="url" placeholder="TikTok URL" data-social="tiktok" class="social-input">
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Brand Assets Tab -->
 <div id="brand-assets" class="tab-content" data-section="brand_assets">
     <div class="section-card">
@@ -121,94 +337,6 @@
             <div class="form-group full-width">
                 <label>Vision Statement</label>
                 <div class="field-value" data-field="vision_statement" data-table="brand_assets"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Company Info Tab -->
-<div id="company-info" class="tab-content" data-section="contact_info">
-    <div class="section-card">
-        <div class="card-header">
-            <h2>Contact Information</h2>
-            <button class="btn-secondary edit-button" onclick="toggleEditMode('contact_info')">Edit</button>
-        </div>
-        
-        <div class="form-grid">
-            <div class="form-group">
-                <label>Primary Contact Name</label>
-                <div class="field-value" data-field="primary_contact_name" data-table="contact_info"></div>
-            </div>
-            
-            <div class="form-group">
-                <label>Primary Contact Title</label>
-                <div class="field-value" data-field="primary_contact_title" data-table="contact_info"></div>
-            </div>
-            
-            <div class="form-group">
-                <label>Primary Phone</label>
-                <div class="field-value" data-field="primary_phone" data-table="contact_info"></div>
-            </div>
-            
-            <div class="form-group">
-                <label>Primary Email</label>
-                <div class="field-value" data-field="primary_email" data-table="contact_info"></div>
-            </div>
-            
-            <div class="form-group">
-                <label>Main Business Phone</label>
-                <div class="field-value" data-field="main_phone" data-table="contact_info"></div>
-            </div>
-            
-            <div class="form-group">
-                <label>General Email</label>
-                <div class="field-value" data-field="general_email" data-table="contact_info"></div>
-            </div>
-        </div>
-        
-        <h3>Business Hours</h3>
-        <div class="business-hours-grid">
-            <div class="hours-row">
-                <span class="day">Monday</span>
-                <input type="time" class="time-input" data-day="monday" data-period="open">
-                <span>to</span>
-                <input type="time" class="time-input" data-day="monday" data-period="close">
-            </div>
-            <div class="hours-row">
-                <span class="day">Tuesday</span>
-                <input type="time" class="time-input" data-day="tuesday" data-period="open">
-                <span>to</span>
-                <input type="time" class="time-input" data-day="tuesday" data-period="close">
-            </div>
-            <div class="hours-row">
-                <span class="day">Wednesday</span>
-                <input type="time" class="time-input" data-day="wednesday" data-period="open">
-                <span>to</span>
-                <input type="time" class="time-input" data-day="wednesday" data-period="close">
-            </div>
-            <div class="hours-row">
-                <span class="day">Thursday</span>
-                <input type="time" class="time-input" data-day="thursday" data-period="open">
-                <span>to</span>
-                <input type="time" class="time-input" data-day="thursday" data-period="close">
-            </div>
-            <div class="hours-row">
-                <span class="day">Friday</span>
-                <input type="time" class="time-input" data-day="friday" data-period="open">
-                <span>to</span>
-                <input type="time" class="time-input" data-day="friday" data-period="close">
-            </div>
-            <div class="hours-row">
-                <span class="day">Saturday</span>
-                <input type="time" class="time-input" data-day="saturday" data-period="open">
-                <span>to</span>
-                <input type="time" class="time-input" data-day="saturday" data-period="close">
-            </div>
-            <div class="hours-row">
-                <span class="day">Sunday</span>
-                <input type="time" class="time-input" data-day="sunday" data-period="open">
-                <span>to</span>
-                <input type="time" class="time-input" data-day="sunday" data-period="close">
             </div>
         </div>
     </div>
@@ -337,9 +465,150 @@
 }
 
 .field-value:empty::before {
-    content: 'Click to add';
+    content: 'Click Edit to add';
     color: var(--text-muted);
     font-style: italic;
+}
+
+.input-field {
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem;
+    color: var(--text-primary);
+    transition: all 0.2s;
+}
+
+.input-field:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+.subsection-title {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    font-size: 1.125rem;
+}
+
+.address-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.address-card {
+    background: var(--surface);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.address-card h4 {
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.address-fields {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.address-input {
+    width: 100%;
+    padding: 0.5rem;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-primary);
+}
+
+.address-input:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+.address-state {
+    grid-column: 1 / 2;
+}
+
+.address-zip {
+    grid-column: 2 / 3;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    color: var(--text-muted);
+}
+
+.business-hours-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.hours-row {
+    display: grid;
+    grid-template-columns: 100px 120px 30px 120px auto;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.hours-row .day {
+    font-weight: 500;
+}
+
+.time-input {
+    padding: 0.5rem;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-primary);
+}
+
+.time-input:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+.time-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.social-links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.social-input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.social-icon {
+    font-size: 1.5rem;
+}
+
+.social-input {
+    flex: 1;
+    padding: 0.5rem;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-primary);
+}
+
+.social-input:focus {
+    border-color: var(--primary);
+    outline: none;
 }
 
 .ai-research-prompt {
@@ -407,31 +676,6 @@
     border-color: var(--primary);
 }
 
-.business-hours-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 1rem;
-}
-
-.hours-row {
-    display: grid;
-    grid-template-columns: 100px 120px 30px 120px;
-    gap: 0.5rem;
-    align-items: center;
-}
-
-.hours-row .day {
-    font-weight: 500;
-}
-
-.time-input {
-    padding: 0.5rem;
-    background: var(--background);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-}
-
 .certifications-list {
     margin-bottom: 2rem;
 }
@@ -464,8 +708,12 @@
     }
     
     .hours-row {
-        grid-template-columns: 80px 100px 20px 100px;
+        grid-template-columns: 80px 90px 20px 90px auto;
         font-size: 0.875rem;
+    }
+    
+    .address-section {
+        grid-template-columns: 1fr;
     }
 }
 </style>
@@ -489,42 +737,295 @@ function showTab(tabName) {
     event.target.classList.add('active');
 }
 
-function populateBrandInfo() {
-    // Populate business info fields
-    Object.entries(clientData.businessInfo).forEach(([key, value]) => {
-        const field = document.querySelector(`[data-field="${key}"][data-table="business_info"]`);
-        if (field && value) {
-            field.textContent = value;
-        }
-    });
+function toggleSameAddress(type) {
+    const checkbox = document.getElementById(`${type}-same-as-hq`);
+    const addressFields = document.querySelector(`[data-address-type="${type}"]`);
+    const hqFields = document.querySelector('[data-address-type="headquarters"]');
     
-    // Populate contact info fields
-    Object.entries(clientData.contactInfo).forEach(([key, value]) => {
-        const field = document.querySelector(`[data-field="${key}"][data-table="contact_info"]`);
-        if (field && value) {
-            field.textContent = value;
-        }
-    });
-    
-    // Populate brand assets fields
-    Object.entries(clientData.brandAssets).forEach(([key, value]) => {
-        const field = document.querySelector(`[data-field="${key}"][data-table="brand_assets"]`);
-        if (field && value) {
-            field.textContent = value;
-        }
-    });
-    
-    // Populate business hours
-    if (clientData.contactInfo.business_hours) {
-        Object.entries(clientData.contactInfo.business_hours).forEach(([day, hours]) => {
-            const openInput = document.querySelector(`[data-day="${day}"][data-period="open"]`);
-            const closeInput = document.querySelector(`[data-day="${day}"][data-period="close"]`);
-            if (openInput && hours.open) openInput.value = hours.open;
-            if (closeInput && hours.close) closeInput.value = hours.close;
+    if (checkbox.checked && hqFields) {
+        // Copy headquarters address
+        ['street', 'city', 'state', 'zip', 'country'].forEach(field => {
+            const hqValue = hqFields.querySelector(`[data-field="${field}"]`).value;
+            const targetField = addressFields.querySelector(`[data-field="${field}"]`);
+            if (targetField) {
+                targetField.value = hqValue;
+                targetField.disabled = true;
+            }
+        });
+    } else {
+        // Enable fields
+        addressFields.querySelectorAll('input').forEach(input => {
+            input.disabled = false;
         });
     }
 }
 
+function toggleDayClosed(day) {
+    const checkbox = document.querySelector(`[data-day="${day}"][data-period="closed"]`);
+    const openInput = document.querySelector(`[data-day="${day}"][data-period="open"]`);
+    const closeInput = document.querySelector(`[data-day="${day}"][data-period="close"]`);
+    
+    if (checkbox.checked) {
+        openInput.disabled = true;
+        closeInput.disabled = true;
+        openInput.value = '';
+        closeInput.value = '';
+    } else {
+        openInput.disabled = false;
+        closeInput.disabled = false;
+    }
+}
+
+// Override the toggleEditMode function for contact_info
+window.originalToggleEditMode = window.toggleEditMode;
+window.toggleEditMode = function(section) {
+    if (section === 'contact_info') {
+        toggleContactInfoEditMode();
+    } else {
+        window.originalToggleEditMode(section);
+    }
+};
+
+function toggleContactInfoEditMode() {
+    editMode['contact_info'] = !editMode['contact_info'];
+    
+    const button = event.target;
+    const sectionCard = button.closest('.section-card');
+    
+    if (editMode['contact_info']) {
+        // Enter edit mode
+        button.textContent = 'Save';
+        button.classList.remove('btn-secondary');
+        button.classList.add('btn-primary');
+        
+        // Enable all inputs
+        sectionCard.querySelectorAll('input, select, textarea').forEach(input => {
+            if (!input.disabled) {
+                input.readOnly = false;
+            }
+        });
+        
+        // Enable contenteditable fields
+        sectionCard.querySelectorAll('.field-value[data-table="contact_info"]').forEach(field => {
+            if (field.tagName !== 'SELECT' && field.tagName !== 'INPUT') {
+                field.style.cursor = 'text';
+                field.title = 'Click to edit';
+            }
+        });
+        
+        showNotification('Edit mode enabled - make your changes and click Save', 'info');
+    } else {
+        // Exit edit mode and save
+        button.textContent = 'Edit';
+        button.classList.remove('btn-primary');
+        button.classList.add('btn-secondary');
+        
+        // Save all contact information
+        saveContactInfo();
+    }
+}
+
+async function saveContactInfo() {
+    try {
+        // Gather all contact info data
+        const contactData = {
+            user_id: currentUser.id,
+            primary_phone: document.querySelector('[data-field="primary_phone"]').textContent.trim(),
+            secondary_phone: document.querySelector('[data-field="secondary_phone"]').textContent.trim(),
+            primary_email: document.querySelector('[data-field="primary_email"]').textContent.trim(),
+            secondary_email: document.querySelector('[data-field="secondary_email"]').textContent.trim(),
+            website_url: document.querySelector('[data-field="website_url"]').textContent.trim(),
+            preferred_contact_method: document.querySelector('[data-field="preferred_contact_method"]').value,
+            
+            // Gather addresses
+            headquarters_address: gatherAddressData('headquarters'),
+            mailing_address: gatherAddressData('mailing'),
+            billing_address: gatherAddressData('billing'),
+            
+            // Gather business hours
+            business_hours: gatherBusinessHours(),
+            
+            // Gather emergency contact
+            emergency_contact: {
+                name: document.querySelector('[data-field="emergency_name"]').value,
+                phone: document.querySelector('[data-field="emergency_phone"]').value,
+                email: document.querySelector('[data-field="emergency_email"]').value,
+                relationship: document.querySelector('[data-field="emergency_relationship"]').value
+            },
+            
+            // Gather social media links
+            social_media_links: gatherSocialMediaLinks(),
+            
+            updated_at: new Date().toISOString()
+        };
+        
+        console.log('Saving contact info:', contactData);
+        
+        // Save to Supabase
+        const { data, error } = await supabaseClient
+            .from('contact_info')
+            .upsert(contactData, { onConflict: 'user_id' });
+        
+        if (error) {
+            console.error('Error saving contact info:', error);
+            
+            if (error.code === '42P01') {
+                showNotification('Contact info table not created yet. Please run the SQL script in Supabase.', 'warning');
+                return;
+            }
+            
+            throw error;
+        }
+        
+        showNotification('Contact information saved successfully!', 'success');
+        
+        // Update local data
+        if (!clientData.contactInfo) clientData.contactInfo = {};
+        Object.assign(clientData.contactInfo, contactData);
+        
+        // Recalculate completeness
+        calculateDataCompleteness();
+        
+    } catch (error) {
+        console.error('Error saving contact info:', error);
+        showNotification('Error saving contact information. Please try again.', 'error');
+    }
+}
+
+function gatherAddressData(type) {
+    const container = document.querySelector(`[data-address-type="${type}"]`);
+    if (!container) return {};
+    
+    return {
+        street: container.querySelector('[data-field="street"]').value,
+        city: container.querySelector('[data-field="city"]').value,
+        state: container.querySelector('[data-field="state"]').value,
+        zip: container.querySelector('[data-field="zip"]').value,
+        country: container.querySelector('[data-field="country"]').value
+    };
+}
+
+function gatherBusinessHours() {
+    const hours = {};
+    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    
+    days.forEach(day => {
+        const closed = document.querySelector(`[data-day="${day}"][data-period="closed"]`).checked;
+        const open = document.querySelector(`[data-day="${day}"][data-period="open"]`).value;
+        const close = document.querySelector(`[data-day="${day}"][data-period="close"]`).value;
+        
+        hours[day] = {
+            open: closed ? '' : open,
+            close: closed ? '' : close,
+            closed: closed
+        };
+    });
+    
+    return hours;
+}
+
+function gatherSocialMediaLinks() {
+    const links = {};
+    const platforms = ['facebook', 'twitter', 'linkedin', 'instagram', 'youtube', 'tiktok'];
+    
+    platforms.forEach(platform => {
+        const input = document.querySelector(`[data-social="${platform}"]`);
+        if (input && input.value) {
+            links[platform] = input.value;
+        }
+    });
+    
+    return links;
+}
+
+// Load contact info when section is shown
+async function loadContactInfo() {
+    if (!currentUser) return;
+    
+    try {
+        const { data, error } = await supabaseClient
+            .from('contact_info')
+            .select('*')
+            .eq('user_id', currentUser.id)
+            .maybeSingle();
+        
+        if (error && error.code !== '42P01') {
+            console.error('Error loading contact info:', error);
+            return;
+        }
+        
+        if (data) {
+            // Populate fields
+            if (data.primary_phone) document.querySelector('[data-field="primary_phone"]').textContent = data.primary_phone;
+            if (data.secondary_phone) document.querySelector('[data-field="secondary_phone"]').textContent = data.secondary_phone;
+            if (data.primary_email) document.querySelector('[data-field="primary_email"]').textContent = data.primary_email;
+            if (data.secondary_email) document.querySelector('[data-field="secondary_email"]').textContent = data.secondary_email;
+            if (data.website_url) document.querySelector('[data-field="website_url"]').textContent = data.website_url;
+            if (data.preferred_contact_method) document.querySelector('[data-field="preferred_contact_method"]').value = data.preferred_contact_method;
+            
+            // Populate addresses
+            if (data.headquarters_address) populateAddress('headquarters', data.headquarters_address);
+            if (data.mailing_address) populateAddress('mailing', data.mailing_address);
+            if (data.billing_address) populateAddress('billing', data.billing_address);
+            
+            // Populate business hours
+            if (data.business_hours) populateBusinessHours(data.business_hours);
+            
+            // Populate emergency contact
+            if (data.emergency_contact) {
+                if (data.emergency_contact.name) document.querySelector('[data-field="emergency_name"]').value = data.emergency_contact.name;
+                if (data.emergency_contact.phone) document.querySelector('[data-field="emergency_phone"]').value = data.emergency_contact.phone;
+                if (data.emergency_contact.email) document.querySelector('[data-field="emergency_email"]').value = data.emergency_contact.email;
+                if (data.emergency_contact.relationship) document.querySelector('[data-field="emergency_relationship"]').value = data.emergency_contact.relationship;
+            }
+            
+            // Populate social media links
+            if (data.social_media_links) {
+                Object.entries(data.social_media_links).forEach(([platform, url]) => {
+                    const input = document.querySelector(`[data-social="${platform}"]`);
+                    if (input) input.value = url;
+                });
+            }
+            
+            // Update local data
+            if (!clientData.contactInfo) clientData.contactInfo = {};
+            Object.assign(clientData.contactInfo, data);
+        }
+    } catch (error) {
+        console.error('Error loading contact info:', error);
+    }
+}
+
+function populateAddress(type, addressData) {
+    const container = document.querySelector(`[data-address-type="${type}"]`);
+    if (!container) return;
+    
+    if (addressData.street) container.querySelector('[data-field="street"]').value = addressData.street;
+    if (addressData.city) container.querySelector('[data-field="city"]').value = addressData.city;
+    if (addressData.state) container.querySelector('[data-field="state"]').value = addressData.state;
+    if (addressData.zip) container.querySelector('[data-field="zip"]').value = addressData.zip;
+    if (addressData.country) container.querySelector('[data-field="country"]').value = addressData.country;
+}
+
+function populateBusinessHours(hoursData) {
+    Object.entries(hoursData).forEach(([day, hours]) => {
+        const checkbox = document.querySelector(`[data-day="${day}"][data-period="closed"]`);
+        const openInput = document.querySelector(`[data-day="${day}"][data-period="open"]`);
+        const closeInput = document.querySelector(`[data-day="${day}"][data-period="close"]`);
+        
+        if (checkbox && hours.closed !== undefined) checkbox.checked = hours.closed;
+        if (openInput && hours.open) openInput.value = hours.open;
+        if (closeInput && hours.close) closeInput.value = hours.close;
+        
+        // Disable inputs if closed
+        if (hours.closed) {
+            if (openInput) openInput.disabled = true;
+            if (closeInput) closeInput.disabled = true;
+        }
+    });
+}
+
+// Initialize features when the section loads
 function initializeBrandInfoFeatures() {
     // Initialize logo upload
     const logoUpload = document.getElementById('logo-upload');
@@ -559,6 +1060,9 @@ function initializeBrandInfoFeatures() {
     if (colorAdd) {
         colorAdd.addEventListener('click', addBrandColor);
     }
+    
+    // Load contact info data
+    loadContactInfo();
 }
 
 async function handleLogoUpload(event) {
@@ -577,5 +1081,10 @@ function addBrandColor() {
 function addCertification() {
     // TODO: Implement certification modal
     showNotification('Certification management coming soon!', 'info');
+}
+
+// Call initialization when tab loads
+if (typeof initializeBrandInfoFeatures === 'function') {
+    initializeBrandInfoFeatures();
 }
 </script>
