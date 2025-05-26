@@ -1,0 +1,107 @@
+<!-- Business Details Tab -->
+<div id="business-details" class="tab-content active" data-section="business_info">
+    <div class="section-card">
+        <div class="card-header">
+            <h2>Basic Information</h2>
+            <button class="btn-secondary edit-button" onclick="toggleEditMode('business_info')">Edit</button>
+        </div>
+        
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Business Name</label>
+                <div class="field-value" data-field="business_name" data-table="business_info"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Legal Name</label>
+                <div class="field-value" data-field="legal_entity_name" data-table="business_info"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Business Type</label>
+                <div class="field-value" data-field="business_type" data-table="business_info"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>EIN/Tax ID</label>
+                <div class="field-value" data-field="ein_tax_id" data-table="business_info">••••••••</div>
+            </div>
+            
+            <div class="form-group full-width">
+                <label>Primary Industry</label>
+                <div class="field-value" data-field="primary_industry" data-table="business_info"></div>
+            </div>
+            
+            <div class="form-group full-width">
+                <label>Business Description</label>
+                <div class="field-value" data-field="business_description" data-table="business_info"></div>
+            </div>
+            
+            <div class="form-group full-width">
+                <label>Unique Selling Proposition</label>
+                <div class="field-value" data-field="unique_selling_proposition" data-table="business_info"></div>
+            </div>
+        </div>
+        
+        <div class="ai-research-prompt">
+            <button class="btn-outline" onclick="triggerAIResearch('business_info')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2v4m0 12v4m10-10h-4M6 12H2"/>
+                </svg>
+                Let AI Research This Information
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.field-value {
+    padding: 0.75rem;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    min-height: 2.5rem;
+    transition: all 0.2s;
+}
+
+.field-value[contenteditable="true"] {
+    background: var(--surface);
+    border-color: var(--primary);
+    outline: none;
+}
+
+.field-value:empty::before {
+    content: 'Click Edit to add';
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.ai-research-prompt {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+}
+</style>
