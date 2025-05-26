@@ -1,4 +1,4 @@
-// Dashboard Core - Ultra Simple Module Loader
+// Dashboard Core - Ultra Simple Module Loader with Mobile-First Design
 // Initialize Supabase
 const SUPABASE_URL = 'https://orhswpgngjpztcxgwbuy.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9yaHN3cGduZ2pwenRjeGd3YnV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgxMzUwNjgsImV4cCI6MjA2MzcxMTA2OH0.UNn_iNSkUOa1uxmoqz3MEdRuts326XVbR9MBHLiTltY';
@@ -26,9 +26,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateUserDisplay();
         initializeMobileHandlers();
         
-        // Set initial sidebar state based on screen size
+        // Set initial sidebar state - collapsed on mobile, open on desktop
         if (isMobile) {
             closeSidebar();
+        } else {
+            openSidebar();
         }
         
         loadSection('overview');
@@ -45,10 +47,14 @@ function initializeMobileHandlers() {
     const sidebarClose = document.getElementById('sidebarClose');
     
     // Close sidebar when clicking overlay
-    overlay.addEventListener('click', closeSidebar);
+    if (overlay) {
+        overlay.addEventListener('click', closeSidebar);
+    }
     
     // Close sidebar when clicking close button
-    sidebarClose.addEventListener('click', closeSidebar);
+    if (sidebarClose) {
+        sidebarClose.addEventListener('click', closeSidebar);
+    }
     
     // Handle window resize
     window.addEventListener('resize', () => {
@@ -80,31 +86,47 @@ function updateUserDisplay() {
     const email = window.user?.email || 'User';
     const initials = email.split('@')[0].slice(0, 2).toUpperCase();
     
-    document.getElementById('userName').textContent = email.split('@')[0];
-    document.getElementById('userAvatar').textContent = initials;
+    const userName = document.getElementById('userName');
+    const userAvatar = document.getElementById('userAvatar');
+    
+    if (userName) userName.textContent = email.split('@')[0];
+    if (userAvatar) userAvatar.textContent = initials;
 }
 
 // Load section modules dynamically
 async function loadSection(sectionName) {
     const content = document.getElementById('main-content');
+    if (!content) return;
+    
     content.innerHTML = '<div class="loading-state">Loading...</div>';
     
     // Update nav
     document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-    event?.target?.closest('.nav-link')?.classList.add('active') || 
-    document.querySelector(`[onclick=\"loadSection('${sectionName}')\"]`)?.classList.add('active');
+    const targetLink = event?.target?.closest('.nav-link') || 
+                      document.querySelector(`[onclick*="loadSection('${sectionName}')"]`);
+    if (targetLink) {
+        targetLink.classList.add('active');
+    }
     
     try {
         // Load section HTML
         const htmlResponse = await fetch(`sections/${sectionName}.html`);
         if (htmlResponse.ok) {
-            content.innerHTML = await htmlResponse.text();
+            const htmlContent = await htmlResponse.text();
+            content.innerHTML = htmlContent;
             
             // Load section JS if exists
             const script = document.createElement('script');
             script.src = `js/sections/${sectionName}.js`;
             script.onload = () => console.log(`Loaded ${sectionName} module`);
             script.onerror = () => console.log(`No JS module for ${sectionName}`);
+            
+            // Remove any existing section scripts first
+            const existingScript = document.querySelector(`script[src="js/sections/${sectionName}.js"]`);
+            if (existingScript) {
+                existingScript.remove();
+            }
+            
             document.head.appendChild(script);
         } else {
             throw new Error('Section not found');
@@ -114,6 +136,9 @@ async function loadSection(sectionName) {
             <div class="section-header">
                 <h1>${sectionName.charAt(0).toUpperCase() + sectionName.slice(1).replace('-', ' ')}</h1>
                 <p>This section is under development.</p>
+            </div>
+            <div class="section-card">
+                <p>We're working hard to bring you this feature. Check back soon!</p>
             </div>
         `;
     }
@@ -132,9 +157,11 @@ function openSidebar() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('mobileOverlay');
     
+    if (!sidebar) return;
+    
     sidebar.classList.remove('collapsed');
     
-    if (isMobile) {
+    if (isMobile && overlay) {
         overlay.classList.add('show');
         // Prevent body scroll when sidebar is open on mobile
         document.body.style.overflow = 'hidden';
@@ -147,9 +174,13 @@ function closeSidebar() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('mobileOverlay');
     
+    if (!sidebar) return;
+    
     if (isMobile) {
         sidebar.classList.add('collapsed');
-        overlay.classList.remove('show');
+        if (overlay) {
+            overlay.classList.remove('show');
+        }
         // Re-enable body scroll
         document.body.style.overflow = '';
     }
@@ -158,18 +189,28 @@ function closeSidebar() {
 }
 
 function toggleDropdown() {
-    document.getElementById('userDropdown').classList.toggle('show');
+    const dropdown = document.getElementById('userDropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('show');
+    }
 }
 
 async function signOut() {
-    await window.supabase.auth.signOut();
-    window.location.href = 'login.html';
+    try {
+        await window.supabase.auth.signOut();
+        window.location.href = 'login.html';
+    } catch (error) {
+        console.error('Sign out error:', error);
+        // Force redirect even if sign out fails
+        window.location.href = 'login.html';
+    }
 }
 
 // Close dropdowns when clicking outside
 document.addEventListener('click', (e) => {
-    if (!e.target.closest('.user-menu')) {
-        document.getElementById('userDropdown').classList.remove('show');
+    const dropdown = document.getElementById('userDropdown');
+    if (dropdown && !e.target.closest('.user-menu')) {
+        dropdown.classList.remove('show');
     }
 });
 
@@ -181,9 +222,57 @@ document.addEventListener('keydown', (e) => {
 });
 
 // Prevent sidebar from closing when clicking inside it
-document.getElementById('sidebar').addEventListener('click', (e) => {
-    e.stopPropagation();
+const sidebar = document.getElementById('sidebar');
+if (sidebar) {
+    sidebar.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+}
+
+// Touch gesture support for sidebar (swipe to close)
+let touchStartX = 0;
+let touchStartY = 0;
+
+document.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
 });
+
+document.addEventListener('touchend', (e) => {
+    if (!isMobile || !sidebarOpen) return;
+    
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const deltaX = touchEndX - touchStartX;
+    const deltaY = touchEndY - touchStartY;
+    
+    // Swipe left to close sidebar (when sidebar is open)
+    if (deltaX < -50 && Math.abs(deltaY) < 100) {
+        closeSidebar();
+    }
+});
+
+// Utility function to show notifications
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    notification.style.zIndex = '10000';
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 3000);
+    
+    // Allow manual removal by clicking
+    notification.addEventListener('click', () => {
+        notification.remove();
+    });
+}
 
 // Make functions global
 window.loadSection = loadSection;
@@ -192,3 +281,9 @@ window.openSidebar = openSidebar;
 window.closeSidebar = closeSidebar;
 window.toggleDropdown = toggleDropdown;
 window.signOut = signOut;
+window.showNotification = showNotification;
+
+// Add touch class for better mobile interactions
+if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+    document.documentElement.classList.add('touch');
+}
