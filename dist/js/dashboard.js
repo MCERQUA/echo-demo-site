@@ -868,12 +868,11 @@ async function saveSection(section) {
         console.log('Saving data to table:', section);
         console.log('Save data:', saveData);
         
-        // Save to database with better error handling
+        // Save to database with fixed syntax
         const { data, error } = await supabaseClient
             .from(section)
             .upsert(saveData, { 
-                onConflict: 'user_id',
-                returning: 'representation' 
+                onConflict: 'user_id'
             })
             .select();
         
@@ -882,13 +881,13 @@ async function saveSection(section) {
             
             // Handle specific error types
             if (error.code === '42P01') {
-                showNotification('Database tables not set up yet. Please run the SQL schema in Supabase.', 'warning');
+                showNotification('Database tables not set up yet. Please contact support.', 'warning');
                 return;
             } else if (error.message && error.message.includes('Invalid API key')) {
-                showNotification('Authentication error. Please check your Supabase configuration.', 'error');
+                showNotification('Authentication error. Please refresh the page and try again.', 'error');
                 return;
             } else if (error.code === 'PGRST301') {
-                showNotification('Row level security issue. Please check RLS policies.', 'error');
+                showNotification('Permission denied. Please contact support.', 'error');
                 return;
             }
             
@@ -917,11 +916,11 @@ async function saveSection(section) {
         let errorMessage = 'Error saving data. ';
         if (error.message) {
             if (error.message.includes('Invalid API key')) {
-                errorMessage = 'Authentication error. Please refresh and try again.';
+                errorMessage = 'Authentication error. Please refresh the page and try again.';
             } else if (error.message.includes('JWT')) {
                 errorMessage = 'Session expired. Please log in again.';
             } else {
-                errorMessage += error.message;
+                errorMessage += 'Please try again or contact support.';
             }
         }
         
