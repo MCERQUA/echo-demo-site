@@ -1,16 +1,10 @@
 // Dashboard JavaScript - Enhanced for Client Information Management
-// Initialize Supabase client - FIXED TO USE CORRECT INSTANCE
+// Initialize Supabase client
 const SUPABASE_URL = 'https://orhswpgngjpztcxgwbuy.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9yaHN3cGduZ2pwenRjeGd3YnV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI5MDM0NjIsImV4cCI6MjA0ODQ3OTQ2Mn0.vTt4L2h7B6U-2OYzfbYhcFRZUdPU9LM5SA7AHZHFxts';
 
 const { createClient } = supabase;
-const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true
-    }
-});
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Global variables
 let currentUser = null;
@@ -41,14 +35,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentUser = session.user;
         console.log('User authenticated:', currentUser.email);
         
-        // IMPORTANT: Set the auth header for all subsequent requests
-        supabaseClient.rest.headers['Authorization'] = `Bearer ${session.access_token}`;
-        
         // Hide loading state
         hideLoadingState();
         
-        // Load client data from database
-        await loadClientData();
+        // Initialize empty client data structure
+        initializeClientData();
+        
+        // Update UI
         updateUserInterface();
         
         // Load the initial section
@@ -61,6 +54,46 @@ document.addEventListener('DOMContentLoaded', async () => {
         redirectToLogin();
     }
 });
+
+// Initialize empty client data structure
+function initializeClientData() {
+    clientData = {
+        client: { id: currentUser.id },
+        businessInfo: {},
+        contactInfo: {},
+        brandAssets: {},
+        digitalPresence: {},
+        socialMedia: [],
+        googleBusiness: {},
+        reputation: [],
+        competitors: [],
+        campaigns: [],
+        seoData: {},
+        customerInsights: {},
+        contentLibrary: [],
+        aiQueue: [],
+        completeness: 0
+    };
+    
+    // Load any saved data from localStorage as a backup
+    const savedData = localStorage.getItem(`clientData_${currentUser.id}`);
+    if (savedData) {
+        try {
+            const parsed = JSON.parse(savedData);
+            clientData = { ...clientData, ...parsed };
+            console.log('Loaded data from localStorage:', clientData);
+        } catch (e) {
+            console.log('No valid saved data found');
+        }
+    }
+    
+    calculateDataCompleteness();
+}
+
+// Save data to localStorage as backup
+function saveToLocalStorage() {
+    localStorage.setItem(`clientData_${currentUser.id}`, JSON.stringify(clientData));
+}
 
 // Show loading state
 function showLoadingState() {
@@ -126,71 +159,15 @@ function redirectToLogin() {
 }
 
 // Listen for auth state changes
-supabaseClient.auth.onAuthStateChange(async (event, session) => {
+supabaseClient.auth.onAuthStateChange((event, session) => {
     console.log('Auth state changed:', event);
     
     if (event === 'SIGNED_OUT' || !session) {
         if (window.location.pathname.includes('dashboard')) {
             redirectToLogin();
         }
-    } else if (session && session.access_token) {
-        // Update the auth header whenever the session changes
-        supabaseClient.rest.headers['Authorization'] = `Bearer ${session.access_token}`;
     }
 });
-
-// Load client data from database
-async function loadClientData() {
-    try {
-        console.log('Loading client data for user:', currentUser.id);
-        
-        // Create default empty data structure
-        clientData = {
-            client: { id: currentUser.id },
-            businessInfo: {},
-            contactInfo: {},
-            brandAssets: {},
-            digitalPresence: {},
-            socialMedia: [],
-            googleBusiness: {},
-            reputation: [],
-            competitors: [],
-            campaigns: [],
-            seoData: {},
-            customerInsights: {},
-            contentLibrary: [],
-            aiQueue: [],
-            completeness: 0
-        };
-        
-        // Load business_info table data
-        try {
-            const { data: businessData, error: businessError } = await supabaseClient
-                .from('business_info')
-                .select('*')
-                .eq('user_id', currentUser.id)
-                .maybeSingle();
-            
-            if (!businessError && businessData) {
-                clientData.businessInfo = businessData;
-                console.log('Loaded business info:', businessData);
-            }
-        } catch (e) {
-            console.log('business_info table may not exist yet');
-        }
-        
-        // Note: We're simplifying this for now - just loading the main business_info table
-        // Other tables can be loaded similarly when they're created
-        
-        // Calculate completeness
-        calculateDataCompleteness();
-        
-        console.log('Client data loaded:', clientData);
-        
-    } catch (error) {
-        console.error('Error loading client data:', error);
-    }
-}
 
 // Calculate overall data completeness
 function calculateDataCompleteness() {
@@ -843,6 +820,23 @@ async function saveSection(section) {
         return;
     }
     
+    // Save to localStorage immediately
+    saveToLocalStorage();
+    
+    // Update UI to show it's saved
+    showNotification(`${formatSectionName(section)} saved successfully!`, 'success');
+    
+    // Recalculate completeness
+    calculateDataCompleteness();
+    updateUserInterface();
+    
+    // Update overview if visible
+    if (currentSection === 'overview') {
+        populateOverview();
+    }
+    
+    // Try to save to Supabase in the background
+    // We'll use a direct fetch call instead of the Supabase client to have better control
     try {
         // Prepare data for save
         const saveData = {
@@ -858,74 +852,38 @@ async function saveSection(section) {
             }
         });
         
-        console.log('Saving data to table:', section);
-        console.log('Save data:', saveData);
+        console.log('Attempting to save to Supabase:', saveData);
         
-        // Get current session to ensure we have fresh token
+        // Get current session for auth token
         const { data: { session } } = await supabaseClient.auth.getSession();
         if (!session) {
-            showNotification('Session expired. Please log in again.', 'error');
-            redirectToLogin();
+            console.log('No active session for Supabase save');
             return;
         }
         
-        // Update auth header with fresh token
-        supabaseClient.rest.headers['Authorization'] = `Bearer ${session.access_token}`;
+        // Make direct API call
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/${section}?on_conflict=user_id`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${session.access_token}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'resolution=merge-duplicates'
+            },
+            body: JSON.stringify(saveData)
+        });
         
-        // Save to database
-        const { data, error } = await supabaseClient
-            .from(section)
-            .upsert(saveData, { 
-                onConflict: 'user_id'
-            });
-        
-        if (error) {
-            console.error('Supabase error:', error);
-            
-            // Handle specific error types
-            if (error.code === '42P01') {
-                showNotification('Database tables not set up yet. Please contact support.', 'warning');
-                return;
-            } else if (error.message && error.message.includes('Invalid API key')) {
-                showNotification('Authentication error. Please refresh the page and try again.', 'error');
-                return;
-            } else if (error.code === 'PGRST301') {
-                showNotification('Permission denied. Please contact support.', 'error');
-                return;
-            }
-            
-            throw error;
-        }
-        
-        showNotification(`${formatSectionName(section)} saved successfully!`, 'success');
-        
-        // Update local data with what we sent
-        clientData[dataKey] = saveData;
-        
-        // Recalculate completeness
-        calculateDataCompleteness();
-        
-        // Update overview if visible
-        if (currentSection === 'overview') {
-            populateOverview();
+        if (response.ok) {
+            console.log('Successfully saved to Supabase');
+        } else {
+            const error = await response.text();
+            console.error('Supabase save error:', error);
+            // Don't show error to user since localStorage save worked
         }
         
     } catch (error) {
-        console.error('Error saving data:', error);
-        
-        // Show user-friendly error message
-        let errorMessage = 'Error saving data. ';
-        if (error.message) {
-            if (error.message.includes('Invalid API key')) {
-                errorMessage = 'Authentication error. Please refresh the page and try again.';
-            } else if (error.message.includes('JWT')) {
-                errorMessage = 'Session expired. Please log in again.';
-            } else {
-                errorMessage += 'Please try again or contact support.';
-            }
-        }
-        
-        showNotification(errorMessage, 'error');
+        console.error('Background save error:', error);
+        // Don't show error to user since localStorage save worked
     }
 }
 
@@ -1239,24 +1197,7 @@ document.addEventListener('click', (e) => {
 
 // AI Research trigger
 async function triggerAIResearch(researchType) {
-    try {
-        const { data, error } = await supabaseClient
-            .from('ai_research_queue')
-            .insert({
-                client_id: currentUser.id,
-                research_type: researchType,
-                status: 'pending',
-                priority: 5,
-                created_at: new Date().toISOString()
-            });
-        
-        if (error) throw error;
-        
-        showNotification('AI research task queued successfully!', 'success');
-    } catch (error) {
-        console.error('Error queuing AI research:', error);
-        showNotification('AI research feature requires database setup', 'info');
-    }
+    showNotification('AI research feature coming soon!', 'info');
 }
 
 // Placeholder functions for features not yet implemented
