@@ -1,4 +1,4 @@
-// Dashboard Core - Fixed Navigation System
+// Dashboard Core - Fixed Navigation System with Data Loading
 // Initialize Supabase
 const SUPABASE_URL = 'https://orhswpgngjpztcxgwbuy.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9yaHN3cGduZ2pwenRjeGd3YnV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgxMzUwNjgsImV4cCI6MjA2MzcxMTA2OH0.UNn_iNSkUOa1uxmoqz3MEdRuts326XVbR9MBHLiTltY';
@@ -24,6 +24,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         window.user = session.user;
         updateUserDisplay();
+        
+        // Load user data from Supabase
+        await loadUserData();
+        
         initializeMobileHandlers();
         initializeNavigation();
         
@@ -42,6 +46,65 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = 'login.html';
     }
 });
+
+// Load user data from Supabase
+async function loadUserData() {
+    if (!window.user) return;
+    
+    console.log('Loading user data for:', window.user.email);
+    
+    try {
+        // Load business info
+        const { data: businessData, error: businessError } = await window.supabase
+            .from('business_info')
+            .select('*')
+            .eq('user_id', window.user.id)
+            .maybeSingle();
+        
+        if (businessError && businessError.code !== 'PGRST116') {
+            console.error('Error loading business info:', businessError);
+        } else if (businessData) {
+            window.userData.businessInfo = businessData;
+            console.log('Loaded business info:', businessData);
+        }
+        
+        // Load contact info
+        const { data: contactData, error: contactError } = await window.supabase
+            .from('contact_info')
+            .select('*')
+            .eq('user_id', window.user.id)
+            .maybeSingle();
+        
+        if (contactError && contactError.code !== 'PGRST116') {
+            console.error('Error loading contact info:', contactError);
+        } else if (contactData) {
+            window.userData.contactInfo = contactData;
+            console.log('Loaded contact info:', contactData);
+        }
+        
+        // Load brand assets
+        const { data: brandData, error: brandError } = await window.supabase
+            .from('brand_assets')
+            .select('*')
+            .eq('user_id', window.user.id);
+        
+        if (brandError && brandError.code !== 'PGRST116') {
+            console.error('Error loading brand assets:', brandError);
+        } else if (brandData) {
+            window.userData.brandAssets = brandData;
+            console.log('Loaded brand assets:', brandData);
+        }
+        
+        console.log('User data loaded successfully:', window.userData);
+        
+    } catch (error) {
+        console.error('Error in loadUserData:', error);
+        if (error.message?.includes('relation') && error.message?.includes('does not exist')) {
+            console.log('Database tables not set up yet - this is normal for new installations');
+            showNotification('Database setup required. Some features may not work yet.', 'info');
+        }
+    }
+}
 
 // Initialize navigation event listeners
 function initializeNavigation() {
@@ -144,7 +207,13 @@ async function loadSection(sectionName) {
             try {
                 const script = document.createElement('script');
                 script.src = `js/sections/${sectionName}.js`;
-                script.onload = () => console.log(`Loaded ${sectionName} module`);
+                script.onload = () => {
+                    console.log(`Loaded ${sectionName} module`);
+                    // Trigger data loading for brand-info section
+                    if (sectionName === 'brand-info' && window.loadBrandData) {
+                        setTimeout(() => window.loadBrandData(), 100);
+                    }
+                };
                 script.onerror = () => console.log(`No JS module for ${sectionName} (this is normal)`);
                 
                 // Remove any existing section scripts first
@@ -326,6 +395,7 @@ window.closeSidebar = closeSidebar;
 window.toggleDropdown = toggleDropdown;
 window.signOut = signOut;
 window.showNotification = showNotification;
+window.loadUserData = loadUserData;
 
 // Add touch class for better mobile interactions
 if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
