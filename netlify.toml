@@ -1,12 +1,19 @@
 [build]
   # This will be your default build command
   command = ""
-  # This is the directory that you want to publish (default is dist folder)
-  publish = "."  # Changed to use root directory
+  # This is the directory that you want to publish
+  publish = "."
 
 [build.environment]
   NODE_VERSION = "16"
 
+# Specific redirects for dashboard files - these should be served directly
+[[redirects]]
+  from = "/dist/*"
+  to = "/dist/:splat"
+  status = 200
+
+# Redirect other paths to homepage
 [[redirects]]
   from = "/*"
   to = "/index.html"
