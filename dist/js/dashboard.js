@@ -4,7 +4,13 @@ const SUPABASE_URL = 'https://orhswpgngjpztcxgwbuy.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9yaHN3cGduZ2pwenRjeGd3YnV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI5MDM0NjIsImV4cCI6MjA0ODQ3OTQ2Mn0.vTt4L2h7B6U-2OYzfbYhcFRZUdPU9LM5SA7AHZHFxts';
 
 const { createClient } = supabase;
-const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+    }
+});
 
 // Global variables
 let currentUser = null;
@@ -34,6 +40,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         currentUser = session.user;
         console.log('User authenticated:', currentUser.email);
+        
+        // IMPORTANT: Set the auth header for all subsequent requests
+        supabaseClient.rest.headers['Authorization'] = `Bearer ${session.access_token}`;
         
         // Hide loading state
         hideLoadingState();
@@ -117,13 +126,16 @@ function redirectToLogin() {
 }
 
 // Listen for auth state changes
-supabaseClient.auth.onAuthStateChange((event, session) => {
+supabaseClient.auth.onAuthStateChange(async (event, session) => {
     console.log('Auth state changed:', event);
     
     if (event === 'SIGNED_OUT' || !session) {
         if (window.location.pathname.includes('dashboard')) {
             redirectToLogin();
         }
+    } else if (session && session.access_token) {
+        // Update the auth header whenever the session changes
+        supabaseClient.rest.headers['Authorization'] = `Bearer ${session.access_token}`;
     }
 });
 
@@ -151,43 +163,24 @@ async function loadClientData() {
             completeness: 0
         };
         
-        // Try to load from database (tables might not exist yet)
+        // Load business_info table data
         try {
-            const results = await Promise.allSettled([
-                supabaseClient.from('clients').select('*').eq('user_id', currentUser.id).single(),
-                supabaseClient.from('business_info').select('*').eq('user_id', currentUser.id).single(),
-                supabaseClient.from('contact_info').select('*').eq('user_id', currentUser.id).single(),
-                supabaseClient.from('brand_assets').select('*').eq('user_id', currentUser.id).single(),
-                supabaseClient.from('digital_presence').select('*').eq('user_id', currentUser.id).single(),
-                supabaseClient.from('social_media_accounts').select('*').eq('client_id', currentUser.id),
-                supabaseClient.from('google_business_profile').select('*').eq('user_id', currentUser.id).single(),
-                supabaseClient.from('reputation_management').select('*').eq('client_id', currentUser.id),
-                supabaseClient.from('competitor_analysis').select('*').eq('client_id', currentUser.id),
-                supabaseClient.from('campaign_data').select('*').eq('client_id', currentUser.id),
-                supabaseClient.from('seo_data').select('*').eq('user_id', currentUser.id).single(),
-                supabaseClient.from('customer_insights').select('*').eq('client_id', currentUser.id).single(),
-                supabaseClient.from('content_library').select('*').eq('client_id', currentUser.id),
-                supabaseClient.from('ai_research_queue').select('*').eq('client_id', currentUser.id)
-            ]);
+            const { data: businessData, error: businessError } = await supabaseClient
+                .from('business_info')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .maybeSingle();
             
-            // Process results (update only if data exists)
-            if (results[0].status === 'fulfilled' && results[0].value.data) clientData.client = results[0].value.data;
-            if (results[1].status === 'fulfilled' && results[1].value.data) clientData.businessInfo = results[1].value.data;
-            if (results[2].status === 'fulfilled' && results[2].value.data) clientData.contactInfo = results[2].value.data;
-            if (results[3].status === 'fulfilled' && results[3].value.data) clientData.brandAssets = results[3].value.data;
-            if (results[4].status === 'fulfilled' && results[4].value.data) clientData.digitalPresence = results[4].value.data;
-            if (results[5].status === 'fulfilled' && results[5].value.data) clientData.socialMedia = results[5].value.data;
-            if (results[6].status === 'fulfilled' && results[6].value.data) clientData.googleBusiness = results[6].value.data;
-            if (results[7].status === 'fulfilled' && results[7].value.data) clientData.reputation = results[7].value.data;
-            if (results[8].status === 'fulfilled' && results[8].value.data) clientData.competitors = results[8].value.data;
-            if (results[9].status === 'fulfilled' && results[9].value.data) clientData.campaigns = results[9].value.data;
-            if (results[10].status === 'fulfilled' && results[10].value.data) clientData.seoData = results[10].value.data;
-            if (results[11].status === 'fulfilled' && results[11].value.data) clientData.customerInsights = results[11].value.data;
-            if (results[12].status === 'fulfilled' && results[12].value.data) clientData.contentLibrary = results[12].value.data;
-            if (results[13].status === 'fulfilled' && results[13].value.data) clientData.aiQueue = results[13].value.data;
-        } catch (dbError) {
-            console.log('Database tables may not exist yet. Using default data structure.');
+            if (!businessError && businessData) {
+                clientData.businessInfo = businessData;
+                console.log('Loaded business info:', businessData);
+            }
+        } catch (e) {
+            console.log('business_info table may not exist yet');
         }
+        
+        // Note: We're simplifying this for now - just loading the main business_info table
+        // Other tables can be loaded similarly when they're created
         
         // Calculate completeness
         calculateDataCompleteness();
@@ -868,7 +861,18 @@ async function saveSection(section) {
         console.log('Saving data to table:', section);
         console.log('Save data:', saveData);
         
-        // Save to database - FIX: Don't use select() which adds the problematic prefer header
+        // Get current session to ensure we have fresh token
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (!session) {
+            showNotification('Session expired. Please log in again.', 'error');
+            redirectToLogin();
+            return;
+        }
+        
+        // Update auth header with fresh token
+        supabaseClient.rest.headers['Authorization'] = `Bearer ${session.access_token}`;
+        
+        // Save to database
         const { data, error } = await supabaseClient
             .from(section)
             .upsert(saveData, { 
@@ -895,7 +899,7 @@ async function saveSection(section) {
         
         showNotification(`${formatSectionName(section)} saved successfully!`, 'success');
         
-        // Since we can't use select(), we'll just update local data with what we sent
+        // Update local data with what we sent
         clientData[dataKey] = saveData;
         
         // Recalculate completeness
