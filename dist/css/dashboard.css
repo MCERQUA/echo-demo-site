@@ -50,7 +50,7 @@ body {
     visibility: visible;
 }
 
-/* Sidebar */
+/* Sidebar - Fixed mobile states */
 .sidebar {
     position: fixed;
     top: 0;
@@ -63,9 +63,16 @@ body {
     flex-direction: column;
     transition: transform 0.3s ease;
     z-index: 1000;
+    /* Default state: hidden on mobile */
     transform: translateX(-100%);
 }
 
+/* When sidebar is open (remove collapsed class to show) */
+.sidebar:not(.collapsed) {
+    transform: translateX(0);
+}
+
+/* Keep collapsed state for explicit hiding */
 .sidebar.collapsed {
     transform: translateX(-100%);
 }
@@ -112,6 +119,7 @@ body {
     padding: 0.5rem;
     border-radius: 4px;
     transition: all 0.2s;
+    z-index: 1001;
 }
 
 .sidebar-close:hover {
@@ -900,9 +908,15 @@ nav {
     }
 }
 
-/* Responsive Desktop */
+/* Responsive Desktop - Critical Fix */
 @media (min-width: 768px) {
+    /* Desktop: Sidebar always visible */
     .sidebar {
+        transform: translateX(0);
+    }
+    
+    /* Desktop: Always remove collapsed state */
+    .sidebar.collapsed {
         transform: translateX(0);
     }
     
