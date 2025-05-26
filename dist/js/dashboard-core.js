@@ -8,6 +8,10 @@ window.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 window.user = null;
 window.userData = {};
 
+// Mobile sidebar state
+let isMobile = window.innerWidth <= 768;
+let sidebarOpen = false;
+
 // Check authentication and initialize
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -20,6 +24,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         window.user = session.user;
         updateUserDisplay();
+        initializeMobileHandlers();
+        
+        // Set initial sidebar state based on screen size
+        if (isMobile) {
+            closeSidebar();
+        }
+        
         loadSection('overview');
         
     } catch (error) {
@@ -27,6 +38,42 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = 'login.html';
     }
 });
+
+// Initialize mobile-specific event handlers
+function initializeMobileHandlers() {
+    const overlay = document.getElementById('mobileOverlay');
+    const sidebarClose = document.getElementById('sidebarClose');
+    
+    // Close sidebar when clicking overlay
+    overlay.addEventListener('click', closeSidebar);
+    
+    // Close sidebar when clicking close button
+    sidebarClose.addEventListener('click', closeSidebar);
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        const wasMyMobile = isMobile;
+        isMobile = window.innerWidth <= 768;
+        
+        // If switching from mobile to desktop, ensure sidebar is visible
+        if (wasMyMobile && !isMobile) {
+            openSidebar();
+        }
+        // If switching from desktop to mobile, ensure sidebar is hidden
+        else if (!wasMyMobile && isMobile) {
+            closeSidebar();
+        }
+    });
+    
+    // Close sidebar when clicking navigation links on mobile
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            if (isMobile) {
+                closeSidebar();
+            }
+        });
+    });
+}
 
 // Update user display
 function updateUserDisplay() {
@@ -45,7 +92,7 @@ async function loadSection(sectionName) {
     // Update nav
     document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
     event?.target?.closest('.nav-link')?.classList.add('active') || 
-    document.querySelector(`[onclick="loadSection('${sectionName}')"]`)?.classList.add('active');
+    document.querySelector(`[onclick=\"loadSection('${sectionName}')\"]`)?.classList.add('active');
     
     try {
         // Load section HTML
@@ -72,9 +119,42 @@ async function loadSection(sectionName) {
     }
 }
 
-// Simple utilities
+// Enhanced sidebar controls
 function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('collapsed');
+    if (sidebarOpen) {
+        closeSidebar();
+    } else {
+        openSidebar();
+    }
+}
+
+function openSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('mobileOverlay');
+    
+    sidebar.classList.remove('collapsed');
+    
+    if (isMobile) {
+        overlay.classList.add('show');
+        // Prevent body scroll when sidebar is open on mobile
+        document.body.style.overflow = 'hidden';
+    }
+    
+    sidebarOpen = true;
+}
+
+function closeSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('mobileOverlay');
+    
+    if (isMobile) {
+        sidebar.classList.add('collapsed');
+        overlay.classList.remove('show');
+        // Re-enable body scroll
+        document.body.style.overflow = '';
+    }
+    
+    sidebarOpen = false;
 }
 
 function toggleDropdown() {
@@ -93,8 +173,22 @@ document.addEventListener('click', (e) => {
     }
 });
 
+// Handle escape key to close sidebar on mobile
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isMobile && sidebarOpen) {
+        closeSidebar();
+    }
+});
+
+// Prevent sidebar from closing when clicking inside it
+document.getElementById('sidebar').addEventListener('click', (e) => {
+    e.stopPropagation();
+});
+
 // Make functions global
 window.loadSection = loadSection;
 window.toggleSidebar = toggleSidebar;
+window.openSidebar = openSidebar;
+window.closeSidebar = closeSidebar;
 window.toggleDropdown = toggleDropdown;
 window.signOut = signOut;
