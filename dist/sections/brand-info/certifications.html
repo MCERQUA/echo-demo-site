@@ -1,0 +1,145 @@
+<!-- Certifications Tab -->
+<div id="certifications" class="tab-content" data-section="business_info">
+    <div class="section-card">
+        <div class="card-header">
+            <h2>Licenses & Certifications</h2>
+            <button class="btn-primary" id="cert-upload-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h6"/>
+                    <polyline points="15 2 21 2 21 8"/>
+                    <line x1="10" y1="14" x2="21" y2="3"/>
+                </svg>
+                Upload Certificate
+            </button>
+        </div>
+        
+        <div class="certifications-list" id="certifications-list">
+            <div class="empty-state">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="12" y1="18" x2="12" y2="12"/>
+                    <line x1="9" y1="15" x2="15" y2="15"/>
+                </svg>
+                <p>No certifications added yet</p>
+                <p class="text-muted">Upload your business licenses, certifications, and insurance documents</p>
+            </div>
+        </div>
+        
+        <div class="insurance-section">
+            <h3>Insurance & Bonding</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Bonded</label>
+                    <select class="field-value" data-field="bonded" data-table="business_info">
+                        <option value="false">No</option>
+                        <option value="true">Yes</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Bond Amount</label>
+                    <div class="field-value" data-field="bond_amount" data-table="business_info"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.certifications-list {
+    margin-bottom: 2rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted);
+}
+
+.empty-state svg {
+    margin-bottom: 1rem;
+}
+
+.empty-state .text-muted {
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.certification-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 0.75rem;
+}
+
+.cert-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: var(--primary-light);
+    border-radius: 8px;
+    color: var(--primary);
+}
+
+.cert-info {
+    flex: 1;
+}
+
+.cert-info h4 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.cert-date {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.cert-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-icon:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+}
+
+.insurance-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+}
+</style>
+
+<script>
+// Initialize certificate upload when this tab loads
+document.addEventListener('DOMContentLoaded', () => {
+    if (window.brandAssetsUpload) {
+        window.brandAssetsUpload.loadBrandAssets();
+    }
+});
+</script>
