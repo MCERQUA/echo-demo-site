@@ -1,4 +1,4 @@
-// Dashboard Core - Ultra Simple Module Loader with Mobile-First Design
+// Dashboard Core - Fixed Navigation System
 // Initialize Supabase
 const SUPABASE_URL = 'https://orhswpgngjpztcxgwbuy.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9yaHN3cGduZ2pwenRjeGd3YnV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgxMzUwNjgsImV4cCI6MjA2MzcxMTA2OH0.UNn_iNSkUOa1uxmoqz3MEdRuts326XVbR9MBHLiTltY';
@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.user = session.user;
         updateUserDisplay();
         initializeMobileHandlers();
+        initializeNavigation();
         
         // Set initial sidebar state - collapsed on mobile, open on desktop
         if (isMobile) {
@@ -33,6 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             openSidebar();
         }
         
+        // Load default section
         loadSection('overview');
         
     } catch (error) {
@@ -40,6 +42,40 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = 'login.html';
     }
 });
+
+// Initialize navigation event listeners
+function initializeNavigation() {
+    // Add click event listeners to all navigation links
+    document.querySelectorAll('.nav-link').forEach(link => {
+        // Get the onclick attribute to extract the section name
+        const onclickAttr = link.getAttribute('onclick');
+        if (onclickAttr) {
+            const match = onclickAttr.match(/loadSection\('([^']+)'\)/);
+            if (match) {
+                const sectionName = match[1];
+                
+                // Add click event listener
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Remove active class from all nav links
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    // Add active class to clicked link
+                    this.classList.add('active');
+                    
+                    // Load the section
+                    loadSection(sectionName);
+                    
+                    // Close sidebar on mobile after navigation
+                    if (isMobile) {
+                        setTimeout(() => closeSidebar(), 100);
+                    }
+                });
+            }
+        }
+    });
+}
 
 // Initialize mobile-specific event handlers
 function initializeMobileHandlers() {
@@ -70,15 +106,6 @@ function initializeMobileHandlers() {
             closeSidebar();
         }
     });
-    
-    // Close sidebar when clicking navigation links on mobile
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', () => {
-            if (isMobile) {
-                closeSidebar();
-            }
-        });
-    });
 }
 
 // Update user display
@@ -95,18 +122,15 @@ function updateUserDisplay() {
 
 // Load section modules dynamically
 async function loadSection(sectionName) {
+    console.log('Loading section:', sectionName);
+    
     const content = document.getElementById('main-content');
-    if (!content) return;
+    if (!content) {
+        console.error('Main content container not found');
+        return;
+    }
     
     content.innerHTML = '<div class="loading-state">Loading...</div>';
-    
-    // Update nav
-    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-    const targetLink = event?.target?.closest('.nav-link') || 
-                      document.querySelector(`[onclick*="loadSection('${sectionName}')"]`);
-    if (targetLink) {
-        targetLink.classList.add('active');
-    }
     
     try {
         // Load section HTML
@@ -114,24 +138,30 @@ async function loadSection(sectionName) {
         if (htmlResponse.ok) {
             const htmlContent = await htmlResponse.text();
             content.innerHTML = htmlContent;
+            console.log(`Loaded ${sectionName} section successfully`);
             
-            // Load section JS if exists
-            const script = document.createElement('script');
-            script.src = `js/sections/${sectionName}.js`;
-            script.onload = () => console.log(`Loaded ${sectionName} module`);
-            script.onerror = () => console.log(`No JS module for ${sectionName}`);
-            
-            // Remove any existing section scripts first
-            const existingScript = document.querySelector(`script[src="js/sections/${sectionName}.js"]`);
-            if (existingScript) {
-                existingScript.remove();
+            // Load section JS if exists (optional)
+            try {
+                const script = document.createElement('script');
+                script.src = `js/sections/${sectionName}.js`;
+                script.onload = () => console.log(`Loaded ${sectionName} module`);
+                script.onerror = () => console.log(`No JS module for ${sectionName} (this is normal)`);
+                
+                // Remove any existing section scripts first
+                const existingScript = document.querySelector(`script[src="js/sections/${sectionName}.js"]`);
+                if (existingScript) {
+                    existingScript.remove();
+                }
+                
+                document.head.appendChild(script);
+            } catch (jsError) {
+                console.log(`No JS module for ${sectionName}:`, jsError);
             }
-            
-            document.head.appendChild(script);
         } else {
-            throw new Error('Section not found');
+            throw new Error(`Section not found: ${sectionName}`);
         }
     } catch (error) {
+        console.error(`Error loading section ${sectionName}:`, error);
         content.innerHTML = `
             <div class="section-header">
                 <h1>${sectionName.charAt(0).toUpperCase() + sectionName.slice(1).replace('-', ' ')}</h1>
@@ -139,6 +169,7 @@ async function loadSection(sectionName) {
             </div>
             <div class="section-card">
                 <p>We're working hard to bring you this feature. Check back soon!</p>
+                <button class="btn-primary" onclick="loadSection('overview')">Return to Overview</button>
             </div>
         `;
     }
@@ -146,6 +177,7 @@ async function loadSection(sectionName) {
 
 // Enhanced sidebar controls
 function toggleSidebar() {
+    console.log('Toggling sidebar, current state:', sidebarOpen);
     if (sidebarOpen) {
         closeSidebar();
     } else {
@@ -157,8 +189,12 @@ function openSidebar() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('mobileOverlay');
     
-    if (!sidebar) return;
+    if (!sidebar) {
+        console.error('Sidebar element not found');
+        return;
+    }
     
+    console.log('Opening sidebar');
     sidebar.classList.remove('collapsed');
     
     if (isMobile && overlay) {
@@ -174,7 +210,12 @@ function closeSidebar() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('mobileOverlay');
     
-    if (!sidebar) return;
+    if (!sidebar) {
+        console.error('Sidebar element not found');
+        return;
+    }
+    
+    console.log('Closing sidebar');
     
     if (isMobile) {
         sidebar.classList.add('collapsed');
@@ -222,12 +263,12 @@ document.addEventListener('keydown', (e) => {
 });
 
 // Prevent sidebar from closing when clicking inside it
-const sidebar = document.getElementById('sidebar');
-if (sidebar) {
-    sidebar.addEventListener('click', (e) => {
+document.addEventListener('click', (e) => {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar && sidebar.contains(e.target)) {
         e.stopPropagation();
-    });
-}
+    }
+});
 
 // Touch gesture support for sidebar (swipe to close)
 let touchStartX = 0;
@@ -274,7 +315,7 @@ function showNotification(message, type = 'info') {
     });
 }
 
-// Make functions global
+// Make functions global for onclick handlers
 window.loadSection = loadSection;
 window.toggleSidebar = toggleSidebar;
 window.openSidebar = openSidebar;
@@ -287,3 +328,6 @@ window.showNotification = showNotification;
 if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
     document.documentElement.classList.add('touch');
 }
+
+// Debug logging
+console.log('Dashboard core loaded, mobile detection:', isMobile);
