@@ -164,7 +164,7 @@ async function loadClientData() {
                 supabaseClient.from('reputation_management').select('*').eq('client_id', currentUser.id),
                 supabaseClient.from('competitor_analysis').select('*').eq('client_id', currentUser.id),
                 supabaseClient.from('campaign_data').select('*').eq('client_id', currentUser.id),
-                supabaseClient.from('seo_data').select('*').eq('client_id', currentUser.id).single(),
+                supabaseClient.from('seo_data').select('*').eq('user_id', currentUser.id).single(),
                 supabaseClient.from('customer_insights').select('*').eq('client_id', currentUser.id).single(),
                 supabaseClient.from('content_library').select('*').eq('client_id', currentUser.id),
                 supabaseClient.from('ai_research_queue').select('*').eq('client_id', currentUser.id)
@@ -718,7 +718,7 @@ function initializeSectionFeatures(sectionName) {
             break;
     }
     
-    // Initialize edit mode for all field values
+    // Initialize editable fields
     initializeEditableFields();
 }
 
@@ -868,13 +868,12 @@ async function saveSection(section) {
         console.log('Saving data to table:', section);
         console.log('Save data:', saveData);
         
-        // Save to database with fixed syntax
+        // Save to database - FIX: Don't use select() which adds the problematic prefer header
         const { data, error } = await supabaseClient
             .from(section)
             .upsert(saveData, { 
                 onConflict: 'user_id'
-            })
-            .select();
+            });
         
         if (error) {
             console.error('Supabase error:', error);
@@ -896,10 +895,8 @@ async function saveSection(section) {
         
         showNotification(`${formatSectionName(section)} saved successfully!`, 'success');
         
-        // Update local data with response
-        if (data && data[0]) {
-            clientData[dataKey] = data[0];
-        }
+        // Since we can't use select(), we'll just update local data with what we sent
+        clientData[dataKey] = saveData;
         
         // Recalculate completeness
         calculateDataCompleteness();
