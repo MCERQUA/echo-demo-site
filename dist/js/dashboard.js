@@ -161,12 +161,36 @@ async function loadClientData() {
         if (!businessError && businessData) {
             clientData.businessInfo = businessData;
             console.log('Loaded business info:', businessData);
-        } else if (businessError) {
+        } else if (businessError && businessError.code !== '42P01') {
             console.error('Error loading business info:', businessError);
-            // If table doesn't exist, that's okay - just use empty data
-            if (businessError.code !== '42P01') {
-                showNotification('Error loading data. Some features may be limited.', 'warning');
-            }
+        }
+        
+        // Try to load contact_info data
+        const { data: contactData, error: contactError } = await supabaseClient
+            .from('contact_info')
+            .select('*')
+            .eq('user_id', currentUser.id)
+            .maybeSingle();
+        
+        if (!contactError && contactData) {
+            clientData.contactInfo = contactData;
+            console.log('Loaded contact info:', contactData);
+        } else if (contactError && contactError.code !== '42P01') {
+            console.error('Error loading contact info:', contactError);
+        }
+        
+        // Try to load brand_assets data
+        const { data: brandData, error: brandError } = await supabaseClient
+            .from('brand_assets')
+            .select('*')
+            .eq('user_id', currentUser.id)
+            .maybeSingle();
+        
+        if (!brandError && brandData) {
+            clientData.brandAssets = brandData;
+            console.log('Loaded brand assets:', brandData);
+        } else if (brandError && brandError.code !== '42P01') {
+            console.error('Error loading brand assets:', brandError);
         }
         
         // Calculate completeness
@@ -737,6 +761,12 @@ function initializeEditableFields() {
 
 // Toggle edit mode for a section
 function toggleEditMode(section) {
+    // Special handling for contact_info
+    if (section === 'contact_info' && typeof toggleContactInfoEditMode === 'function') {
+        toggleContactInfoEditMode();
+        return;
+    }
+    
     editMode[section] = !editMode[section];
     
     const button = event.target;
@@ -914,6 +944,9 @@ function populateSection(sectionName) {
             break;
         case 'brand-info':
             populateBrandInfo();
+            if (typeof loadContactInfo === 'function') {
+                loadContactInfo();
+            }
             break;
         case 'social-media':
             populateSocialMedia();
