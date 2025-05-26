@@ -1,329 +1,87 @@
-<!-- Contact Information Tab Content -->
+<!-- Contact Information Tab - Simple Clean Version -->
 <div class="section-card">
     <div class="card-header">
-        <h2>Primary Contact Information</h2>
-        <button class="btn-secondary edit-button" onclick="toggleContactInfoEditMode()">Edit</button>
+        <h2>Contact Information</h2>
+        <button class="btn-secondary edit-button" onclick="toggleContactEditMode()">Edit</button>
     </div>
     
-    <div class="contact-info-content">
-        <div class="form-grid">
-            <div class="form-group">
-                <label for="primary_phone">Primary Phone</label>
-                <div class="field-display">
-                    <span class="field-value" id="primary_phone_display">Click Edit to add</span>
-                    <input type="tel" id="primary_phone" class="field-input" style="display: none;" placeholder="(555) 123-4567">
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="secondary_phone">Secondary Phone</label>
-                <div class="field-display">
-                    <span class="field-value" id="secondary_phone_display">Click Edit to add</span>
-                    <input type="tel" id="secondary_phone" class="field-input" style="display: none;" placeholder="(555) 987-6543">
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="primary_email">Primary Email</label>
-                <div class="field-display">
-                    <span class="field-value" id="primary_email_display">Click Edit to add</span>
-                    <input type="email" id="primary_email" class="field-input" style="display: none;" placeholder="info@company.com">
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="support_email">Support Email</label>
-                <div class="field-display">
-                    <span class="field-value" id="support_email_display">Click Edit to add</span>
-                    <input type="email" id="support_email" class="field-input" style="display: none;" placeholder="support@company.com">
-                </div>
-            </div>
-            
-            <div class="form-group full-width">
-                <label for="headquarters_address">Business Address</label>
-                <div class="field-display">
-                    <span class="field-value" id="headquarters_address_display">Click Edit to add</span>
-                    <textarea id="headquarters_address" class="field-input" style="display: none;" rows="3" placeholder="123 Business St, Suite 100&#10;City, State 12345"></textarea>
-                </div>
-            </div>
-            
-            <div class="form-group full-width">
-                <label for="business_hours">Business Hours</label>
-                <div class="field-display">
-                    <span class="field-value" id="business_hours_display">Click Edit to add</span>
-                    <textarea id="business_hours" class="field-input" style="display: none;" rows="3" placeholder="Monday - Friday: 9:00 AM - 6:00 PM&#10;Saturday: 10:00 AM - 4:00 PM&#10;Sunday: Closed"></textarea>
-                </div>
-            </div>
+    <div class="form-grid">
+        <div class="form-group">
+            <label>Primary Phone</label>
+            <span class="field-value" id="primary_phone_display">Click Edit to add</span>
+            <input type="tel" id="primary_phone" class="field-input" style="display:none" placeholder="(555) 123-4567">
+        </div>
+        
+        <div class="form-group">
+            <label>Primary Email</label>
+            <span class="field-value" id="primary_email_display">Click Edit to add</span>
+            <input type="email" id="primary_email" class="field-input" style="display:none" placeholder="info@company.com">
+        </div>
+        
+        <div class="form-group">
+            <label>Secondary Phone</label>
+            <span class="field-value" id="secondary_phone_display">Click Edit to add</span>
+            <input type="tel" id="secondary_phone" class="field-input" style="display:none" placeholder="(555) 987-6543">
+        </div>
+        
+        <div class="form-group">
+            <label>Support Email</label>
+            <span class="field-value" id="support_email_display">Click Edit to add</span>
+            <input type="email" id="support_email" class="field-input" style="display:none" placeholder="support@company.com">
+        </div>
+        
+        <div class="form-group full-width">
+            <label>Business Address</label>
+            <span class="field-value" id="headquarters_address_display">Click Edit to add</span>
+            <textarea id="headquarters_address" class="field-input" style="display:none" rows="3" placeholder="123 Business St, Suite 100&#10;City, State 12345"></textarea>
+        </div>
+        
+        <div class="form-group full-width">
+            <label>Business Hours</label>
+            <span class="field-value" id="business_hours_display">Click Edit to add</span>
+            <textarea id="business_hours" class="field-input" style="display:none" rows="3" placeholder="Monday - Friday: 9:00 AM - 6:00 PM&#10;Saturday: 10:00 AM - 4:00 PM&#10;Sunday: Closed"></textarea>
         </div>
     </div>
 </div>
 
 <div class="section-card">
     <div class="card-header">
-        <h2>Additional Contact Methods</h2>
+        <h2>Online Presence</h2>
     </div>
     
-    <div class="contact-info-content">
-        <div class="form-grid">
-            <div class="form-group">
-                <label for="website_url">Website URL</label>
-                <div class="field-display">
-                    <span class="field-value" id="website_url_display">Click Edit to add</span>
-                    <input type="url" id="website_url" class="field-input" style="display: none;" placeholder="https://www.company.com">
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="linkedin_url">LinkedIn Profile</label>
-                <div class="field-display">
-                    <span class="field-value" id="linkedin_url_display">Click Edit to add</span>
-                    <input type="url" id="linkedin_url" class="field-input" style="display: none;" placeholder="https://linkedin.com/company/yourcompany">
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="facebook_url">Facebook Page</label>
-                <div class="field-display">
-                    <span class="field-value" id="facebook_url_display">Click Edit to add</span>
-                    <input type="url" id="facebook_url" class="field-input" style="display: none;" placeholder="https://facebook.com/yourcompany">
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="twitter_url">Twitter/X Profile</label>
-                <div class="field-display">
-                    <span class="field-value" id="twitter_url_display">Click Edit to add</span>
-                    <input type="url" id="twitter_url" class="field-input" style="display: none;" placeholder="https://twitter.com/yourcompany">
-                </div>
-            </div>
+    <div class="form-grid">
+        <div class="form-group">
+            <label>Website URL</label>
+            <span class="field-value" id="website_url_display">Click Edit to add</span>
+            <input type="url" id="website_url" class="field-input" style="display:none" placeholder="https://www.company.com">
+        </div>
+        
+        <div class="form-group">
+            <label>LinkedIn</label>
+            <span class="field-value" id="linkedin_url_display">Click Edit to add</span>
+            <input type="url" id="linkedin_url" class="field-input" style="display:none" placeholder="https://linkedin.com/company/yourcompany">
+        </div>
+        
+        <div class="form-group">
+            <label>Facebook</label>
+            <span class="field-value" id="facebook_url_display">Click Edit to add</span>
+            <input type="url" id="facebook_url" class="field-input" style="display:none" placeholder="https://facebook.com/yourcompany">
+        </div>
+        
+        <div class="form-group">
+            <label>Twitter/X</label>
+            <span class="field-value" id="twitter_url_display">Click Edit to add</span>
+            <input type="url" id="twitter_url" class="field-input" style="display:none" placeholder="https://twitter.com/yourcompany">
         </div>
     </div>
 </div>
-
-<script>
-// Contact Info Edit Mode Management
-let contactInfoEditMode = false;
-
-function toggleContactInfoEditMode() {
-    contactInfoEditMode = !contactInfoEditMode;
-    
-    const editButton = document.querySelector('.edit-button');
-    const fieldDisplays = document.querySelectorAll('.field-value');
-    const fieldInputs = document.querySelectorAll('.field-input');
-    
-    if (contactInfoEditMode) {
-        // Enter edit mode
-        editButton.textContent = 'Save';
-        editButton.classList.remove('btn-secondary');
-        editButton.classList.add('btn-primary');
-        
-        // Show inputs, hide displays
-        fieldDisplays.forEach(display => {
-            display.style.display = 'none';
-        });
-        
-        fieldInputs.forEach(input => {
-            input.style.display = 'block';
-        });
-        
-        // Load current values into inputs
-        loadContactInfo();
-        
-        if (window.showNotification) {
-            window.showNotification('Edit mode enabled - make your changes and click Save', 'info');
-        }
-    } else {
-        // Save mode
-        saveContactInfo();
-        
-        editButton.textContent = 'Edit';
-        editButton.classList.remove('btn-primary');
-        editButton.classList.add('btn-secondary');
-        
-        // Show displays, hide inputs
-        fieldDisplays.forEach(display => {
-            display.style.display = 'block';
-        });
-        
-        fieldInputs.forEach(input => {
-            input.style.display = 'none';
-        });
-    }
-}
-
-function loadContactInfo() {
-    if (!window.clientData || !window.clientData.contactInfo) return;
-    
-    const contactData = window.clientData.contactInfo;
-    
-    // Load each field
-    const fields = [
-        'primary_phone', 'secondary_phone', 'primary_email', 'support_email', 
-        'headquarters_address', 'business_hours', 'website_url', 'linkedin_url', 
-        'facebook_url', 'twitter_url'
-    ];
-    
-    fields.forEach(fieldName => {
-        const input = document.getElementById(fieldName);
-        const display = document.getElementById(fieldName + '_display');
-        
-        if (input && contactData[fieldName]) {
-            input.value = contactData[fieldName];
-        }
-        
-        if (display) {
-            display.textContent = contactData[fieldName] || 'Click Edit to add';
-        }
-    });
-}
-
-async function saveContactInfo() {
-    try {
-        // Collect all form data
-        const formData = {
-            primary_phone: document.getElementById('primary_phone').value,
-            secondary_phone: document.getElementById('secondary_phone').value,
-            primary_email: document.getElementById('primary_email').value,
-            support_email: document.getElementById('support_email').value,
-            headquarters_address: document.getElementById('headquarters_address').value,
-            business_hours: document.getElementById('business_hours').value,
-            website_url: document.getElementById('website_url').value,
-            linkedin_url: document.getElementById('linkedin_url').value,
-            facebook_url: document.getElementById('facebook_url').value,
-            twitter_url: document.getElementById('twitter_url').value,
-            user_id: window.currentUser.id,
-            updated_at: new Date().toISOString()
-        };
-        
-        // Remove empty fields
-        Object.keys(formData).forEach(key => {
-            if (!formData[key] || formData[key].trim() === '') {
-                delete formData[key];
-            }
-        });
-        
-        // Add required fields back
-        formData.user_id = window.currentUser.id;
-        formData.updated_at = new Date().toISOString();
-        
-        console.log('Saving contact info:', formData);
-        
-        // Save to database
-        const { data, error } = await window.supabaseClient
-            .from('contact_info')
-            .upsert(formData, { onConflict: 'user_id' });
-        
-        if (error) {
-            console.error('Error saving contact info:', error);
-            
-            if (error.code === '42P01') {
-                if (window.showNotification) {
-                    window.showNotification('Database tables not ready yet. Data saved locally.', 'warning');
-                }
-            } else {
-                throw error;
-            }
-        } else {
-            if (window.showNotification) {
-                window.showNotification('Contact information saved successfully!', 'success');
-            }
-        }
-        
-        // Update local data
-        if (!window.clientData.contactInfo) {
-            window.clientData.contactInfo = {};
-        }
-        Object.assign(window.clientData.contactInfo, formData);
-        
-        // Update displays with new values
-        Object.keys(formData).forEach(key => {
-            if (key !== 'user_id' && key !== 'updated_at') {
-                const display = document.getElementById(key + '_display');
-                if (display) {
-                    display.textContent = formData[key] || 'Click Edit to add';
-                }
-            }
-        });
-        
-        // Recalculate completeness
-        if (window.calculateDataCompleteness) {
-            window.calculateDataCompleteness();
-        }
-        
-        // Update user interface
-        if (window.updateUserInterface) {
-            window.updateUserInterface();
-        }
-        
-    } catch (error) {
-        console.error('Error saving contact info:', error);
-        if (window.showNotification) {
-            window.showNotification('Error saving contact information. Please try again.', 'error');
-        }
-    }
-}
-
-// Load contact info when this script runs
-document.addEventListener('DOMContentLoaded', loadContactInfo);
-
-// If this script is loaded after DOMContentLoaded, run immediately
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadContactInfo);
-} else {
-    loadContactInfo();
-}
-
-// Make functions available globally
-window.toggleContactInfoEditMode = toggleContactInfoEditMode;
-window.loadContactInfo = loadContactInfo;
-window.saveContactInfo = saveContactInfo;
-</script>
 
 <style>
-.contact-info-content {
-    padding: 1.5rem;
-}
-
-.field-display {
-    position: relative;
-}
-
-.field-value {
-    display: block;
-    padding: 0.75rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    min-height: 2.5rem;
-    color: var(--text-primary);
-    cursor: default;
-}
-
-.field-input {
-    width: 100%;
-    padding: 0.75rem;
-    background: var(--background);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    color: var(--text-primary);
-    font-family: inherit;
-    font-size: 0.875rem;
-}
-
-.field-input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
-}
-
-.field-input::placeholder {
-    color: var(--text-muted);
-}
-
 .form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
+    padding: 1.5rem;
 }
 
 .form-group.full-width {
@@ -337,15 +95,29 @@ window.saveContactInfo = saveContactInfo;
     color: var(--text-primary);
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .form-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    .contact-info-content {
-        padding: 1rem;
-    }
+.field-value {
+    display: block;
+    padding: 0.75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    min-height: 2.5rem;
+    color: var(--text-primary);
+}
+
+.field-input {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-family: inherit;
+}
+
+.field-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
 }
 </style>
