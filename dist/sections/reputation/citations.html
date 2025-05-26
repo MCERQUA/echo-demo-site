@@ -1,0 +1,635 @@
+<!-- Directory Citations Tab -->
+<div class="tab-content">
+    <div class="citations-header">
+        <h2>Directory Citations</h2>
+        <p>Manage your business listings across directory sites</p>
+        <button class="btn-primary" onclick="openAddCitationModal()">+ Add Citation</button>
+    </div>
+    
+    <!-- Citations Table -->
+    <div class="citations-table-container">
+        <table class="citations-table">
+            <thead>
+                <tr>
+                    <th>Site Name</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>Live URL</th>
+                    <th>Reviews</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="citations-tbody">
+                <tr class="loading-row">
+                    <td colspan="7">Loading citations...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Add/Edit Citation Modal -->
+    <div id="citation-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="citation-modal-title">Add Directory Citation</h3>
+            <form id="citation-form">
+                <div class="form-group">
+                    <label for="site-name">Site Name *</label>
+                    <input type="text" id="site-name" required placeholder="e.g., Yelp, Yellow Pages">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" placeholder="Login username">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" placeholder="Login password">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="live-url">Live Profile URL</label>
+                    <input type="url" id="live-url" placeholder="https://...">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="has-reviews">Has Reviews?</label>
+                        <select id="has-reviews" onchange="toggleReviewsUrl()">
+                            <option value="false">No</option>
+                            <option value="true">Yes</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="reviews-url-group" style="display: none;">
+                        <label for="reviews-url">Reviews URL</label>
+                        <input type="url" id="reviews-url" placeholder="https://...">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status">
+                        <option value="pending">Pending</option>
+                        <option value="active">Active</option>
+                        <option value="needs_update">Needs Update</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" rows="3" placeholder="Any additional notes..."></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeCitationModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Citation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+let editingCitationId = null;
+let citationsData = [];
+
+// Load citations data
+async function loadCitationsData() {
+    console.log('Loading citations data');
+    
+    if (!window.user) {
+        console.log('No user logged in');
+        return;
+    }
+    
+    try {
+        const { data, error } = await window.supabase
+            .from('directory_citations')
+            .select('*')
+            .eq('client_id', window.user.id)
+            .order('site_name');
+            
+        if (error) throw error;
+        
+        citationsData = data || [];
+        displayCitations();
+        
+    } catch (error) {
+        console.error('Error loading citations:', error);
+        showCitationsErrorState();
+    }
+}
+
+// Display citations in table
+function displayCitations() {
+    const tbody = document.getElementById('citations-tbody');
+    
+    if (citationsData.length === 0) {
+        tbody.innerHTML = `
+            <tr class="empty-row">
+                <td colspan="7">No citations added yet. Click "Add Citation" to get started.</td>
+            </tr>
+        `;
+        return;
+    }
+    
+    const rows = citationsData.map(citation => {
+        const statusClass = `status-${citation.status || 'pending'}`;
+        const hasReviews = citation.has_reviews ? '✅' : '❌';
+        const reviewsLink = citation.has_reviews && citation.reviews_url 
+            ? `<a href="${citation.reviews_url}" target="_blank" class="review-link">View</a>` 
+            : '';
+        
+        return `
+            <tr>
+                <td>${escapeHtml(citation.site_name)}</td>
+                <td>${escapeHtml(citation.username || '-')}</td>
+                <td class="password-cell">
+                    <span class="password-hidden">••••••••</span>
+                    ${citation.password ? '<button class="btn-tiny" onclick="togglePassword(this, \'' + citation.id + '\')">Show</button>' : '-'}
+                </td>
+                <td>
+                    ${citation.live_url 
+                        ? `<a href="${citation.live_url}" target="_blank" class="link">View →</a>` 
+                        : '-'}
+                </td>
+                <td>
+                    ${hasReviews} ${reviewsLink}
+                </td>
+                <td>
+                    <span class="status ${statusClass}">${formatStatus(citation.status)}</span>
+                </td>
+                <td class="actions">
+                    <button class="btn-icon" onclick="editCitation('${citation.id}')" title="Edit">✏️</button>
+                    <button class="btn-icon" onclick="deleteCitation('${citation.id}')" title="Delete">🗑️</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+    
+    tbody.innerHTML = rows;
+}
+
+// Toggle password visibility
+async function togglePassword(button, citationId) {
+    const cell = button.parentElement;
+    const passwordSpan = cell.querySelector('.password-hidden');
+    
+    if (passwordSpan.textContent === '••••••••') {
+        // Show password
+        const citation = citationsData.find(c => c.id === citationId);
+        if (citation && citation.password) {
+            passwordSpan.textContent = citation.password;
+            button.textContent = 'Hide';
+        }
+    } else {
+        // Hide password
+        passwordSpan.textContent = '••••••••';
+        button.textContent = 'Show';
+    }
+}
+
+// Open add citation modal
+function openAddCitationModal() {
+    editingCitationId = null;
+    document.getElementById('citation-modal-title').textContent = 'Add Directory Citation';
+    document.getElementById('citation-form').reset();
+    document.getElementById('reviews-url-group').style.display = 'none';
+    document.getElementById('citation-modal').style.display = 'flex';
+}
+
+// Edit citation
+async function editCitation(citationId) {
+    editingCitationId = citationId;
+    document.getElementById('citation-modal-title').textContent = 'Edit Directory Citation';
+    
+    const citation = citationsData.find(c => c.id === citationId);
+    if (!citation) return;
+    
+    // Populate form
+    document.getElementById('site-name').value = citation.site_name;
+    document.getElementById('username').value = citation.username || '';
+    document.getElementById('password').value = citation.password || '';
+    document.getElementById('live-url').value = citation.live_url || '';
+    document.getElementById('has-reviews').value = citation.has_reviews ? 'true' : 'false';
+    document.getElementById('reviews-url').value = citation.reviews_url || '';
+    document.getElementById('status').value = citation.status || 'pending';
+    document.getElementById('notes').value = citation.notes || '';
+    
+    // Show/hide reviews URL field
+    document.getElementById('reviews-url-group').style.display = 
+        citation.has_reviews ? 'block' : 'none';
+    
+    document.getElementById('citation-modal').style.display = 'flex';
+}
+
+// Delete citation
+async function deleteCitation(citationId) {
+    if (!confirm('Are you sure you want to delete this citation?')) return;
+    
+    try {
+        const { error } = await window.supabase
+            .from('directory_citations')
+            .delete()
+            .eq('id', citationId);
+            
+        if (error) throw error;
+        
+        loadCitationsData(); // Reload data
+        
+    } catch (error) {
+        console.error('Error deleting citation:', error);
+        alert('Failed to delete citation. Please try again.');
+    }
+}
+
+// Close modal
+function closeCitationModal() {
+    document.getElementById('citation-modal').style.display = 'none';
+    editingCitationId = null;
+}
+
+// Toggle reviews URL field
+function toggleReviewsUrl() {
+    const hasReviews = document.getElementById('has-reviews').value === 'true';
+    document.getElementById('reviews-url-group').style.display = hasReviews ? 'block' : 'none';
+    if (!hasReviews) {
+        document.getElementById('reviews-url').value = '';
+    }
+}
+
+// Handle form submission
+document.getElementById('citation-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const citationData = {
+        client_id: window.user.id,
+        site_name: document.getElementById('site-name').value,
+        username: document.getElementById('username').value || null,
+        password: document.getElementById('password').value || null,
+        live_url: document.getElementById('live-url').value || null,
+        has_reviews: document.getElementById('has-reviews').value === 'true',
+        reviews_url: document.getElementById('reviews-url').value || null,
+        status: document.getElementById('status').value,
+        notes: document.getElementById('notes').value || null
+    };
+    
+    try {
+        if (editingCitationId) {
+            // Update existing
+            const { error } = await window.supabase
+                .from('directory_citations')
+                .update(citationData)
+                .eq('id', editingCitationId);
+                
+            if (error) throw error;
+        } else {
+            // Insert new
+            const { error } = await window.supabase
+                .from('directory_citations')
+                .insert([citationData]);
+                
+            if (error) throw error;
+        }
+        
+        closeCitationModal();
+        loadCitationsData(); // Reload data
+        
+    } catch (error) {
+        console.error('Error saving citation:', error);
+        alert('Failed to save citation. Please try again.');
+    }
+});
+
+// Format status
+function formatStatus(status) {
+    const statusMap = {
+        'pending': 'Pending',
+        'active': 'Active',
+        'needs_update': 'Needs Update',
+        'inactive': 'Inactive'
+    };
+    return statusMap[status] || status;
+}
+
+// Escape HTML
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Show error state
+function showCitationsErrorState() {
+    document.getElementById('citations-tbody').innerHTML = `
+        <tr class="error-row">
+            <td colspan="7">Failed to load citations. Please refresh the page.</td>
+        </tr>
+    `;
+}
+
+// Close modal on outside click
+document.getElementById('citation-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'citation-modal') {
+        closeCitationModal();
+    }
+});
+
+// Make functions globally available
+window.loadCitationsData = loadCitationsData;
+window.openAddCitationModal = openAddCitationModal;
+window.editCitation = editCitation;
+window.deleteCitation = deleteCitation;
+window.closeCitationModal = closeCitationModal;
+window.toggleReviewsUrl = toggleReviewsUrl;
+window.togglePassword = togglePassword;
+
+// Initialize if tab is already active
+if (document.querySelector('.tab-button.active')?.textContent.includes('Citations')) {
+    loadCitationsData();
+}
+</script>
+
+<style>
+/* Citations Header */
+.citations-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.citations-header h2 {
+    margin: 0;
+}
+
+.citations-header p {
+    color: var(--text-muted);
+    margin: 0;
+    flex: 1 1 100%;
+}
+
+/* Table Container */
+.citations-table-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+/* Table Styles */
+.citations-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.citations-table th,
+.citations-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+.citations-table th {
+    background: var(--background);
+    font-weight: 600;
+    color: var(--text-primary);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.citations-table tr:last-child td {
+    border-bottom: none;
+}
+
+.citations-table tr:hover {
+    background: var(--background);
+}
+
+/* Table Cell Styles */
+.password-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.password-hidden {
+    font-family: monospace;
+}
+
+.link,
+.review-link {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.link:hover,
+.review-link:hover {
+    text-decoration: underline;
+}
+
+/* Status Styles */
+.status {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-active {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-needs_update {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.status-inactive {
+    background: #e5e7eb;
+    color: #4b5563;
+}
+
+/* Action Buttons */
+.actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.125rem;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.btn-icon:hover {
+    background: var(--background);
+}
+
+.btn-tiny {
+    padding: 0.125rem 0.5rem;
+    font-size: 0.75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Empty and Error States */
+.loading-row td,
+.empty-row td,
+.error-row td {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 3rem 1rem;
+}
+
+.error-row td {
+    color: var(--danger);
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 2rem;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-content h3 {
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.5rem;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-primary);
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    justify-content: flex-end;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-secondary {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .citations-table {
+        font-size: 0.875rem;
+    }
+    
+    .citations-table th,
+    .citations-table td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .citations-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .citations-header .btn-primary {
+        align-self: stretch;
+    }
+}
+
+@media (max-width: 576px) {
+    .modal-content {
+        padding: 1.5rem;
+    }
+    
+    .citations-table-container {
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+}
+</style>
