@@ -1,10 +1,46 @@
 // Dashboard JavaScript - Enhanced for Client Information Management
-// Initialize Supabase client
+// Initialize Supabase client with CORRECT credentials
 const SUPABASE_URL = 'https://orhswpgngjpztcxgwbuy.supabase.co';
+// This anon key appears to be incorrect or expired - it's causing the "Invalid API key" error
+// You need to get the correct anon key from your Supabase dashboard
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9yaHN3cGduZ2pwenRjeGd3YnV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI5MDM0NjIsImV4cCI6MjA0ODQ3OTQ2Mn0.vTt4L2h7B6U-2OYzfbYhcFRZUdPU9LM5SA7AHZHFxts';
+
+// IMPORTANT: The API key above is causing the authentication errors!
+// To fix this, you need to:
+// 1. Go to your Supabase dashboard
+// 2. Go to Settings > API
+// 3. Copy the "anon public" key
+// 4. Replace the SUPABASE_ANON_KEY above with the correct key
 
 const { createClient } = supabase;
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Show prominent error message if API key is invalid
+window.addEventListener('DOMContentLoaded', () => {
+    // Add a warning banner
+    const warningBanner = document.createElement('div');
+    warningBanner.id = 'api-key-warning';
+    warningBanner.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: #ef4444;
+        color: white;
+        padding: 15px;
+        text-align: center;
+        z-index: 10000;
+        font-weight: bold;
+        display: none;
+    `;
+    warningBanner.innerHTML = `
+        ⚠️ Invalid Supabase API Key Detected! 
+        <a href="https://app.supabase.com/project/orhswpgngjpztcxgwbuy/settings/api" target="_blank" style="color: white; text-decoration: underline;">
+            Click here to get the correct API key from your Supabase dashboard
+        </a>
+    `;
+    document.body.appendChild(warningBanner);
+});
 
 // Global variables
 let currentUser = null;
@@ -38,10 +74,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Hide loading state
         hideLoadingState();
         
-        // Initialize empty client data structure
-        initializeClientData();
+        // Test the API key by making a simple request
+        const testResponse = await fetch(`${SUPABASE_URL}/rest/v1/`, {
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${session.access_token}`
+            }
+        });
         
-        // Update UI
+        if (testResponse.status === 401) {
+            // Show the API key warning
+            document.getElementById('api-key-warning').style.display = 'block';
+            console.error('Invalid API key detected! Please update SUPABASE_ANON_KEY in dashboard.js');
+        }
+        
+        // Load client data from database
+        await loadClientData();
         updateUserInterface();
         
         // Load the initial section
@@ -54,46 +102,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         redirectToLogin();
     }
 });
-
-// Initialize empty client data structure
-function initializeClientData() {
-    clientData = {
-        client: { id: currentUser.id },
-        businessInfo: {},
-        contactInfo: {},
-        brandAssets: {},
-        digitalPresence: {},
-        socialMedia: [],
-        googleBusiness: {},
-        reputation: [],
-        competitors: [],
-        campaigns: [],
-        seoData: {},
-        customerInsights: {},
-        contentLibrary: [],
-        aiQueue: [],
-        completeness: 0
-    };
-    
-    // Load any saved data from localStorage as a backup
-    const savedData = localStorage.getItem(`clientData_${currentUser.id}`);
-    if (savedData) {
-        try {
-            const parsed = JSON.parse(savedData);
-            clientData = { ...clientData, ...parsed };
-            console.log('Loaded data from localStorage:', clientData);
-        } catch (e) {
-            console.log('No valid saved data found');
-        }
-    }
-    
-    calculateDataCompleteness();
-}
-
-// Save data to localStorage as backup
-function saveToLocalStorage() {
-    localStorage.setItem(`clientData_${currentUser.id}`, JSON.stringify(clientData));
-}
 
 // Show loading state
 function showLoadingState() {
@@ -168,6 +176,54 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
         }
     }
 });
+
+// Load client data from database
+async function loadClientData() {
+    try {
+        console.log('Loading client data for user:', currentUser.id);
+        
+        // Create default empty data structure
+        clientData = {
+            client: { id: currentUser.id },
+            businessInfo: {},
+            contactInfo: {},
+            brandAssets: {},
+            digitalPresence: {},
+            socialMedia: [],
+            googleBusiness: {},
+            reputation: [],
+            competitors: [],
+            campaigns: [],
+            seoData: {},
+            customerInsights: {},
+            contentLibrary: [],
+            aiQueue: [],
+            completeness: 0
+        };
+        
+        // Try to load business_info data
+        const { data: businessData, error: businessError } = await supabaseClient
+            .from('business_info')
+            .select('*')
+            .eq('user_id', currentUser.id)
+            .maybeSingle();
+        
+        if (!businessError && businessData) {
+            clientData.businessInfo = businessData;
+            console.log('Loaded business info:', businessData);
+        } else if (businessError) {
+            console.error('Error loading business info:', businessError);
+        }
+        
+        // Calculate completeness
+        calculateDataCompleteness();
+        
+        console.log('Client data loaded:', clientData);
+        
+    } catch (error) {
+        console.error('Error loading client data:', error);
+    }
+}
 
 // Calculate overall data completeness
 function calculateDataCompleteness() {
@@ -820,23 +876,6 @@ async function saveSection(section) {
         return;
     }
     
-    // Save to localStorage immediately
-    saveToLocalStorage();
-    
-    // Update UI to show it's saved
-    showNotification(`${formatSectionName(section)} saved successfully!`, 'success');
-    
-    // Recalculate completeness
-    calculateDataCompleteness();
-    updateUserInterface();
-    
-    // Update overview if visible
-    if (currentSection === 'overview') {
-        populateOverview();
-    }
-    
-    // Try to save to Supabase in the background
-    // We'll use a direct fetch call instead of the Supabase client to have better control
     try {
         // Prepare data for save
         const saveData = {
@@ -852,38 +891,67 @@ async function saveSection(section) {
             }
         });
         
-        console.log('Attempting to save to Supabase:', saveData);
+        console.log('Saving data to table:', section);
+        console.log('Save data:', saveData);
         
-        // Get current session for auth token
-        const { data: { session } } = await supabaseClient.auth.getSession();
-        if (!session) {
-            console.log('No active session for Supabase save');
-            return;
+        // Save to database
+        const { data, error } = await supabaseClient
+            .from(section)
+            .upsert(saveData, { 
+                onConflict: 'user_id'
+            });
+        
+        if (error) {
+            console.error('Supabase error:', error);
+            
+            // Handle specific error types
+            if (error.code === '42P01') {
+                showNotification('Database tables not set up yet. Please contact support.', 'warning');
+                return;
+            } else if (error.message && error.message.includes('Invalid API key')) {
+                showNotification('Invalid API key. Please contact support to fix this issue.', 'error');
+                // Show the API key warning
+                document.getElementById('api-key-warning').style.display = 'block';
+                return;
+            } else if (error.code === 'PGRST301') {
+                showNotification('Permission denied. Please contact support.', 'error');
+                return;
+            }
+            
+            throw error;
         }
         
-        // Make direct API call
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/${section}?on_conflict=user_id`, {
-            method: 'POST',
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': `Bearer ${session.access_token}`,
-                'Content-Type': 'application/json',
-                'Prefer': 'resolution=merge-duplicates'
-            },
-            body: JSON.stringify(saveData)
-        });
+        showNotification(`${formatSectionName(section)} saved successfully!`, 'success');
         
-        if (response.ok) {
-            console.log('Successfully saved to Supabase');
-        } else {
-            const error = await response.text();
-            console.error('Supabase save error:', error);
-            // Don't show error to user since localStorage save worked
+        // Since we can't use select(), we'll keep our local data
+        clientData[dataKey] = saveData;
+        
+        // Recalculate completeness
+        calculateDataCompleteness();
+        
+        // Update overview if visible
+        if (currentSection === 'overview') {
+            populateOverview();
         }
         
     } catch (error) {
-        console.error('Background save error:', error);
-        // Don't show error to user since localStorage save worked
+        console.error('Error saving data:', error);
+        
+        // Show user-friendly error message
+        let errorMessage = 'Error saving data. ';
+        if (error.message) {
+            if (error.message.includes('Invalid API key')) {
+                errorMessage = 'Invalid API key. The Supabase API key needs to be updated.';
+                // Show the API key warning
+                document.getElementById('api-key-warning').style.display = 'block';
+            } else if (error.message.includes('JWT')) {
+                errorMessage = 'Session expired. Please log in again.';
+            } else {
+                errorMessage += 'Please try again or contact support.';
+            }
+        }
+        
+        showNotification(errorMessage, 'error');
     }
 }
 
@@ -1197,7 +1265,24 @@ document.addEventListener('click', (e) => {
 
 // AI Research trigger
 async function triggerAIResearch(researchType) {
-    showNotification('AI research feature coming soon!', 'info');
+    try {
+        const { data, error } = await supabaseClient
+            .from('ai_research_queue')
+            .insert({
+                client_id: currentUser.id,
+                research_type: researchType,
+                status: 'pending',
+                priority: 5,
+                created_at: new Date().toISOString()
+            });
+        
+        if (error) throw error;
+        
+        showNotification('AI research task queued successfully!', 'success');
+    } catch (error) {
+        console.error('Error queuing AI research:', error);
+        showNotification('AI research feature requires database setup', 'info');
+    }
 }
 
 // Placeholder functions for features not yet implemented
