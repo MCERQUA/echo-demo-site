@@ -25,95 +25,18 @@
         
         <nav>
             <ul class="nav-menu">
-                <li>
-                    <a class="nav-link active" onclick="showSection('overview')">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="7" height="7" rx="1"/>
-                            <rect x="14" y="3" width="7" height="7" rx="1"/>
-                            <rect x="3" y="14" width="7" height="7" rx="1"/>
-                            <rect x="14" y="14" width="7" height="7" rx="1"/>
-                        </svg>
-                        <span>Overview</span>
-                    </a>
-                </li>
-                <li>
-                    <a class="nav-link" onclick="showSection('brand-info')">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
-                        </svg>
-                        <span>Brand Info</span>
-                    </a>
-                </li>
-                <li>
-                    <a class="nav-link" onclick="showSection('social-media')">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 5.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM12 12a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM21 18.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
-                            <path d="M16 5.5h-5.5V12M7 12h5.5M16 18.5h-5.5V12"/>
-                        </svg>
-                        <span>Social Media</span>
-                    </a>
-                </li>
-                <li>
-                    <a class="nav-link" onclick="showSection('website')">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <line x1="2" y1="12" x2="22" y2="12"/>
-                            <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
-                        </svg>
-                        <span>Website</span>
-                    </a>
-                </li>
-                <li>
-                    <a class="nav-link" onclick="showSection('google-business')">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
-                            <circle cx="12" cy="10" r="3"/>
-                        </svg>
-                        <span>Google Business</span>
-                    </a>
-                </li>
-                <li>
-                    <a class="nav-link" onclick="showSection('reputation')">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                        </svg>
-                        <span>Reputation</span>
-                    </a>
-                </li>
-                <li>
-                    <a class="nav-link" onclick="showSection('reports')">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                            <line x1="16" y1="13" x2="8" y2="13"/>
-                            <line x1="16" y1="17" x2="8" y2="17"/>
-                            <polyline points="10 9 9 9 8 9"/>
-                        </svg>
-                        <span>Reports</span>
-                    </a>
-                </li>
-                <li>
-                    <a class="nav-link" onclick="showSection('billing')">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="11" width="18" height="10" rx="2" ry="2"/>
-                            <path d="M7 11V7a5 5 0 0110 0v4"/>
-                        </svg>
-                        <span>Billing</span>
-                    </a>
-                </li>
+                <li><a class="nav-link active" onclick="loadSection('overview')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Overview</span></a></li>
+                <li><a class="nav-link" onclick="loadSection('brand-info')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/></svg><span>Brand Info</span></a></li>
+                <li><a class="nav-link" onclick="loadSection('social-media')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 5.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM12 12a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM21 18.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/><path d="M16 5.5h-5.5V12M7 12h5.5M16 18.5h-5.5V12"/></svg><span>Social Media</span></a></li>
+                <li><a class="nav-link" onclick="loadSection('website')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg><span>Website</span></a></li>
+                <li><a class="nav-link" onclick="loadSection('google-business')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Google Business</span></a></li>
+                <li><a class="nav-link" onclick="loadSection('reputation')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Reputation</span></a></li>
+                <li><a class="nav-link" onclick="loadSection('reports')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>Reports</span></a></li>
+                <li><a class="nav-link" onclick="loadSection('billing')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><span>Billing</span></a></li>
             </ul>
         </nav>
         
-        <div>
-            <a class="nav-link" onclick="showSection('support')">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/>
-                    <line x1="12" y1="17" x2="12.01" y2="17"/>
-                </svg>
-                <span>Support</span>
-            </a>
-        </div>
+        <div><a class="nav-link" onclick="loadSection('support')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Support</span></a></div>
     </aside>
     
     <!-- Main Content -->
@@ -121,92 +44,27 @@
         <!-- Header -->
         <header class="header">
             <div class="header-left">
-                <button class="menu-toggle" onclick="toggleSidebar()">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="3" y1="12" x2="21" y2="12"/>
-                        <line x1="3" y1="6" x2="21" y2="6"/>
-                        <line x1="3" y1="18" x2="21" y2="18"/>
-                    </svg>
-                </button>
-                
-                <div class="search-bar">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"/>
-                        <path d="m21 21-4.35-4.35"/>
-                    </svg>
-                    <input type="text" placeholder="Search...">
-                </div>
+                <button class="menu-toggle" onclick="toggleSidebar()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+                <div class="search-bar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" placeholder="Search..."></div>
             </div>
-            
             <div class="user-menu">
-                <button class="user-button" onclick="toggleDropdown()">
-                    <div class="user-avatar" id="userAvatar">JD</div>
-                    <span id="userName">John Doe</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="6 9 12 15 18 9"/>
-                    </svg>
-                </button>
-                
+                <button class="user-button" onclick="toggleDropdown()"><div class="user-avatar" id="userAvatar">--</div><span id="userName">Loading...</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
                 <div class="dropdown" id="userDropdown">
-                    <a href="#" class="dropdown-item">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; margin-right: 8px;">
-                            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-                            <circle cx="12" cy="7" r="4"/>
-                        </svg>
-                        Profile
-                    </a>
-                    <a href="#" class="dropdown-item">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; margin-right: 8px;">
-                            <circle cx="12" cy="12" r="3"/>
-                            <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
-                        </svg>
-                        Settings
-                    </a>
+                    <a href="#" class="dropdown-item">Profile</a>
+                    <a href="#" class="dropdown-item">Settings</a>
                     <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item" onclick="signOut()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; margin-right: 8px;">
-                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
-                            <polyline points="16 17 21 12 16 7"/>
-                            <line x1="21" y1="12" x2="9" y2="12"/>
-                        </svg>
-                        Sign Out
-                    </a>
+                    <a href="#" class="dropdown-item" onclick="signOut()">Sign Out</a>
                 </div>
             </div>
         </header>
         
-        <!-- Content -->
-        <main class="content">
-            <!-- Overview Section -->
-            <section id="overview-section" class="section-content active" data-loaded="true"></section>
-            
-            <!-- Brand Info Section -->
-            <section id="brand-info-section" class="section-content"></section>
-            
-            <!-- Social Media Section -->
-            <section id="social-media-section" class="section-content"></section>
-            
-            <!-- Website Section -->
-            <section id="website-section" class="section-content"></section>
-            
-            <!-- Google Business Section -->
-            <section id="google-business-section" class="section-content"></section>
-            
-            <!-- Reputation Section -->
-            <section id="reputation-section" class="section-content"></section>
-            
-            <!-- Reports Section -->
-            <section id="reports-section" class="section-content"></section>
-            
-            <!-- Billing Section -->
-            <section id="billing-section" class="section-content"></section>
-            
-            <!-- Support Section -->
-            <section id="support-section" class="section-content"></section>
+        <!-- Content Container -->
+        <main class="content" id="main-content">
+            <div class="loading-state">Loading dashboard...</div>
         </main>
     </div>
     
-    <!-- Dashboard JavaScript -->
-    <script src="js/dashboard.js"></script>
+    <!-- Core Dashboard Script -->
+    <script src="js/dashboard-core.js"></script>
 </body>
 </html>
