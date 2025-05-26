@@ -11,15 +11,7 @@ First, you need to create the citations table in your Supabase database:
 3. Copy and paste the contents of `docs/citations_table.sql`
 4. Click "Run" to create the table
 
-### 2. (Optional) Initialize Default Citations
-
-If you want to pre-populate the citations with common directory sites:
-
-1. Copy and paste the contents of `docs/initialize_citations.sql`
-2. Run it in the SQL Editor
-3. This will create functions to automatically add default citations
-
-### 3. Access the Reputation Section
+### 2. Access the Reputation Section
 
 1. Log into your Echo AI Systems dashboard
 2. Click on "Reputation" in the sidebar
@@ -45,39 +37,43 @@ If you want to pre-populate the citations with common directory sites:
 - Quick links to profiles
 
 ### Citations Tab
-- Pre-populated with 29 common directory sites including:
-  - Google Business Profile
-  - Yelp
-  - Facebook Business
-  - Bing Places
-  - Apple Maps
-  - Industry-specific directories
-  - And many more!
-- Track username/password (securely hidden)
-- Live profile URLs
-- Review availability
-- Status tracking (pending/active/needs update/inactive)
+- Empty table by default (no fake data)
+- Add citations manually using the "+ Add Citation" button
+- Track for each citation:
+  - Site Name
+  - Username (optional)
+  - Password (securely hidden by default)
+  - Live profile URL
+  - Whether it has reviews
+  - Reviews URL (if applicable)
+  - Status (pending/active/needs update/inactive)
+  - Notes
+- Edit or delete any citation
+- Passwords can be shown/hidden with toggle button
 
-## Automatic Population
+## Adding Citations
 
-When you first access the Citations tab:
-1. The system checks if you have any existing citations
-2. If none exist, it automatically creates entries for 29 common directory sites
-3. All citations start with "Pending" status
-4. You can then update each one with your actual information
+You have two options for adding citations:
+
+### Option 1: Add Manually via Dashboard
+1. Click the "+ Add Citation" button
+2. Fill in the citation details
+3. Save to add it to your table
+
+### Option 2: Add via Supabase (or have Echo add them)
+Citations can be added directly to Supabase and will automatically appear in the dashboard.
 
 ## Managing Citations
 
 - Click the ✏️ icon to edit any citation
-- Add your username, password, and live URL
-- Update the status as you claim/create each listing
-- Use the notes field for any special instructions
-- Passwords are hidden by default but can be revealed with the "Show" button
+- Click the 🗑️ icon to delete a citation
+- Use the "Show" button to reveal passwords when needed
+- Update the status as you create or claim each listing
+- Add notes for any special instructions or reminders
 
-## Next Steps
+## Data Security
 
-1. Review the pre-populated citations
-2. Start with the most important ones (Google Business Profile, Yelp, Facebook)
-3. Update each citation as you create or claim your listings
-4. Keep track of which directories have reviews
-5. Monitor your reputation metrics in the Overview tab
+- All data is stored in your Supabase database
+- Passwords are hidden by default in the interface
+- Only you can see your own citations (Row Level Security)
+- Data is loaded in real-time from Supabase
