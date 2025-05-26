@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Auth Test - Echo AI Systems</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #0a0a0a;
+            color: #fff;
+        }
+        .section {
+            background: #1a1a1a;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        button {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1557b0;
+        }
+        .success { color: #10b981; }
+        .error { color: #ef4444; }
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            overflow: auto;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 4px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Supabase Authentication Test</h1>
+    
+    <div class="section">
+        <h2>Test 1: Basic Connection</h2>
+        <button onclick="testConnection()">Test Connection</button>
+        <div id="connection-result"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Test 2: Authentication Status</h2>
+        <button onclick="testAuth()">Check Auth</button>
+        <div id="auth-result"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Test 3: Direct API Call with Token</h2>
+        <button onclick="testDirectAPI()">Test Direct API</button>
+        <div id="api-result"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Test 4: Save with Supabase Client</h2>
+        <input type="text" id="test-business-name" placeholder="Enter test business name">
+        <button onclick="testSupabaseSave()">Test Supabase Save</button>
+        <div id="supabase-save-result"></div>
+    </div>
+
+    <script>
+        // Initialize Supabase
+        const SUPABASE_URL = 'https://orhswpgngjpztcxgwbuy.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9yaHN3cGduZ2pwenRjeGd3YnV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI5MDM0NjIsImV4cCI6MjA0ODQ3OTQ2Mn0.vTt4L2h7B6U-2OYzfbYhcFRZUdPU9LM5SA7AHZHFxts';
+        
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Test 1: Basic Connection
+        async function testConnection() {
+            const resultEl = document.getElementById('connection-result');
+            resultEl.innerHTML = 'Testing connection...';
+            
+            try {
+                // Try to get the current time from Supabase
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY
+                    }
+                });
+                
+                if (response.ok) {
+                    resultEl.innerHTML = '<span class="success">✓ Connection successful!</span>';
+                } else {
+                    resultEl.innerHTML = `<span class="error">✗ Connection failed: ${response.status}</span>`;
+                }
+            } catch (error) {
+                resultEl.innerHTML = `<span class="error">✗ Error: ${error.message}</span>`;
+            }
+        }
+        
+        // Test 2: Authentication Status
+        async function testAuth() {
+            const resultEl = document.getElementById('auth-result');
+            resultEl.innerHTML = 'Checking authentication...';
+            
+            try {
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
+                
+                if (error) {
+                    resultEl.innerHTML = `<span class="error">✗ Auth Error: ${error.message}</span>`;
+                    return;
+                }
+                
+                if (!session) {
+                    resultEl.innerHTML = '<span class="error">✗ Not authenticated</span>';
+                    return;
+                }
+                
+                resultEl.innerHTML = `
+                    <span class="success">✓ Authenticated!</span><br>
+                    User ID: ${session.user.id}<br>
+                    Email: ${session.user.email}<br>
+                    Token expires: ${new Date(session.expires_at * 1000).toLocaleString()}<br>
+                    <details>
+                        <summary>Access Token (first 50 chars)</summary>
+                        <code>${session.access_token.substring(0, 50)}...</code>
+                    </details>
+                `;
+            } catch (error) {
+                resultEl.innerHTML = `<span class="error">✗ Error: ${error.message}</span>`;
+            }
+        }
+        
+        // Test 3: Direct API Call
+        async function testDirectAPI() {
+            const resultEl = document.getElementById('api-result');
+            resultEl.innerHTML = 'Testing direct API call...';
+            
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) {
+                    resultEl.innerHTML = '<span class="error">✗ Not authenticated</span>';
+                    return;
+                }
+                
+                // Try to fetch business_info
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/business_info?user_id=eq.${session.user.id}`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${session.access_token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const responseText = await response.text();
+                
+                if (response.ok) {
+                    resultEl.innerHTML = `
+                        <span class="success">✓ API call successful!</span><br>
+                        Status: ${response.status}<br>
+                        Data: <pre>${responseText}</pre>
+                    `;
+                } else {
+                    resultEl.innerHTML = `
+                        <span class="error">✗ API call failed!</span><br>
+                        Status: ${response.status}<br>
+                        Error: <pre>${responseText}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultEl.innerHTML = `<span class="error">✗ Error: ${error.message}</span>`;
+            }
+        }
+        
+        // Test 4: Save with Supabase Client
+        async function testSupabaseSave() {
+            const resultEl = document.getElementById('supabase-save-result');
+            const businessName = document.getElementById('test-business-name').value;
+            
+            if (!businessName) {
+                resultEl.innerHTML = '<span class="error">Please enter a business name</span>';
+                return;
+            }
+            
+            resultEl.innerHTML = 'Testing Supabase save...';
+            
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) {
+                    resultEl.innerHTML = '<span class="error">✗ Not authenticated</span>';
+                    return;
+                }
+                
+                const saveData = {
+                    user_id: session.user.id,
+                    business_name: businessName,
+                    updated_at: new Date().toISOString()
+                };
+                
+                console.log('Attempting to save:', saveData);
+                
+                // Try using upsert without select
+                const { data, error } = await supabaseClient
+                    .from('business_info')
+                    .upsert(saveData, { 
+                        onConflict: 'user_id'
+                    });
+                
+                if (error) {
+                    resultEl.innerHTML = `
+                        <span class="error">✗ Save failed!</span><br>
+                        Error: ${error.message}<br>
+                        Code: ${error.code}<br>
+                        Details: <pre>${JSON.stringify(error, null, 2)}</pre>
+                    `;
+                } else {
+                    resultEl.innerHTML = '<span class="success">✓ Save successful!</span>';
+                    
+                    // Now try to read it back
+                    const { data: readData, error: readError } = await supabaseClient
+                        .from('business_info')
+                        .select('*')
+                        .eq('user_id', session.user.id)
+                        .single();
+                    
+                    if (readData) {
+                        resultEl.innerHTML += `<br>Read back: <pre>${JSON.stringify(readData, null, 2)}</pre>`;
+                    }
+                }
+            } catch (error) {
+                resultEl.innerHTML = `<span class="error">✗ Unexpected error: ${error.message}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
