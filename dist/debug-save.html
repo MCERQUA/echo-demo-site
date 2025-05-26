@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Dashboard Save - Echo AI Systems</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #0a0a0a;
+            color: #fff;
+        }
+        .section {
+            background: #1a1a1a;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        button {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1557b0;
+        }
+        .success { color: #10b981; }
+        .error { color: #ef4444; }
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            overflow: auto;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 4px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Debug Dashboard Save Issue</h1>
+    
+    <div class="section">
+        <h2>1. Authentication Status</h2>
+        <div id="auth-status">Checking...</div>
+        <button onclick="checkAuth()">Re-check Auth</button>
+    </div>
+    
+    <div class="section">
+        <h2>2. Test Simple Save</h2>
+        <input type="text" id="business-name" placeholder="Enter business name">
+        <button onclick="testSimpleSave()">Test Save</button>
+        <div id="save-result"></div>
+    </div>
+    
+    <div class="section">
+        <h2>3. Debug Info</h2>
+        <pre id="debug-info"></pre>
+    </div>
+
+    <script>
+        // Initialize Supabase
+        const SUPABASE_URL = 'https://orhswpgngjpztcxgwbuy.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9yaHN3cGduZ2pwenRjeGd3YnV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI5MDM0NjIsImV4cCI6MjA0ODQ3OTQ2Mn0.vTt4L2h7B6U-2OYzfbYhcFRZUdPU9LM5SA7AHZHFxts';
+        
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let currentUser = null;
+        
+        // Check auth on load
+        window.addEventListener('DOMContentLoaded', checkAuth);
+        
+        async function checkAuth() {
+            const statusEl = document.getElementById('auth-status');
+            const debugEl = document.getElementById('debug-info');
+            
+            try {
+                // Get session
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
+                
+                if (error) {
+                    statusEl.innerHTML = `<span class="error">Auth Error: ${error.message}</span>`;
+                    debugEl.textContent = JSON.stringify(error, null, 2);
+                    return;
+                }
+                
+                if (!session) {
+                    statusEl.innerHTML = '<span class="error">Not authenticated</span>';
+                    debugEl.textContent = 'No session found';
+                    return;
+                }
+                
+                currentUser = session.user;
+                statusEl.innerHTML = `<span class="success">✓ Authenticated as: ${currentUser.email}</span><br>
+                                    <span>User ID: ${currentUser.id}</span>`;
+                
+                // Show session details
+                debugEl.textContent = JSON.stringify({
+                    user_id: currentUser.id,
+                    email: currentUser.email,
+                    role: session.user.role,
+                    aud: session.user.aud,
+                    session_access_token: session.access_token ? 'Present' : 'Missing',
+                    expires_at: new Date(session.expires_at * 1000).toLocaleString()
+                }, null, 2);
+                
+            } catch (error) {
+                statusEl.innerHTML = `<span class="error">Error: ${error.message}</span>`;
+                debugEl.textContent = JSON.stringify(error, null, 2);
+            }
+        }
+        
+        async function testSimpleSave() {
+            const resultEl = document.getElementById('save-result');
+            const debugEl = document.getElementById('debug-info');
+            const businessName = document.getElementById('business-name').value;
+            
+            if (!currentUser) {
+                resultEl.innerHTML = '<span class="error">Not authenticated. Please log in first.</span>';
+                return;
+            }
+            
+            if (!businessName) {
+                resultEl.innerHTML = '<span class="error">Please enter a business name</span>';
+                return;
+            }
+            
+            resultEl.innerHTML = 'Saving...';
+            
+            try {
+                // First, try a simple insert
+                console.log('Attempting to save with user_id:', currentUser.id);
+                
+                const saveData = {
+                    user_id: currentUser.id,
+                    business_name: businessName,
+                    updated_at: new Date().toISOString()
+                };
+                
+                console.log('Save data:', saveData);
+                
+                // Try upsert
+                const { data, error } = await supabaseClient
+                    .from('business_info')
+                    .upsert(saveData, { 
+                        onConflict: 'user_id'
+                    })
+                    .select();
+                
+                if (error) {
+                    console.error('Save error:', error);
+                    resultEl.innerHTML = `<span class="error">Save failed: ${error.message}</span>`;
+                    
+                    // Show detailed error info
+                    debugEl.textContent = JSON.stringify({
+                        error: error,
+                        error_code: error.code,
+                        error_details: error.details,
+                        error_hint: error.hint,
+                        attempted_data: saveData
+                    }, null, 2);
+                    
+                    // If it's a RLS error, try to get more info
+                    if (error.code === 'PGRST301' || error.message.includes('row-level')) {
+                        const { data: checkData, error: checkError } = await supabaseClient
+                            .from('business_info')
+                            .select('*')
+                            .eq('user_id', currentUser.id);
+                        
+                        debugEl.textContent += '\n\nExisting data check:\n' + JSON.stringify({
+                            check_result: checkData,
+                            check_error: checkError
+                        }, null, 2);
+                    }
+                    
+                    return;
+                }
+                
+                resultEl.innerHTML = '<span class="success">✓ Save successful!</span>';
+                debugEl.textContent = JSON.stringify({
+                    success: true,
+                    saved_data: data,
+                    timestamp: new Date().toISOString()
+                }, null, 2);
+                
+            } catch (error) {
+                console.error('Unexpected error:', error);
+                resultEl.innerHTML = `<span class="error">Unexpected error: ${error.message}</span>`;
+                debugEl.textContent = JSON.stringify(error, null, 2);
+            }
+        }
+    </script>
+</body>
+</html>
