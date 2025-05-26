@@ -98,6 +98,79 @@
 let editingCitationId = null;
 let citationsData = [];
 
+// Default citations list
+const defaultCitations = [
+    // General Business Directories
+    { site_name: 'Google Business Profile', directory_type: 'general', has_reviews: true, notes: 'Primary listing - most important for local SEO' },
+    { site_name: 'Yelp', directory_type: 'general', has_reviews: true, notes: 'Popular review platform' },
+    { site_name: 'Facebook Business', directory_type: 'general', has_reviews: true, notes: 'Social media business page' },
+    { site_name: 'Bing Places', directory_type: 'general', has_reviews: true, notes: 'Microsoft search directory' },
+    { site_name: 'Apple Maps', directory_type: 'general', has_reviews: false, notes: 'Important for iPhone users' },
+    { site_name: 'Yellow Pages', directory_type: 'general', has_reviews: true, notes: 'Traditional directory' },
+    { site_name: 'Better Business Bureau (BBB)', directory_type: 'general', has_reviews: true, notes: 'Trust and credibility' },
+    
+    // Local Directories
+    { site_name: 'Foursquare', directory_type: 'local', has_reviews: false, notes: 'Location-based platform' },
+    { site_name: 'Nextdoor', directory_type: 'local', has_reviews: true, notes: 'Neighborhood social network' },
+    { site_name: 'MapQuest', directory_type: 'local', has_reviews: false, notes: 'Navigation and local search' },
+    { site_name: 'Citysearch', directory_type: 'local', has_reviews: true, notes: 'Local business reviews' },
+    { site_name: 'MerchantCircle', directory_type: 'local', has_reviews: true, notes: 'Local business network' },
+    
+    // Industry-Specific (Home Services)
+    { site_name: 'Angi (Angie\'s List)', directory_type: 'industry', has_reviews: true, notes: 'Home services marketplace' },
+    { site_name: 'HomeAdvisor', directory_type: 'industry', has_reviews: true, notes: 'Home improvement professionals' },
+    { site_name: 'Houzz', directory_type: 'industry', has_reviews: true, notes: 'Home design and renovation' },
+    { site_name: 'Thumbtack', directory_type: 'industry', has_reviews: true, notes: 'Local service professionals' },
+    { site_name: 'Porch', directory_type: 'industry', has_reviews: true, notes: 'Home services platform' },
+    
+    // Industry-Specific (Other)
+    { site_name: 'TripAdvisor', directory_type: 'industry', has_reviews: true, notes: 'Travel and hospitality' },
+    { site_name: 'OpenTable', directory_type: 'industry', has_reviews: true, notes: 'Restaurant reservations' },
+    { site_name: 'Healthgrades', directory_type: 'industry', has_reviews: true, notes: 'Healthcare providers' },
+    { site_name: 'Avvo', directory_type: 'industry', has_reviews: true, notes: 'Legal services' },
+    { site_name: 'Zillow', directory_type: 'industry', has_reviews: true, notes: 'Real estate professionals' },
+    
+    // Data Aggregators
+    { site_name: 'Yext', directory_type: 'general', has_reviews: false, notes: 'Data aggregator - manages multiple listings' },
+    { site_name: 'Moz Local', directory_type: 'general', has_reviews: false, notes: 'Local SEO and listings management' },
+    { site_name: 'BrightLocal', directory_type: 'general', has_reviews: false, notes: 'Citation tracking and management' },
+    
+    // Social & Other
+    { site_name: 'LinkedIn Company Page', directory_type: 'general', has_reviews: false, notes: 'Professional networking' },
+    { site_name: 'Instagram Business', directory_type: 'general', has_reviews: false, notes: 'Visual social platform' },
+    { site_name: 'Pinterest Business', directory_type: 'general', has_reviews: false, notes: 'Visual discovery platform' },
+    { site_name: 'Twitter/X Business', directory_type: 'general', has_reviews: false, notes: 'Social media presence' }
+];
+
+// Initialize default citations for new users
+async function initializeDefaultCitations() {
+    console.log('Initializing default citations');
+    
+    try {
+        // Prepare the citations with user ID
+        const citationsToInsert = defaultCitations.map(citation => ({
+            ...citation,
+            client_id: window.user.id,
+            status: 'pending'
+        }));
+        
+        // Insert all default citations
+        const { error } = await window.supabase
+            .from('directory_citations')
+            .insert(citationsToInsert);
+            
+        if (error) {
+            console.error('Error creating default citations:', error);
+        } else {
+            console.log('Default citations created successfully');
+            // Reload the data
+            loadCitationsData();
+        }
+    } catch (error) {
+        console.error('Error in initializeDefaultCitations:', error);
+    }
+}
+
 // Load citations data
 async function loadCitationsData() {
     console.log('Loading citations data');
@@ -117,11 +190,31 @@ async function loadCitationsData() {
         if (error) throw error;
         
         citationsData = data || [];
-        displayCitations();
+        
+        // If no citations exist, initialize with defaults
+        if (citationsData.length === 0) {
+            console.log('No citations found, initializing defaults');
+            await initializeDefaultCitations();
+        } else {
+            displayCitations();
+        }
         
     } catch (error) {
         console.error('Error loading citations:', error);
-        showCitationsErrorState();
+        // Check if the table doesn't exist
+        if (error.message?.includes('relation "directory_citations" does not exist')) {
+            document.getElementById('citations-tbody').innerHTML = `
+                <tr class="error-row">
+                    <td colspan="7">
+                        <p><strong>Database table not found.</strong></p>
+                        <p>Please run the citations table SQL schema in your Supabase database.</p>
+                        <p>The schema file is located at: <code>docs/citations_table.sql</code></p>
+                    </td>
+                </tr>
+            `;
+        } else {
+            showCitationsErrorState();
+        }
     }
 }
 
