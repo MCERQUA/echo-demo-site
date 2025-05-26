@@ -29,6 +29,25 @@ body {
     overflow-x: hidden;
 }
 
+/* Mobile Overlay */
+.mobile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.mobile-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
 /* Sidebar */
 .sidebar {
     position: fixed;
@@ -73,6 +92,26 @@ body {
 .logo span {
     font-size: 1.25rem;
     font-weight: 600;
+}
+
+/* Close button for mobile */
+.sidebar-close {
+    display: none;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.sidebar-close:hover {
+    background: var(--background);
+    color: var(--text-primary);
 }
 
 /* Navigation */
@@ -168,6 +207,12 @@ nav {
     color: var(--text-primary);
     cursor: pointer;
     padding: 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.menu-toggle:hover {
+    background: var(--background);
 }
 
 .search-bar {
@@ -209,6 +254,7 @@ nav {
     padding: 0.5rem;
     border-radius: 8px;
     transition: background 0.2s;
+    color: var(--text-primary);
 }
 
 .user-button:hover {
@@ -738,11 +784,21 @@ textarea.form-control {
 /* Responsive */
 @media (max-width: 768px) {
     .menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .sidebar-close {
         display: block;
     }
     
     .main-content {
         margin-left: 0;
+    }
+    
+    .header {
+        padding: 1rem;
     }
     
     .search-bar {
@@ -759,6 +815,54 @@ textarea.form-control {
     
     .form-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .section-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .research-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+    
+    .reputation-metrics {
+        gap: 1rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .action-btn {
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .research-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .reputation-metrics {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .header {
+        padding: 0.75rem;
+    }
+    
+    .content {
+        padding: 0.75rem;
+    }
+    
+    .section-header h1 {
+        font-size: 1.25rem;
     }
 }
 
