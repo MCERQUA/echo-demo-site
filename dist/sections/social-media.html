@@ -1,84 +1,521 @@
-<div class="welcome-section">
+<!-- Social Media Management - Mobile First Design -->
+<div class="section-header">
     <h1>Social Media Management</h1>
     <p>Connect and manage all your social media accounts in one place.</p>
 </div>
 
-<div class="info-grid">
-    <div class="info-card">
-        <h3>Connected Accounts</h3>
-        <div class="info-item">
-            <span class="info-label">Facebook</span>
-            <span class="info-value">Not connected</span>
+<div class="social-overview-grid">
+    <div class="social-card">
+        <div class="card-header">
+            <h3>Connected Accounts</h3>
+            <button class="btn-primary" onclick="connectAccount()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+                    <polyline points="15 3 21 3 21 9"/>
+                    <line x1="10" y1="14" x2="21" y2="3"/>
+                </svg>
+                Connect Account
+            </button>
         </div>
-        <div class="info-item">
-            <span class="info-label">Instagram</span>
-            <span class="info-value">Not connected</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">Twitter/X</span>
-            <span class="info-value">Not connected</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">LinkedIn</span>
-            <span class="info-value">Not connected</span>
+        <div class="social-accounts-list">
+            <div class="social-account-item">
+                <div class="platform-info">
+                    <div class="platform-icon facebook">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                    </div>
+                    <div class="platform-details">
+                        <span class="platform-name">Facebook</span>
+                        <span class="connection-status">Not connected</span>
+                    </div>
+                </div>
+                <button class="connect-btn">Connect</button>
+            </div>
+            
+            <div class="social-account-item">
+                <div class="platform-info">
+                    <div class="platform-icon instagram">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                    </div>
+                    <div class="platform-details">
+                        <span class="platform-name">Instagram</span>
+                        <span class="connection-status">Not connected</span>
+                    </div>
+                </div>
+                <button class="connect-btn">Connect</button>
+            </div>
+            
+            <div class="social-account-item">
+                <div class="platform-info">
+                    <div class="platform-icon twitter">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                        </svg>
+                    </div>
+                    <div class="platform-details">
+                        <span class="platform-name">Twitter/X</span>
+                        <span class="connection-status">Not connected</span>
+                    </div>
+                </div>
+                <button class="connect-btn">Connect</button>
+            </div>
+            
+            <div class="social-account-item">
+                <div class="platform-info">
+                    <div class="platform-icon linkedin">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                    </div>
+                    <div class="platform-details">
+                        <span class="platform-name">LinkedIn</span>
+                        <span class="connection-status">Not connected</span>
+                    </div>
+                </div>
+                <button class="connect-btn">Connect</button>
+            </div>
         </div>
     </div>
     
-    <div class="info-card">
-        <h3>Content Calendar</h3>
-        <div class="info-item">
-            <span class="info-label">Scheduled Posts</span>
-            <span class="info-value">0</span>
+    <div class="social-card">
+        <div class="card-header">
+            <h3>Content Calendar</h3>
         </div>
-        <div class="info-item">
-            <span class="info-label">Drafts</span>
-            <span class="info-value">0</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">Published This Month</span>
-            <span class="info-value">0</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">Next Post</span>
-            <span class="info-value">None scheduled</span>
+        <div class="content-stats">
+            <div class="stat-item">
+                <span class="stat-label">Scheduled Posts</span>
+                <span class="stat-value">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Drafts</span>
+                <span class="stat-value">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Published This Month</span>
+                <span class="stat-value">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Next Post</span>
+                <span class="stat-value">None scheduled</span>
+            </div>
         </div>
     </div>
     
-    <div class="info-card">
-        <h3>Performance Overview</h3>
-        <div class="info-item">
-            <span class="info-label">Total Followers</span>
-            <span class="info-value">-</span>
+    <div class="social-card">
+        <div class="card-header">
+            <h3>Performance Overview</h3>
         </div>
-        <div class="info-item">
-            <span class="info-label">Engagement Rate</span>
-            <span class="info-value">-</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">Reach This Month</span>
-            <span class="info-value">-</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">Top Performing Post</span>
-            <span class="info-value">-</span>
+        <div class="performance-stats">
+            <div class="perf-stat">
+                <div class="perf-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 010 7.75"/>
+                    </svg>
+                </div>
+                <div class="perf-content">
+                    <div class="perf-value">-</div>
+                    <div class="perf-label">Total Followers</div>
+                </div>
+            </div>
+            
+            <div class="perf-stat">
+                <div class="perf-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                    </svg>
+                </div>
+                <div class="perf-content">
+                    <div class="perf-value">-</div>
+                    <div class="perf-label">Engagement Rate</div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="quick-actions">
-    <button class="action-button">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
-            <polyline points="15 3 21 3 21 9"/>
-            <line x1="10" y1="14" x2="21" y2="3"/>
-        </svg>
-        Connect Account
-    </button>
-    <button class="action-button secondary">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="12" y1="5" x2="12" y2="19"/>
-            <line x1="5" y1="12" x2="19" y2="12"/>
-        </svg>
-        Create Post
-    </button>
+    <h2>Quick Actions</h2>
+    <div class="action-buttons">
+        <button class="action-button" onclick="connectAccount()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+                <polyline points="15 3 21 3 21 9"/>
+                <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+            Connect Account
+        </button>
+        <button class="action-button secondary" onclick="createPost()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Create Post
+        </button>
+        <button class="action-button secondary" onclick="viewAnalytics()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+            View Analytics
+        </button>
+    </div>
 </div>
+
+<style>
+/* Social Media Page - Mobile First */
+.social-overview-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.social-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.social-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.social-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* Social Accounts List */
+.social-accounts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.social-account-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    gap: 1rem;
+}
+
+.platform-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.platform-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.platform-icon.facebook { background: #1877f2; color: white; }
+.platform-icon.instagram { background: #E4405F; color: white; }
+.platform-icon.twitter { background: #1DA1F2; color: white; }
+.platform-icon.linkedin { background: #0A66C2; color: white; }
+
+.platform-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.platform-name {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+}
+
+.connection-status {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.connect-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.connect-btn:hover {
+    background: var(--primary-dark);
+}
+
+/* Content Stats */
+.content-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.stat-value {
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+/* Performance Stats */
+.performance-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.perf-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.perf-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--primary-light);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+.perf-content {
+    flex: 1;
+}
+
+.perf-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+    line-height: 1.1;
+}
+
+.perf-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Quick Actions */
+.quick-actions {
+    margin-top: 1.5rem;
+}
+
+.quick-actions h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.action-button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-align: center;
+    min-height: 44px;
+    font-size: 0.875rem;
+}
+
+.action-button:hover {
+    background: var(--primary-dark);
+}
+
+.action-button.secondary {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.action-button.secondary:hover {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* Responsive Design */
+@media (min-width: 576px) {
+    .social-overview-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .content-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .stat-item {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+        border-bottom: none;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 1rem;
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-top: 0.5rem;
+    }
+    
+    .performance-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .action-buttons {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .action-button {
+        flex: 1;
+        min-width: 140px;
+    }
+}
+
+@media (min-width: 768px) {
+    .social-overview-grid {
+        grid-template-columns: 2fr 1fr 1fr;
+        align-items: start;
+    }
+    
+    .social-card {
+        padding: 1.5rem;
+    }
+    
+    .content-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-item {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .stat-value {
+        font-size: 0.875rem;
+        margin-top: 0;
+    }
+    
+    .performance-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (min-width: 1024px) {
+    .social-overview-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+</style>
+
+<script>
+function connectAccount() {
+    // Implement social media account connection
+    console.log('Connecting social media account...');
+    showNotification('Social media connection feature coming soon!', 'info');
+}
+
+function createPost() {
+    // Implement post creation
+    console.log('Creating new post...');
+    showNotification('Post creation feature coming soon!', 'info');
+}
+
+function viewAnalytics() {
+    // Implement analytics view
+    console.log('Viewing analytics...');
+    showNotification('Analytics feature coming soon!', 'info');
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// Make functions globally available
+window.connectAccount = connectAccount;
+window.createPost = createPost;
+window.viewAnalytics = viewAnalytics;
+</script>
