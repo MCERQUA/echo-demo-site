@@ -485,14 +485,50 @@
     animation: pulse 2s ease-in-out infinite;
 }
 
-/* Responsive */
+/* Mobile Menu Styles - FIX FOR MOBILE NAVIGATION */
 @media (max-width: 768px) {
     .main-nav {
         display: none;
+        position: fixed;
+        top: var(--header-height);
+        left: 0;
+        right: 0;
+        background: rgba(10, 14, 39, 0.98);
+        backdrop-filter: blur(20px);
+        padding: var(--space-xl) var(--space-md);
+        border-top: 1px solid var(--glass-border);
+        z-index: var(--z-fixed);
+    }
+    
+    .main-nav.mobile-active {
+        display: block;
+    }
+    
+    .nav-list {
+        flex-direction: column;
+        gap: var(--space-lg);
+    }
+    
+    .nav-link {
+        font-size: var(--text-lg);
+        padding: var(--space-md) 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: block;
+        text-align: center;
+    }
+    
+    .nav-link:last-child {
+        border-bottom: none;
     }
     
     .mobile-menu-toggle {
         display: flex;
+        z-index: var(--z-modal);
+    }
+    
+    /* Prevent body scroll when menu is open */
+    body.menu-open {
+        overflow: hidden;
     }
     
     .hero-actions {
