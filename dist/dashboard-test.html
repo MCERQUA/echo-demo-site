@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Test - Echo AI Systems</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Dashboard CSS -->
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <!-- Close button for mobile -->
+        <button class="sidebar-close" id="sidebarClose">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+        
+        <a href="index.html" class="logo">
+            <div class="logo-icon">E</div>
+            <span>Echo <sup style="font-size: 0.75rem; color: #0EA5E9;">AI</sup></span>
+        </a>
+        
+        <nav>
+            <ul class="nav-menu">
+                <li><a class="nav-link active" data-section="overview"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Overview</span></a></li>
+                <li><a class="nav-link" data-section="brand-info"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/></svg><span>Brand Info</span></a></li>
+                <li><a class="nav-link" data-section="social-media"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 5.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM12 12a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM21 18.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/><path d="M16 5.5h-5.5V12M7 12h5.5M16 18.5h-5.5V12"/></svg><span>Social Media</span></a></li>
+                <li><a class="nav-link" data-section="website"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg><span>Website</span></a></li>
+                <li><a class="nav-link" data-section="google-business"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Google Business</span></a></li>
+                <li><a class="nav-link" data-section="reputation"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Reputation</span></a></li>
+                <li><a class="nav-link" data-section="reports"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>Reports</span></a></li>
+                <li><a class="nav-link" data-section="billing"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><span>Billing</span></a></li>
+            </ul>
+        </nav>
+        
+        <div><a class="nav-link" data-section="support"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Support</span></a></div>
+    </aside>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button class="menu-toggle" onclick="toggleSidebar()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+                <div class="search-bar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" placeholder="Search..."></div>
+            </div>
+            <div class="user-menu">
+                <button class="user-button" onclick="toggleDropdown()"><div class="user-avatar">TS</div><span>Test User</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+                <div class="dropdown" id="userDropdown">
+                    <a href="#" class="dropdown-item">Profile</a>
+                    <a href="#" class="dropdown-item">Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item">Sign Out</a>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Content Container -->
+        <main class="content" id="main-content">
+            <div class="section-header">
+                <h1>Dashboard Test</h1>
+                <p>Testing navigation functionality</p>
+            </div>
+            <div class="section-card">
+                <h2>Current Section: <span id="current-section">overview</span></h2>
+                <p>Click the navigation items in the sidebar to test the menu functionality.</p>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Test navigation without Supabase
+        let isMobile = window.innerWidth <= 768;
+        let sidebarOpen = !isMobile;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeNavigation();
+            initializeMobileHandlers();
+            
+            // Set initial sidebar state
+            if (isMobile) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        });
+        
+        function initializeNavigation() {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                const sectionName = link.getAttribute('data-section');
+                if (sectionName) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // Update active states
+                        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        // Update current section display
+                        document.getElementById('current-section').textContent = sectionName;
+                        
+                        console.log('Navigated to:', sectionName);
+                        
+                        // Close sidebar on mobile
+                        if (isMobile) {
+                            setTimeout(() => closeSidebar(), 100);
+                        }
+                    });
+                }
+            });
+        }
+        
+        function initializeMobileHandlers() {
+            const overlay = document.getElementById('mobileOverlay');
+            const sidebarClose = document.getElementById('sidebarClose');
+            
+            if (overlay) {
+                overlay.addEventListener('click', closeSidebar);
+            }
+            
+            if (sidebarClose) {
+                sidebarClose.addEventListener('click', closeSidebar);
+            }
+            
+            window.addEventListener('resize', () => {
+                const wasMobile = isMobile;
+                isMobile = window.innerWidth <= 768;
+                
+                if (wasMobile && !isMobile) {
+                    openSidebar();
+                } else if (!wasMobile && isMobile) {
+                    closeSidebar();
+                }
+            });
+        }
+        
+        function toggleSidebar() {
+            if (sidebarOpen) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        }
+        
+        function openSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            
+            if (!sidebar) return;
+            
+            sidebar.classList.remove('collapsed');
+            
+            if (isMobile && overlay) {
+                overlay.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            sidebarOpen = true;
+        }
+        
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            
+            if (!sidebar) return;
+            
+            if (isMobile) {
+                sidebar.classList.add('collapsed');
+                if (overlay) {
+                    overlay.classList.remove('show');
+                }
+                document.body.style.overflow = '';
+            }
+            
+            sidebarOpen = false;
+        }
+        
+        function toggleDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('show');
+            }
+        }
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('userDropdown');
+            if (dropdown && !e.target.closest('.user-menu')) {
+                dropdown.classList.remove('show');
+            }
+        });
+        
+        // Make functions global
+        window.toggleSidebar = toggleSidebar;
+        window.toggleDropdown = toggleDropdown;
+        
+        console.log('Dashboard test loaded, mobile detection:', isMobile);
+    </script>
+</body>
+</html>
