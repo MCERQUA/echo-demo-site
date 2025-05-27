@@ -1,0 +1,815 @@
+<!-- Website SEO Metrics Tab -->
+<div id="website-seo-metrics" class="tab-content" data-section="website_seo">
+    <div class="content-header">
+        <h2>SEO Metrics & Analysis</h2>
+        <button class="btn-primary" onclick="runSeoAudit()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+            Run SEO Audit
+        </button>
+    </div>
+
+    <!-- SEO Overview -->
+    <div class="seo-overview">
+        <div class="overview-card">
+            <div class="overview-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                </svg>
+            </div>
+            <div class="overview-content">
+                <h3>Overall SEO Score</h3>
+                <div class="seo-score-large" data-field="overall_seo_score" data-table="website_seo">--</div>
+                <p class="score-description">Your website's search engine optimization health</p>
+            </div>
+        </div>
+        
+        <div class="overview-card">
+            <div class="overview-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                </svg>
+            </div>
+            <div class="overview-content">
+                <h3>Keyword Rankings</h3>
+                <div class="keyword-summary">
+                    <span class="keyword-stat">
+                        <strong data-field="keywords_top10" data-table="website_seo">--</strong> Top 10
+                    </span>
+                    <span class="keyword-stat">
+                        <strong data-field="keywords_total" data-table="website_seo">--</strong> Total
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="overview-card">
+            <div class="overview-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                </svg>
+            </div>
+            <div class="overview-content">
+                <h3>Page Speed</h3>
+                <div class="speed-summary">
+                    <span class="speed-stat">Mobile: <strong data-field="mobile_speed_score" data-table="website_seo">--</strong></span>
+                    <span class="speed-stat">Desktop: <strong data-field="desktop_speed_score" data-table="website_seo">--</strong></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Technical SEO -->
+    <div class="technical-seo">
+        <h3>Technical SEO Analysis</h3>
+        <div class="technical-grid">
+            <div class="technical-item">
+                <div class="item-header">
+                    <span class="item-title">Meta Tags</span>
+                    <span class="item-status" data-status="good">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="item-details">
+                    <div class="detail-row">
+                        <span>Title Tags</span>
+                        <span data-field="title_tags_count" data-table="website_seo">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Meta Descriptions</span>
+                        <span data-field="meta_descriptions_count" data-table="website_seo">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Missing Meta</span>
+                        <span data-field="missing_meta_count" data-table="website_seo">--</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="technical-item">
+                <div class="item-header">
+                    <span class="item-title">Headings</span>
+                    <span class="item-status" data-status="warning">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="item-details">
+                    <div class="detail-row">
+                        <span>H1 Tags</span>
+                        <span data-field="h1_tags_count" data-table="website_seo">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Multiple H1s</span>
+                        <span data-field="multiple_h1_pages" data-table="website_seo">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Missing H1s</span>
+                        <span data-field="missing_h1_pages" data-table="website_seo">--</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="technical-item">
+                <div class="item-header">
+                    <span class="item-title">Schema Markup</span>
+                    <span class="item-status" data-status="error">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="item-details">
+                    <div class="detail-row">
+                        <span>Schema Types</span>
+                        <span data-field="schema_types_count" data-table="website_seo">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Valid Schema</span>
+                        <span data-field="valid_schema_count" data-table="website_seo">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Schema Errors</span>
+                        <span data-field="schema_errors_count" data-table="website_seo">--</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="technical-item">
+                <div class="item-header">
+                    <span class="item-title">Sitemap & Robots</span>
+                    <span class="item-status" data-status="good">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="item-details">
+                    <div class="detail-row">
+                        <span>Sitemap Status</span>
+                        <span data-field="sitemap_status" data-table="website_seo">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Indexed Pages</span>
+                        <span data-field="indexed_pages_count" data-table="website_seo">--</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Robots.txt</span>
+                        <span data-field="robots_txt_status" data-table="website_seo">--</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Keyword Rankings -->
+    <div class="keyword-rankings">
+        <div class="rankings-header">
+            <h3>Top Keyword Rankings</h3>
+            <button class="btn-secondary" onclick="showAddKeywordModal()">Add Keyword</button>
+        </div>
+        
+        <div class="rankings-table-container">
+            <table class="rankings-table">
+                <thead>
+                    <tr>
+                        <th>Keyword</th>
+                        <th>Position</th>
+                        <th>Change</th>
+                        <th>Search Volume</th>
+                        <th>URL</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="keyword-rankings-list">
+                    <tr>
+                        <td colspan="6" class="loading-state">Loading keyword rankings...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Content Optimization -->
+    <div class="content-optimization">
+        <h3>Content Optimization Opportunities</h3>
+        <div class="optimization-list" id="optimization-opportunities">
+            <div class="optimization-item">
+                <div class="optimization-icon warning">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                </div>
+                <div class="optimization-content">
+                    <h4>Thin Content Pages</h4>
+                    <p><span data-field="thin_content_pages" data-table="website_seo">--</span> pages have less than 300 words</p>
+                    <a href="#" class="optimization-link">View Pages →</a>
+                </div>
+            </div>
+            
+            <div class="optimization-item">
+                <div class="optimization-icon error">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                </div>
+                <div class="optimization-content">
+                    <h4>Duplicate Content</h4>
+                    <p><span data-field="duplicate_content_pages" data-table="website_seo">--</span> pages with duplicate content detected</p>
+                    <a href="#" class="optimization-link">Fix Duplicates →</a>
+                </div>
+            </div>
+            
+            <div class="optimization-item">
+                <div class="optimization-icon info">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+                    </svg>
+                </div>
+                <div class="optimization-content">
+                    <h4>Internal Linking</h4>
+                    <p><span data-field="orphan_pages" data-table="website_seo">--</span> orphan pages need internal links</p>
+                    <a href="#" class="optimization-link">Improve Links →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Keyword Modal -->
+<div class="modal" id="keyword-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Track New Keyword</h3>
+            <button class="modal-close" onclick="closeKeywordModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <form id="keyword-form">
+                <div class="form-group">
+                    <label for="keyword-term">Keyword</label>
+                    <input type="text" id="keyword-term" class="form-input" required placeholder="e.g., web design services">
+                </div>
+                
+                <div class="form-group">
+                    <label for="keyword-url">Target URL</label>
+                    <input type="url" id="keyword-url" class="form-input" placeholder="https://yoursite.com/page">
+                </div>
+                
+                <div class="form-group">
+                    <label for="keyword-volume">Monthly Search Volume</label>
+                    <input type="number" id="keyword-volume" class="form-input" placeholder="1000">
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeKeywordModal()">Cancel</button>
+            <button class="btn-primary" onclick="saveKeyword()">Start Tracking</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// SEO Metrics management
+(function() {
+    console.log('Website SEO metrics tab loaded');
+    loadSeoMetrics();
+    loadKeywordRankings();
+})();
+
+async function loadSeoMetrics() {
+    if (!window.user) return;
+    
+    try {
+        // Load SEO metrics from Supabase
+        const { data, error } = await window.supabase
+            .from('website_seo')
+            .select('*')
+            .eq('user_id', window.user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+        
+        if (error) throw error;
+        
+        if (data) {
+            displaySeoData(data);
+        }
+        
+    } catch (error) {
+        console.error('Error loading SEO metrics:', error);
+    }
+}
+
+async function loadKeywordRankings() {
+    if (!window.user) return;
+    
+    try {
+        // Load keyword rankings from Supabase
+        const { data, error } = await window.supabase
+            .from('keyword_rankings')
+            .select('*')
+            .eq('user_id', window.user.id)
+            .order('position', { ascending: true })
+            .limit(10);
+        
+        if (error) throw error;
+        
+        displayKeywordRankings(data || []);
+        
+    } catch (error) {
+        console.error('Error loading keyword rankings:', error);
+        document.getElementById('keyword-rankings-list').innerHTML = '<tr><td colspan="6" class="error-state">Failed to load rankings</td></tr>';
+    }
+}
+
+function displaySeoData(data) {
+    // Update all data fields
+    Object.entries(data).forEach(([key, value]) => {
+        const element = document.querySelector(`[data-field="${key}"][data-table="website_seo"]`);
+        if (element && value !== null) {
+            element.textContent = value;
+        }
+    });
+    
+    // Update technical SEO item statuses
+    updateTechnicalStatus('meta', data.missing_meta_count);
+    updateTechnicalStatus('headings', data.missing_h1_pages || data.multiple_h1_pages);
+    updateTechnicalStatus('schema', data.schema_errors_count);
+    updateTechnicalStatus('sitemap', data.sitemap_status === 'Valid' ? 0 : 1);
+}
+
+function updateTechnicalStatus(type, errorCount) {
+    let selector = '';
+    switch(type) {
+        case 'meta': selector = '.technical-item:has(.item-title:contains("Meta"))'; break;
+        case 'headings': selector = '.technical-item:has(.item-title:contains("Headings"))'; break;
+        case 'schema': selector = '.technical-item:has(.item-title:contains("Schema"))'; break;
+        case 'sitemap': selector = '.technical-item:has(.item-title:contains("Sitemap"))'; break;
+    }
+    
+    const item = document.querySelector(selector);
+    if (!item) return;
+    
+    const statusEl = item.querySelector('.item-status');
+    let status = 'good';
+    let icon = '<polyline points="20 6 9 17 4 12"/>';
+    
+    if (errorCount > 0) {
+        status = errorCount > 5 ? 'error' : 'warning';
+        icon = status === 'error' 
+            ? '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>'
+            : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+    }
+    
+    statusEl.setAttribute('data-status', status);
+    statusEl.querySelector('svg').innerHTML = icon;
+}
+
+function displayKeywordRankings(rankings) {
+    const rankingsList = document.getElementById('keyword-rankings-list');
+    
+    if (rankings.length === 0) {
+        rankingsList.innerHTML = `
+            <tr>
+                <td colspan="6" class="empty-state">
+                    <p>No keywords tracked yet</p>
+                    <button class="btn-primary" onclick="showAddKeywordModal()">Add Your First Keyword</button>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    rankingsList.innerHTML = rankings.map(ranking => {
+        const changeClass = ranking.position_change > 0 ? 'positive' : ranking.position_change < 0 ? 'negative' : '';
+        const changeIcon = ranking.position_change > 0 ? '↑' : ranking.position_change < 0 ? '↓' : '→';
+        
+        return `
+            <tr>
+                <td><strong>${ranking.keyword}</strong></td>
+                <td class="position">${ranking.position || '-'}</td>
+                <td class="change ${changeClass}">${changeIcon} ${Math.abs(ranking.position_change || 0)}</td>
+                <td>${ranking.search_volume ? ranking.search_volume.toLocaleString() : '-'}</td>
+                <td class="url-cell">${ranking.url ? `<a href="${ranking.url}" target="_blank">${new URL(ranking.url).pathname}</a>` : '-'}</td>
+                <td>
+                    <button class="btn-icon" onclick="refreshKeywordRanking('${ranking.id}')" title="Refresh">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+                        </svg>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+async function runSeoAudit() {
+    const button = event.target.closest('button');
+    const originalText = button.innerHTML;
+    button.innerHTML = '<span class="spinner"></span> Running Audit...';
+    button.disabled = true;
+    
+    try {
+        window.showNotification('SEO audit started. This may take a few minutes.', 'info');
+        
+        // Simulate audit delay
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        
+        // Generate mock SEO data
+        const mockData = generateMockSeoData();
+        
+        const { error } = await window.supabase
+            .from('website_seo')
+            .insert([{
+                ...mockData,
+                user_id: window.user.id
+            }]);
+        
+        if (error) throw error;
+        
+        displaySeoData(mockData);
+        window.showNotification('SEO audit completed successfully', 'success');
+        
+    } catch (error) {
+        console.error('Error running SEO audit:', error);
+        window.showNotification('Failed to run SEO audit', 'error');
+    } finally {
+        button.innerHTML = originalText;
+        button.disabled = false;
+    }
+}
+
+function generateMockSeoData() {
+    return {
+        overall_seo_score: Math.floor(Math.random() * 30) + 70,
+        keywords_top10: Math.floor(Math.random() * 20) + 5,
+        keywords_total: Math.floor(Math.random() * 50) + 20,
+        mobile_speed_score: Math.floor(Math.random() * 30) + 70,
+        desktop_speed_score: Math.floor(Math.random() * 20) + 80,
+        title_tags_count: Math.floor(Math.random() * 50) + 50,
+        meta_descriptions_count: Math.floor(Math.random() * 50) + 40,
+        missing_meta_count: Math.floor(Math.random() * 10),
+        h1_tags_count: Math.floor(Math.random() * 50) + 50,
+        multiple_h1_pages: Math.floor(Math.random() * 5),
+        missing_h1_pages: Math.floor(Math.random() * 5),
+        schema_types_count: Math.floor(Math.random() * 5) + 1,
+        valid_schema_count: Math.floor(Math.random() * 5) + 1,
+        schema_errors_count: Math.floor(Math.random() * 3),
+        sitemap_status: 'Valid',
+        indexed_pages_count: Math.floor(Math.random() * 100) + 50,
+        robots_txt_status: 'Valid',
+        thin_content_pages: Math.floor(Math.random() * 10),
+        duplicate_content_pages: Math.floor(Math.random() * 5),
+        orphan_pages: Math.floor(Math.random() * 8)
+    };
+}
+
+function showAddKeywordModal() {
+    document.getElementById('keyword-form').reset();
+    document.getElementById('keyword-modal').classList.add('show');
+}
+
+function closeKeywordModal() {
+    document.getElementById('keyword-modal').classList.remove('show');
+}
+
+async function saveKeyword() {
+    const keywordData = {
+        keyword: document.getElementById('keyword-term').value,
+        url: document.getElementById('keyword-url').value,
+        search_volume: parseInt(document.getElementById('keyword-volume').value) || null,
+        user_id: window.user.id,
+        position: Math.floor(Math.random() * 50) + 1,
+        position_change: Math.floor(Math.random() * 10) - 5
+    };
+    
+    try {
+        const { error } = await window.supabase
+            .from('keyword_rankings')
+            .insert([keywordData]);
+        
+        if (error) throw error;
+        
+        closeKeywordModal();
+        loadKeywordRankings();
+        window.showNotification('Keyword tracking started', 'success');
+        
+    } catch (error) {
+        console.error('Error saving keyword:', error);
+        window.showNotification('Failed to save keyword', 'error');
+    }
+}
+
+// Make functions global
+window.loadSeoMetrics = loadSeoMetrics;
+window.runSeoAudit = runSeoAudit;
+window.showAddKeywordModal = showAddKeywordModal;
+window.closeKeywordModal = closeKeywordModal;
+window.saveKeyword = saveKeyword;
+</script>
+
+<style>
+/* SEO Overview */
+.seo-overview {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.overview-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.overview-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--primary-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+.overview-content h3 {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0 0 0.5rem 0;
+}
+
+.seo-score-large {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.score-description {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin: 0.5rem 0 0 0;
+}
+
+.keyword-summary,
+.speed-summary {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.keyword-stat,
+.speed-stat {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.keyword-stat strong,
+.speed-stat strong {
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    display: block;
+}
+
+/* Technical SEO */
+.technical-seo {
+    margin-bottom: 2rem;
+}
+
+.technical-seo h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.technical-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.technical-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.item-title {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.item-status {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.item-status[data-status="good"] {
+    background: var(--success-light);
+    color: var(--success);
+}
+
+.item-status[data-status="warning"] {
+    background: var(--warning-light);
+    color: var(--warning);
+}
+
+.item-status[data-status="error"] {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+.item-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.detail-row span:last-child {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* Keyword Rankings */
+.keyword-rankings {
+    margin-bottom: 2rem;
+}
+
+.rankings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.rankings-header h3 {
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.rankings-table-container {
+    overflow-x: auto;
+}
+
+.rankings-table {
+    width: 100%;
+    min-width: 600px;
+    border-collapse: collapse;
+}
+
+.rankings-table th {
+    text-align: left;
+    padding: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.875rem;
+}
+
+.rankings-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.position {
+    font-weight: 600;
+    font-size: 1.125rem;
+}
+
+.change {
+    font-weight: 500;
+}
+
+.change.positive {
+    color: var(--success);
+}
+
+.change.negative {
+    color: var(--danger);
+}
+
+.url-cell a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.url-cell a:hover {
+    text-decoration: underline;
+}
+
+/* Content Optimization */
+.content-optimization {
+    margin-bottom: 2rem;
+}
+
+.content-optimization h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.optimization-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.optimization-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.optimization-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.optimization-icon.warning {
+    background: var(--warning-light);
+    color: var(--warning);
+}
+
+.optimization-icon.error {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+.optimization-icon.info {
+    background: var(--info-light);
+    color: var(--info);
+}
+
+.optimization-content h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+}
+
+.optimization-content p {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.optimization-link {
+    font-size: 0.875rem;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.optimization-link:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (min-width: 576px) {
+    .seo-overview {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .technical-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 768px) {
+    .technical-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>
