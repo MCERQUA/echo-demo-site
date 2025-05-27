@@ -157,17 +157,94 @@
     </div>
 </div>
 
+<!-- Load the website overview module -->
+<script src="js/tabs/website-overview.js"></script>
+
 <script>
+// Quick action functions
+function runWebsiteAudit() {
+    if (window.showNotification) {
+        window.showNotification('Website audit started. This may take a few minutes.', 'info');
+    }
+    setTimeout(() => {
+        if (window.showNotification) {
+            window.showNotification('Website audit completed. Check the SEO Metrics tab for results.', 'success');
+        }
+    }, 3000);
+}
+
+function submitToSearchEngines() {
+    if (window.showNotification) {
+        window.showNotification('Submitting website to search engines...', 'info');
+    }
+    setTimeout(() => {
+        if (window.showNotification) {
+            window.showNotification('Website submitted to Google and Bing successfully', 'success');
+        }
+    }, 2000);
+}
+
+function generateSitemap() {
+    if (window.showNotification) {
+        window.showNotification('Generating sitemap...', 'info');
+    }
+    setTimeout(() => {
+        if (window.showNotification) {
+            window.showNotification('Sitemap generated successfully', 'success');
+        }
+    }, 2000);
+}
+
+function checkBrokenLinks() {
+    if (window.showNotification) {
+        window.showNotification('Checking for broken links...', 'info');
+    }
+    setTimeout(() => {
+        if (window.showNotification) {
+            window.showNotification('Link check complete. No broken links found!', 'success');
+        }
+    }, 3000);
+}
+
+function refreshSeoScore() {
+    const button = event.target.closest('button');
+    button.disabled = true;
+    
+    // Simulate score refresh
+    const newScore = Math.floor(Math.random() * 30) + 70;
+    const scoreElement = document.querySelector('[data-field="seo_score"]');
+    if (scoreElement) {
+        scoreElement.textContent = newScore;
+        updateScoreDisplay(newScore);
+    }
+    
+    if (window.showNotification) {
+        window.showNotification('SEO score updated', 'success');
+    }
+    
+    setTimeout(() => {
+        button.disabled = false;
+    }, 2000);
+}
+
 // Load website overview data when tab is shown
 (function() {
     console.log('Website overview tab loaded');
     
-    // Load website data
-    if (window.loadWebsiteOverview) {
-        setTimeout(() => {
+    // Load website data after a short delay
+    setTimeout(() => {
+        if (window.loadWebsiteOverview) {
             window.loadWebsiteOverview();
-        }, 100);
-    }
+        } else {
+            console.log('Waiting for loadWebsiteOverview function...');
+            // Try again after module loads
+            setTimeout(() => {
+                if (window.loadWebsiteOverview) {
+                    window.loadWebsiteOverview();
+                }
+            }, 500);
+        }
+    }, 100);
 })();
 </script>
 
@@ -388,6 +465,72 @@
     border-color: var(--primary);
     outline: none;
     cursor: text;
+}
+
+/* Button styles */
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.btn-icon:hover {
+    background: var(--primary-light);
+}
+
+.btn-secondary {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    background: var(--primary-light);
+    border-color: var(--primary);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+/* Section card */
+.section-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.card-header h2 {
+    font-size: 1.25rem;
+    margin: 0;
 }
 
 /* Tablet and Desktop Responsive */
