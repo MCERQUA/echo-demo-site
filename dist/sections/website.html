@@ -17,6 +17,9 @@
     <!-- Tabs will be loaded here dynamically -->
 </div>
 
+<!-- Load the website section script -->
+<script src="js/sections/website.js"></script>
+
 <script>
 // Store loaded tabs to avoid reloading
 const loadedWebsiteTabs = {};
@@ -28,7 +31,7 @@ async function loadWebsiteTabContent(tabName) {
     }
     
     try {
-        const response = await fetch(`/sections/website/${tabName}.html`);
+        const response = await fetch(`sections/website/${tabName}.html`);
         if (!response.ok) throw new Error('Failed to load tab');
         
         const content = await response.text();
@@ -42,6 +45,8 @@ async function loadWebsiteTabContent(tabName) {
 
 // Show specific tab
 async function showWebsiteTab(tabName) {
+    console.log('Showing website tab:', tabName);
+    
     // Update button states
     document.querySelectorAll('.tab-button').forEach(button => {
         button.classList.remove('active');
@@ -66,39 +71,56 @@ async function showWebsiteTab(tabName) {
 
 // Initialize features for specific tabs
 function initializeWebsiteTabFeatures(tabName) {
+    console.log('Initializing features for tab:', tabName);
+    
+    // Execute any inline scripts in the loaded content
+    const scripts = document.getElementById('website-tabs').getElementsByTagName('script');
+    for (let script of scripts) {
+        try {
+            eval(script.innerHTML);
+        } catch (e) {
+            console.error('Error executing inline script:', e);
+        }
+    }
+    
+    // Call specific initialization functions
     switch(tabName) {
         case 'overview':
             if (typeof loadWebsiteOverview === 'function') {
-                loadWebsiteOverview();
+                setTimeout(() => loadWebsiteOverview(), 100);
             }
             break;
         case 'content':
             if (typeof loadWebsiteContent === 'function') {
-                loadWebsiteContent();
+                setTimeout(() => loadWebsiteContent(), 100);
             }
             break;
         case 'backlinks':
             if (typeof loadBacklinks === 'function') {
-                loadBacklinks();
+                setTimeout(() => loadBacklinks(), 100);
             }
             break;
         case 'performance':
             if (typeof loadPerformanceMetrics === 'function') {
-                loadPerformanceMetrics();
+                setTimeout(() => loadPerformanceMetrics(), 100);
             }
             break;
         case 'seo-metrics':
             if (typeof loadSeoMetrics === 'function') {
-                loadSeoMetrics();
+                setTimeout(() => loadSeoMetrics(), 100);
             }
             break;
     }
 }
 
-// Load initial tab on page load
-document.addEventListener('DOMContentLoaded', async () => {
-    await showWebsiteTab('overview');
-});
+// Initialize the website section when it loads
+(function() {
+    console.log('Website section loaded, showing overview tab');
+    // Load initial tab
+    setTimeout(() => {
+        showWebsiteTab('overview');
+    }, 100);
+})();
 
 // Make showWebsiteTab globally available
 window.showWebsiteTab = showWebsiteTab;
