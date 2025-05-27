@@ -1,0 +1,728 @@
+<!-- Website Performance Tab -->
+<div id="website-performance" class="tab-content" data-section="website_performance">
+    <div class="content-header">
+        <h2>Performance Metrics</h2>
+        <button class="btn-primary" onclick="runPerformanceTest()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+            Run Performance Test
+        </button>
+    </div>
+
+    <!-- Core Web Vitals -->
+    <div class="web-vitals">
+        <h3>Core Web Vitals</h3>
+        <div class="vitals-grid">
+            <div class="vital-card">
+                <div class="vital-header">
+                    <span class="vital-name">LCP</span>
+                    <span class="vital-tooltip">Largest Contentful Paint</span>
+                </div>
+                <div class="vital-score" data-status="good">
+                    <span class="score-value" data-field="lcp_score" data-table="website_performance">--</span>
+                    <span class="score-unit">s</span>
+                </div>
+                <div class="vital-bar">
+                    <div class="bar-fill" style="width: 0%"></div>
+                </div>
+                <div class="vital-status">Good < 2.5s</div>
+            </div>
+            
+            <div class="vital-card">
+                <div class="vital-header">
+                    <span class="vital-name">FID</span>
+                    <span class="vital-tooltip">First Input Delay</span>
+                </div>
+                <div class="vital-score" data-status="good">
+                    <span class="score-value" data-field="fid_score" data-table="website_performance">--</span>
+                    <span class="score-unit">ms</span>
+                </div>
+                <div class="vital-bar">
+                    <div class="bar-fill" style="width: 0%"></div>
+                </div>
+                <div class="vital-status">Good < 100ms</div>
+            </div>
+            
+            <div class="vital-card">
+                <div class="vital-header">
+                    <span class="vital-name">CLS</span>
+                    <span class="vital-tooltip">Cumulative Layout Shift</span>
+                </div>
+                <div class="vital-score" data-status="good">
+                    <span class="score-value" data-field="cls_score" data-table="website_performance">--</span>
+                    <span class="score-unit"></span>
+                </div>
+                <div class="vital-bar">
+                    <div class="bar-fill" style="width: 0%"></div>
+                </div>
+                <div class="vital-status">Good < 0.1</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Scores -->
+    <div class="performance-scores">
+        <h3>Performance Breakdown</h3>
+        <div class="scores-grid">
+            <div class="score-card">
+                <div class="score-header">
+                    <h4>Performance</h4>
+                    <span class="score-badge" data-score="0">--</span>
+                </div>
+                <ul class="score-details">
+                    <li>
+                        <span>First Contentful Paint</span>
+                        <span data-field="fcp_time" data-table="website_performance">--</span>
+                    </li>
+                    <li>
+                        <span>Speed Index</span>
+                        <span data-field="speed_index" data-table="website_performance">--</span>
+                    </li>
+                    <li>
+                        <span>Time to Interactive</span>
+                        <span data-field="tti_time" data-table="website_performance">--</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="score-card">
+                <div class="score-header">
+                    <h4>Accessibility</h4>
+                    <span class="score-badge" data-score="0">--</span>
+                </div>
+                <ul class="score-details">
+                    <li>
+                        <span>Alt Text Coverage</span>
+                        <span data-field="alt_text_coverage" data-table="website_performance">--</span>
+                    </li>
+                    <li>
+                        <span>Color Contrast</span>
+                        <span data-field="color_contrast" data-table="website_performance">--</span>
+                    </li>
+                    <li>
+                        <span>ARIA Labels</span>
+                        <span data-field="aria_labels" data-table="website_performance">--</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="score-card">
+                <div class="score-header">
+                    <h4>Best Practices</h4>
+                    <span class="score-badge" data-score="0">--</span>
+                </div>
+                <ul class="score-details">
+                    <li>
+                        <span>HTTPS Usage</span>
+                        <span data-field="https_usage" data-table="website_performance">--</span>
+                    </li>
+                    <li>
+                        <span>Image Optimization</span>
+                        <span data-field="image_optimization" data-table="website_performance">--</span>
+                    </li>
+                    <li>
+                        <span>JavaScript Errors</span>
+                        <span data-field="js_errors" data-table="website_performance">--</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Speed Insights -->
+    <div class="page-speed-section">
+        <h3>Page Speed Analysis</h3>
+        <div class="device-tabs">
+            <button class="device-tab active" onclick="showDeviceMetrics('mobile')">Mobile</button>
+            <button class="device-tab" onclick="showDeviceMetrics('desktop')">Desktop</button>
+        </div>
+        
+        <div class="speed-metrics" id="mobile-metrics">
+            <div class="metric-row">
+                <span class="metric-label">Page Size</span>
+                <span class="metric-value" data-field="mobile_page_size" data-table="website_performance">-- MB</span>
+                <span class="metric-recommendation">Recommended < 1.5 MB</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Requests</span>
+                <span class="metric-value" data-field="mobile_requests" data-table="website_performance">--</span>
+                <span class="metric-recommendation">Recommended < 50</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Load Time</span>
+                <span class="metric-value" data-field="mobile_load_time" data-table="website_performance">-- s</span>
+                <span class="metric-recommendation">Recommended < 3s</span>
+            </div>
+        </div>
+        
+        <div class="speed-metrics" id="desktop-metrics" style="display: none;">
+            <div class="metric-row">
+                <span class="metric-label">Page Size</span>
+                <span class="metric-value" data-field="desktop_page_size" data-table="website_performance">-- MB</span>
+                <span class="metric-recommendation">Recommended < 2 MB</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Requests</span>
+                <span class="metric-value" data-field="desktop_requests" data-table="website_performance">--</span>
+                <span class="metric-recommendation">Recommended < 70</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Load Time</span>
+                <span class="metric-value" data-field="desktop_load_time" data-table="website_performance">-- s</span>
+                <span class="metric-recommendation">Recommended < 2s</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance History Chart -->
+    <div class="performance-history">
+        <h3>Performance History</h3>
+        <div class="chart-container">
+            <canvas id="performance-chart"></canvas>
+        </div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="recommendations">
+        <h3>Performance Recommendations</h3>
+        <div id="performance-recommendations" class="recommendations-list">
+            <div class="loading-state">Run a performance test to see recommendations</div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Performance management
+window.performanceChart = null;
+
+// Initialize performance tab
+(function() {
+    console.log('Website performance tab loaded');
+    loadPerformanceMetrics();
+})();
+
+async function loadPerformanceMetrics() {
+    if (!window.user) return;
+    
+    try {
+        // Load latest performance data from Supabase
+        const { data, error } = await window.supabase
+            .from('website_performance')
+            .select('*')
+            .eq('user_id', window.user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+        
+        if (error) throw error;
+        
+        if (data) {
+            displayPerformanceData(data);
+        }
+        
+        // Load performance history
+        loadPerformanceHistory();
+        
+    } catch (error) {
+        console.error('Error loading performance metrics:', error);
+    }
+}
+
+function displayPerformanceData(data) {
+    // Update all data fields
+    Object.entries(data).forEach(([key, value]) => {
+        const element = document.querySelector(`[data-field="${key}"][data-table="website_performance"]`);
+        if (element && value !== null) {
+            element.textContent = formatMetricValue(key, value);
+        }
+    });
+    
+    // Update Core Web Vitals status
+    updateVitalStatus('lcp', data.lcp_score);
+    updateVitalStatus('fid', data.fid_score);
+    updateVitalStatus('cls', data.cls_score);
+    
+    // Update score badges
+    updateScoreBadge('performance', data.performance_score);
+    updateScoreBadge('accessibility', data.accessibility_score);
+    updateScoreBadge('best-practices', data.best_practices_score);
+}
+
+function updateVitalStatus(vital, score) {
+    const card = document.querySelector(`.vital-card:has(.vital-name:contains("${vital.toUpperCase()}"))`);
+    if (!card || score === null) return;
+    
+    let status = 'poor';
+    let fillPercent = 0;
+    
+    switch(vital) {
+        case 'lcp':
+            if (score <= 2.5) status = 'good';
+            else if (score <= 4) status = 'needs-improvement';
+            fillPercent = Math.min((score / 4) * 100, 100);
+            break;
+        case 'fid':
+            if (score <= 100) status = 'good';
+            else if (score <= 300) status = 'needs-improvement';
+            fillPercent = Math.min((score / 300) * 100, 100);
+            break;
+        case 'cls':
+            if (score <= 0.1) status = 'good';
+            else if (score <= 0.25) status = 'needs-improvement';
+            fillPercent = Math.min((score / 0.25) * 100, 100);
+            break;
+    }
+    
+    card.querySelector('.vital-score').setAttribute('data-status', status);
+    card.querySelector('.bar-fill').style.width = `${fillPercent}%`;
+}
+
+function updateScoreBadge(type, score) {
+    const badge = document.querySelector(`.score-card:has(h4:contains("${type}")) .score-badge`);
+    if (!badge || score === null) return;
+    
+    badge.textContent = score;
+    badge.setAttribute('data-score', score);
+    
+    if (score >= 90) badge.className = 'score-badge good';
+    else if (score >= 50) badge.className = 'score-badge needs-improvement';
+    else badge.className = 'score-badge poor';
+}
+
+function formatMetricValue(key, value) {
+    if (key.includes('time')) return `${value}s`;
+    if (key.includes('size')) return `${(value / 1024 / 1024).toFixed(2)} MB`;
+    if (key.includes('percentage') || key.includes('coverage')) return `${value}%`;
+    return value;
+}
+
+async function runPerformanceTest() {
+    const button = event.target.closest('button');
+    const originalText = button.innerHTML;
+    button.innerHTML = '<span class="spinner"></span> Testing...';
+    button.disabled = true;
+    
+    try {
+        // Simulate performance test - in production, this would call an API
+        window.showNotification('Performance test started. This may take a few minutes.', 'info');
+        
+        // Simulate delay
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        
+        // Save mock results
+        const mockData = generateMockPerformanceData();
+        
+        const { error } = await window.supabase
+            .from('website_performance')
+            .insert([{
+                ...mockData,
+                user_id: window.user.id
+            }]);
+        
+        if (error) throw error;
+        
+        displayPerformanceData(mockData);
+        generateRecommendations(mockData);
+        window.showNotification('Performance test completed successfully', 'success');
+        
+    } catch (error) {
+        console.error('Error running performance test:', error);
+        window.showNotification('Failed to run performance test', 'error');
+    } finally {
+        button.innerHTML = originalText;
+        button.disabled = false;
+    }
+}
+
+function generateMockPerformanceData() {
+    return {
+        lcp_score: (Math.random() * 4).toFixed(2),
+        fid_score: Math.floor(Math.random() * 300),
+        cls_score: (Math.random() * 0.3).toFixed(3),
+        performance_score: Math.floor(Math.random() * 40) + 60,
+        accessibility_score: Math.floor(Math.random() * 30) + 70,
+        best_practices_score: Math.floor(Math.random() * 20) + 80,
+        fcp_time: (Math.random() * 3).toFixed(2),
+        speed_index: (Math.random() * 5).toFixed(2),
+        tti_time: (Math.random() * 6).toFixed(2),
+        mobile_page_size: Math.floor(Math.random() * 3000000) + 1000000,
+        mobile_requests: Math.floor(Math.random() * 50) + 30,
+        mobile_load_time: (Math.random() * 5).toFixed(2),
+        desktop_page_size: Math.floor(Math.random() * 4000000) + 1500000,
+        desktop_requests: Math.floor(Math.random() * 70) + 40,
+        desktop_load_time: (Math.random() * 3).toFixed(2)
+    };
+}
+
+function generateRecommendations(data) {
+    const recommendations = [];
+    
+    if (data.lcp_score > 2.5) {
+        recommendations.push({
+            priority: 'high',
+            title: 'Improve Largest Contentful Paint',
+            description: 'Optimize images, use lazy loading, and minimize render-blocking resources.'
+        });
+    }
+    
+    if (data.mobile_page_size > 1500000) {
+        recommendations.push({
+            priority: 'medium',
+            title: 'Reduce Page Size',
+            description: 'Compress images, minify CSS/JS, and remove unused code.'
+        });
+    }
+    
+    if (data.mobile_requests > 50) {
+        recommendations.push({
+            priority: 'medium',
+            title: 'Reduce HTTP Requests',
+            description: 'Combine files, use CSS sprites, and implement caching strategies.'
+        });
+    }
+    
+    displayRecommendations(recommendations);
+}
+
+function displayRecommendations(recommendations) {
+    const container = document.getElementById('performance-recommendations');
+    
+    if (recommendations.length === 0) {
+        container.innerHTML = '<div class="success-state">Great job! Your website performance is optimized.</div>';
+        return;
+    }
+    
+    container.innerHTML = recommendations.map(rec => `
+        <div class="recommendation-item ${rec.priority}">
+            <div class="recommendation-priority">${rec.priority}</div>
+            <div class="recommendation-content">
+                <h4>${rec.title}</h4>
+                <p>${rec.description}</p>
+            </div>
+        </div>
+    `).join('');
+}
+
+function showDeviceMetrics(device) {
+    document.querySelectorAll('.device-tab').forEach(tab => tab.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    document.getElementById('mobile-metrics').style.display = device === 'mobile' ? 'block' : 'none';
+    document.getElementById('desktop-metrics').style.display = device === 'desktop' ? 'block' : 'none';
+}
+
+// Make functions global
+window.loadPerformanceMetrics = loadPerformanceMetrics;
+window.runPerformanceTest = runPerformanceTest;
+window.showDeviceMetrics = showDeviceMetrics;
+</script>
+
+<style>
+/* Web Vitals */
+.web-vitals {
+    margin-bottom: 2rem;
+}
+
+.web-vitals h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.vitals-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.vital-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.vital-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.vital-name {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.vital-tooltip {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.vital-score {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.score-value {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.score-unit {
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+.vital-score[data-status="good"] .score-value {
+    color: var(--success);
+}
+
+.vital-score[data-status="needs-improvement"] .score-value {
+    color: var(--warning);
+}
+
+.vital-score[data-status="poor"] .score-value {
+    color: var(--danger);
+}
+
+.vital-bar {
+    height: 8px;
+    background: var(--background);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.bar-fill {
+    height: 100%;
+    background: var(--primary);
+    transition: width 0.5s ease;
+}
+
+.vital-status {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Performance Scores */
+.scores-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.score-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.score-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.score-header h4 {
+    font-size: 1rem;
+    margin: 0;
+}
+
+.score-badge {
+    font-size: 1.5rem;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    background: var(--background);
+}
+
+.score-badge.good {
+    background: var(--success-light);
+    color: var(--success);
+}
+
+.score-badge.needs-improvement {
+    background: var(--warning-light);
+    color: var(--warning);
+}
+
+.score-badge.poor {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+.score-details {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.score-details li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.875rem;
+}
+
+.score-details li:last-child {
+    border-bottom: none;
+}
+
+/* Page Speed Section */
+.page-speed-section {
+    margin-bottom: 2rem;
+}
+
+.device-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.device-tab {
+    padding: 0.75rem 1.5rem;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+}
+
+.device-tab.active {
+    color: var(--primary);
+}
+
+.device-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary);
+}
+
+.speed-metrics {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.metric-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.metric-row:last-child {
+    border-bottom: none;
+}
+
+.metric-label {
+    font-weight: 500;
+}
+
+.metric-value {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.metric-recommendation {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Chart Container */
+.chart-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    height: 300px;
+}
+
+/* Recommendations */
+.recommendations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.recommendation-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.recommendation-priority {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    align-self: flex-start;
+}
+
+.recommendation-item.high .recommendation-priority {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+.recommendation-item.medium .recommendation-priority {
+    background: var(--warning-light);
+    color: var(--warning);
+}
+
+.recommendation-content h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+}
+
+.recommendation-content p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+/* Spinner */
+.spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (min-width: 576px) {
+    .vitals-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 768px) {
+    .scores-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+</style>
