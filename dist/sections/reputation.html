@@ -73,13 +73,29 @@ async function showReputationTab(tabName) {
 
 // Initialize features for specific tabs
 function initializeReputationTabFeatures(tabName) {
+    console.log('Initializing features for:', tabName);
+    
     // Add any tab-specific initialization here
-    console.log('Initialized features for:', tabName);
+    if (tabName === 'citations') {
+        // The citations.html file has its own script that defines loadCitationsData
+        // We need to wait a bit for the script to be parsed and executed
+        setTimeout(() => {
+            if (typeof window.loadCitationsData === 'function') {
+                console.log('Loading citations data...');
+                window.loadCitationsData();
+            } else {
+                console.error('loadCitationsData function not found');
+            }
+        }, 100);
+    }
 }
 
 // Load initial tab on page load
 document.addEventListener('DOMContentLoaded', async () => {
-    await showReputationTab('overview');
+    // Only load if we're in the reputation section
+    if (document.querySelector('.section-header h1')?.textContent === 'Reputation Management') {
+        await showReputationTab('overview');
+    }
 });
 
 // Make showReputationTab globally available
