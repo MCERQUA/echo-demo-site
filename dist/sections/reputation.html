@@ -5,9 +5,9 @@
 </div>
 
 <div class="tab-navigation">
-    <button class="tab-button active" id="rep-tab-overview">Overview</button>
-    <button class="tab-button" id="rep-tab-reviews">Reviews</button>
-    <button class="tab-button" id="rep-tab-citations">Directory Citations</button>
+    <button class="tab-button active" onclick="showReputationTab('overview')">Overview</button>
+    <button class="tab-button" onclick="showReputationTab('reviews')">Reviews</button>
+    <button class="tab-button" onclick="showReputationTab('citations')">Directory Citations</button>
 </div>
 
 <!-- Tab Content Container -->
@@ -16,82 +16,74 @@
 </div>
 
 <script>
-// Reputation management functionality
-(function() {
-    console.log('Reputation section initializing...');
-    
-    // Store loaded tabs to avoid reloading
-    const loadedReputationTabs = {};
-    
-    // Load tab content dynamically
-    async function loadReputationTabContent(tabName) {
-        if (loadedReputationTabs[tabName]) {
-            return loadedReputationTabs[tabName];
-        }
-        
-        // Map tab names to file names
-        const fileMap = {
-            'overview': 'reputation-overview.html',
-            'reviews': 'reviews.html',
-            'citations': 'citations.html'
-        };
-        
-        const fileName = fileMap[tabName] || tabName + '.html';
-        
-        try {
-            const response = await fetch(`/sections/reputation/${fileName}`);
-            if (!response.ok) throw new Error('Failed to load tab');
-            
-            const content = await response.text();
-            loadedReputationTabs[tabName] = content;
-            return content;
-        } catch (error) {
-            console.error(`Error loading ${tabName} tab:`, error);
-            return '<div class="error-state">Failed to load content. Please refresh the page.</div>';
-        }
+// Store loaded tabs to avoid reloading
+const loadedReputationTabs = {};
+
+// Load tab content dynamically
+async function loadReputationTabContent(tabName) {
+    if (loadedReputationTabs[tabName]) {
+        return loadedReputationTabs[tabName];
     }
     
-    // Show specific tab
-    async function showReputationTab(tabName) {
-        console.log('Showing reputation tab:', tabName);
-        
-        // Update button states
-        document.querySelectorAll('#reputation-section .tab-button').forEach(button => {
-            button.classList.remove('active');
-        });
-        
-        // Find and activate the correct button
-        const buttonId = `rep-tab-${tabName}`;
-        const activeButton = document.getElementById(buttonId);
-        if (activeButton) {
-            activeButton.classList.add('active');
-        }
-        
-        // Load and display tab content
-        const container = document.getElementById('reputation-tabs');
-        container.innerHTML = '<div class="loading-state">Loading...</div>';
-        
-        const content = await loadReputationTabContent(tabName);
-        container.innerHTML = content;
-        
-        // Initialize tab-specific features if needed
-        if (typeof window.initializeReputationTabFeatures === 'function') {
-            window.initializeReputationTabFeatures(tabName);
-        }
-    }
+    // Map tab names to file names
+    const fileMap = {
+        'overview': 'reputation-overview.html',
+        'reviews': 'reviews.html',
+        'citations': 'citations.html'
+    };
     
-    // Set up event listeners using event delegation that won't break
-    const tabButtons = document.querySelectorAll('#reputation-section .tab-button');
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const tabName = this.id.replace('rep-tab-', '');
-            showReputationTab(tabName);
-        });
+    const fileName = fileMap[tabName] || tabName + '.html';
+    
+    try {
+        const response = await fetch(`/sections/reputation/${fileName}`);
+        if (!response.ok) throw new Error('Failed to load tab');
+        
+        const content = await response.text();
+        loadedReputationTabs[tabName] = content;
+        return content;
+    } catch (error) {
+        console.error(`Error loading ${tabName} tab:`, error);
+        return '<div class="error-state">Failed to load content. Please refresh the page.</div>';
+    }
+}
+
+// Show specific tab
+async function showReputationTab(tabName) {
+    // Update button states
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
     });
     
-    // Load initial tab
-    showReputationTab('overview');
-})();
+    // Find the clicked button
+    const clickedButton = event?.target || document.querySelector(`[onclick="showReputationTab('${tabName}')"]`);
+    if (clickedButton) {
+        clickedButton.classList.add('active');
+    }
+    
+    // Load and display tab content
+    const container = document.getElementById('reputation-tabs');
+    container.innerHTML = '<div class="loading-state">Loading...</div>';
+    
+    const content = await loadReputationTabContent(tabName);
+    container.innerHTML = content;
+    
+    // Initialize tab-specific features
+    initializeReputationTabFeatures(tabName);
+}
+
+// Initialize features for specific tabs
+function initializeReputationTabFeatures(tabName) {
+    // Add any tab-specific initialization here
+    console.log('Initialized features for:', tabName);
+}
+
+// Load initial tab on page load
+document.addEventListener('DOMContentLoaded', async () => {
+    await showReputationTab('overview');
+});
+
+// Make showReputationTab globally available
+window.showReputationTab = showReputationTab;
 </script>
 
 <style>
@@ -100,7 +92,7 @@
     display: flex;
     gap: 0;
     margin-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border, #333);
+    border-bottom: 1px solid var(--border);
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
@@ -116,7 +108,7 @@
     padding: 0.75rem 1rem;
     background: none;
     border: none;
-    color: var(--text-muted, #888);
+    color: var(--text-muted);
     font-weight: 500;
     cursor: pointer;
     position: relative;
@@ -129,13 +121,13 @@
 }
 
 .tab-button:hover {
-    color: var(--text-primary, #fff);
-    background: var(--primary-light, rgba(26, 115, 232, 0.1));
+    color: var(--text-primary);
+    background: var(--primary-light);
 }
 
 .tab-button.active {
-    color: var(--primary, #1a73e8);
-    background: var(--primary-light, rgba(26, 115, 232, 0.1));
+    color: var(--primary);
+    background: var(--primary-light);
 }
 
 .tab-button.active::after {
@@ -145,23 +137,23 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: var(--primary, #1a73e8);
+    background: var(--primary);
 }
 
 .loading-state {
     text-align: center;
     padding: 2rem 1rem;
-    color: var(--text-muted, #888);
+    color: var(--text-muted);
     font-size: 0.875rem;
 }
 
 .error-state {
     text-align: center;
     padding: 2rem 1rem;
-    color: var(--danger, #ff4444);
+    color: var(--danger);
     font-size: 0.875rem;
-    background: var(--surface, #1a1a1a);
-    border: 1px solid var(--border, #333);
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 8px;
 }
 
