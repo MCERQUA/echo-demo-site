@@ -74,21 +74,15 @@
             color: #ff4444;
             margin-bottom: 1rem;
         }
-        
-        .reputation-content {
-            padding: 1.5rem;
-            background: var(--surface, #1a1a1a);
-            border-radius: 8px;
-        }
     </style>
     
     <h2>Reputation Management</h2>
     <p>Monitor and manage your online reputation across review platforms and directory listings.</p>
     
     <nav class="reputation-tabs" id="reputationTabs">
-        <button class="reputation-tab active" data-tab="overview">Overview</button>
-        <button class="reputation-tab" data-tab="reviews">Reviews</button>
-        <button class="reputation-tab" data-tab="citations">Directory Citations</button>
+        <button class="reputation-tab active" data-tab="overview" onclick="loadReputationTab('overview')">Overview</button>
+        <button class="reputation-tab" data-tab="reviews" onclick="loadReputationTab('reviews')">Reviews</button>
+        <button class="reputation-tab" data-tab="citations" onclick="loadReputationTab('citations')">Directory Citations</button>
     </nav>
     
     <div class="tab-content" id="reputationContent">
@@ -99,111 +93,105 @@
 </div>
 
 <script>
-(function() {
-    console.log('=== Reputation Section Script Starting ===');
+// Define loadReputationTab globally so onclick can access it
+window.loadReputationTab = function(tabName) {
+    console.log('Loading reputation tab:', tabName);
     
-    // Create a simple fallback content for testing
-    const fallbackContent = {
-        overview: `
-            <div class="reputation-content">
-                <h3>Reputation Overview</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
-                    <div style="background: var(--surface-light, #2a2a2a); padding: 1.5rem; border-radius: 8px;">
-                        <h4 style="color: var(--text-secondary, #888); font-size: 0.875rem; margin-bottom: 0.5rem;">Total Reviews</h4>
-                        <p style="font-size: 2rem; font-weight: bold; color: var(--primary, #1a73e8);">0</p>
-                    </div>
-                    <div style="background: var(--surface-light, #2a2a2a); padding: 1.5rem; border-radius: 8px;">
-                        <h4 style="color: var(--text-secondary, #888); font-size: 0.875rem; margin-bottom: 0.5rem;">Average Rating</h4>
-                        <p style="font-size: 2rem; font-weight: bold; color: var(--primary, #1a73e8);">--</p>
-                    </div>
-                    <div style="background: var(--surface-light, #2a2a2a); padding: 1.5rem; border-radius: 8px;">
-                        <h4 style="color: var(--text-secondary, #888); font-size: 0.875rem; margin-bottom: 0.5rem;">Response Rate</h4>
-                        <p style="font-size: 2rem; font-weight: bold; color: var(--primary, #1a73e8);">0%</p>
-                    </div>
-                </div>
-                <p style="margin-top: 2rem; color: var(--text-secondary, #888);">No reputation data available yet. Start monitoring your online presence to see metrics here.</p>
-            </div>
-        `,
-        reviews: `
-            <div class="reputation-content">
-                <h3>Review Management</h3>
-                <p style="color: var(--text-secondary, #888); margin-bottom: 2rem;">Monitor and respond to reviews across all platforms.</p>
-                <div style="text-align: center; padding: 3rem; background: var(--surface-light, #2a2a2a); border-radius: 8px;">
-                    <p style="color: var(--text-secondary, #888);">No reviews to display yet.</p>
-                    <button class="btn btn-primary" style="margin-top: 1rem;">Connect Review Platforms</button>
-                </div>
-            </div>
-        `,
-        citations: `
-            <div class="reputation-content">
-                <h3>Directory Citations</h3>
-                <p style="color: var(--text-secondary, #888); margin-bottom: 2rem;">Track your business listings across online directories.</p>
-                <div style="text-align: center; padding: 3rem; background: var(--surface-light, #2a2a2a); border-radius: 8px;">
-                    <p style="color: var(--text-secondary, #888);">No directory citations tracked yet.</p>
-                    <button class="btn btn-primary" style="margin-top: 1rem;">Start Citation Scan</button>
-                </div>
-            </div>
-        `
+    // Update active tab styling
+    document.querySelectorAll('.reputation-tab').forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.dataset.tab === tabName) {
+            tab.classList.add('active');
+        }
+    });
+    
+    // Show loading state
+    const contentDiv = document.getElementById('reputationContent');
+    contentDiv.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div></div>';
+    
+    // Map tab names to actual file names
+    const fileMap = {
+        'overview': 'reputation-overview.html',
+        'reviews': 'reviews.html',
+        'citations': 'citations.html'
     };
     
-    function showReputationTab(tabName) {
-        console.log('showReputationTab called with:', tabName);
-        
-        // Update active tab styling
-        const tabs = document.querySelectorAll('.reputation-tab');
-        tabs.forEach(tab => {
-            if (tab.dataset.tab === tabName) {
-                tab.classList.add('active');
-            } else {
-                tab.classList.remove('active');
+    const fileName = fileMap[tabName];
+    if (!fileName) {
+        contentDiv.innerHTML = '<div class="error-state"><h3>Error</h3><p>Invalid tab selected</p></div>';
+        return;
+    }
+    
+    // For GitHub Pages/Netlify, the path structure is different
+    // The sections folder is at the root level when deployed
+    let filePath = '';
+    
+    // Check if we're on the deployed site or local
+    if (window.location.hostname === 'echoaisystem.com' || window.location.hostname.includes('netlify')) {
+        filePath = `/sections/reputation/${fileName}`;
+    } else {
+        filePath = `sections/reputation/${fileName}`;
+    }
+    
+    console.log('Attempting to load file from:', filePath);
+    
+    fetch(filePath)
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        });
-        
-        // Get content div
-        const contentDiv = document.getElementById('reputationContent');
-        if (!contentDiv) {
-            console.error('Content div not found!');
-            return;
-        }
-        
-        // Show loading briefly
-        contentDiv.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div></div>';
-        
-        // Use fallback content for now
-        setTimeout(() => {
-            console.log('Loading fallback content for:', tabName);
-            contentDiv.innerHTML = fallbackContent[tabName] || '<div class="error-state"><h3>Tab not found</h3></div>';
-        }, 300);
-    }
-    
-    // Make function globally available
-    window.showReputationTab = showReputationTab;
-    
-    // Initialize tabs
-    function initializeTabs() {
-        console.log('Initializing reputation tabs...');
-        
-        const tabButtons = document.querySelectorAll('.reputation-tab');
-        console.log('Found tab buttons:', tabButtons.length);
-        
-        tabButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                const tabName = this.dataset.tab;
-                console.log('Tab clicked:', tabName);
-                showReputationTab(tabName);
+            return response.text();
+        })
+        .then(html => {
+            console.log('Successfully loaded content');
+            contentDiv.innerHTML = html;
+            
+            // Execute any scripts in the loaded content
+            const scripts = contentDiv.querySelectorAll('script');
+            scripts.forEach(script => {
+                const newScript = document.createElement('script');
+                newScript.textContent = script.textContent;
+                document.head.appendChild(newScript);
+                document.head.removeChild(newScript);
             });
+        })
+        .catch(error => {
+            console.error('Error loading tab content:', error);
+            
+            // Try alternative path if first attempt fails
+            const altPath = `./sections/reputation/${fileName}`;
+            console.log('Trying alternative path:', altPath);
+            
+            fetch(altPath)
+                .then(response => response.text())
+                .then(html => {
+                    contentDiv.innerHTML = html;
+                })
+                .catch(err => {
+                    contentDiv.innerHTML = `
+                        <div class="error-state">
+                            <h3>Unable to Load Content</h3>
+                            <p>Could not load ${fileName}</p>
+                            <p style="font-size: 0.85rem; color: #666; margin-top: 1rem;">
+                                Tried paths:<br>
+                                ${filePath}<br>
+                                ${altPath}
+                            </p>
+                        </div>
+                    `;
+                });
         });
-        
-        // Load initial tab
-        showReputationTab('overview');
-    }
-    
-    // Initialize immediately
-    console.log('Setting up reputation section...');
-    initializeTabs();
-    
-    console.log('=== Reputation Section Script Complete ===');
-})();
+};
+
+// Load the overview tab initially
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, loading initial tab');
+    window.loadReputationTab('overview');
+});
+
+// Also load immediately if DOM is already ready
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    window.loadReputationTab('overview');
+}
 </script>
