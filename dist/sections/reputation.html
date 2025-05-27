@@ -1,191 +1,211 @@
-<div class="reputation-section">
-    <style>
-        .reputation-tabs {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid var(--surface, #1a1a1a);
-            padding-bottom: 0;
-        }
-        
-        .reputation-tab {
-            padding: 0.75rem 1.5rem;
-            background: transparent;
-            border: none;
-            color: var(--text-secondary, #888);
-            cursor: pointer;
-            position: relative;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-        
-        .reputation-tab:hover {
-            color: var(--text-primary, #fff);
-        }
-        
-        .reputation-tab.active {
-            color: var(--primary, #1a73e8);
-        }
-        
-        .reputation-tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--primary, #1a73e8);
-        }
-        
-        .tab-content {
-            min-height: 400px;
-            position: relative;
-        }
-        
-        .tab-pane {
-            display: none;
-        }
-        
-        .tab-pane.active {
-            display: block;
-        }
-        
-        .reputation-metrics {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .metric-card {
-            background: var(--surface-light, #2a2a2a);
-            padding: 1.5rem;
-            border-radius: 8px;
-            text-align: center;
-        }
-        
-        .metric-value {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--primary, #1a73e8);
-            margin: 0.5rem 0;
-        }
-        
-        .metric-label {
-            color: var(--text-secondary, #888);
-            font-size: 0.875rem;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: var(--text-secondary, #888);
-        }
-        
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 6px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary {
-            background: var(--primary, #1a73e8);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: var(--primary-dark, #1557b0);
-        }
-    </style>
-    
-    <h2>Reputation Management</h2>
+<!-- Reputation Section Main Container -->
+<div class="section-header">
+    <h1>Reputation Management</h1>
     <p>Monitor and manage your online reputation across review platforms and directory listings.</p>
-    
-    <nav class="reputation-tabs" id="reputationTabs">
-        <button class="reputation-tab active" data-tab="overview">Overview</button>
-        <button class="reputation-tab" data-tab="reviews">Reviews</button>
-        <button class="reputation-tab" data-tab="citations">Directory Citations</button>
-    </nav>
-    
-    <div class="tab-content">
-        <!-- Overview Tab -->
-        <div id="overview-tab" class="tab-pane active">
-            <div class="reputation-metrics">
-                <div class="metric-card">
-                    <div class="metric-label">Total Reviews</div>
-                    <div class="metric-value">0</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Average Rating</div>
-                    <div class="metric-value">--</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Response Rate</div>
-                    <div class="metric-value">0%</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Active Citations</div>
-                    <div class="metric-value">0</div>
-                </div>
-            </div>
-            
-            <div class="empty-state">
-                <p>No reputation data available yet.</p>
-                <p>Start monitoring your online presence to see metrics here.</p>
-                <button class="btn btn-primary" onclick="window.triggerAIResearch('reputation')">Start AI Research</button>
-            </div>
-        </div>
-        
-        <!-- Reviews Tab -->
-        <div id="reviews-tab" class="tab-pane">
-            <h3>Review Management</h3>
-            <p style="color: var(--text-secondary, #888); margin-bottom: 2rem;">Monitor and respond to reviews across all platforms.</p>
-            
-            <div class="empty-state">
-                <p>No reviews to display yet.</p>
-                <button class="btn btn-primary">Connect Review Platforms</button>
-            </div>
-        </div>
-        
-        <!-- Citations Tab -->
-        <div id="citations-tab" class="tab-pane">
-            <h3>Directory Citations</h3>
-            <p style="color: var(--text-secondary, #888); margin-bottom: 2rem;">Track your business listings across online directories.</p>
-            
-            <div class="empty-state">
-                <p>No directory citations tracked yet.</p>
-                <button class="btn btn-primary">Start Citation Scan</button>
-            </div>
-        </div>
-    </div>
+</div>
+
+<div class="tab-navigation">
+    <button class="tab-button active" onclick="showReputationTab('overview')">Overview</button>
+    <button class="tab-button" onclick="showReputationTab('reviews')">Reviews</button>
+    <button class="tab-button" onclick="showReputationTab('citations')">Directory Citations</button>
+</div>
+
+<!-- Tab Content Container -->
+<div id="reputation-tabs">
+    <!-- Tabs will be loaded here dynamically -->
 </div>
 
 <script>
-// Simple tab switching without external file loading
-(function() {
-    const tabs = document.querySelectorAll('.reputation-tab');
-    const panes = document.querySelectorAll('.tab-pane');
+// Store loaded tabs to avoid reloading
+const loadedReputationTabs = {};
+
+// Load tab content dynamically
+async function loadReputationTabContent(tabName) {
+    if (loadedReputationTabs[tabName]) {
+        return loadedReputationTabs[tabName];
+    }
     
-    tabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-            const targetTab = this.dataset.tab;
-            
-            // Update active tab
-            tabs.forEach(t => t.classList.remove('active'));
-            this.classList.add('active');
-            
-            // Update active pane
-            panes.forEach(pane => {
-                pane.classList.remove('active');
-                if (pane.id === targetTab + '-tab') {
-                    pane.classList.add('active');
-                }
-            });
-        });
+    // Map tab names to file names
+    const fileMap = {
+        'overview': 'reputation-overview.html',
+        'reviews': 'reviews.html',
+        'citations': 'citations.html'
+    };
+    
+    const fileName = fileMap[tabName] || tabName + '.html';
+    
+    try {
+        const response = await fetch(`/sections/reputation/${fileName}`);
+        if (!response.ok) throw new Error('Failed to load tab');
+        
+        const content = await response.text();
+        loadedReputationTabs[tabName] = content;
+        return content;
+    } catch (error) {
+        console.error(`Error loading ${tabName} tab:`, error);
+        return '<div class="error-state">Failed to load content. Please refresh the page.</div>';
+    }
+}
+
+// Show specific tab
+async function showReputationTab(tabName) {
+    console.log('Showing reputation tab:', tabName);
+    
+    // Update button states
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
     });
-})();
+    
+    // Find the clicked button
+    const clickedButton = event?.target || document.querySelector(`[onclick="showReputationTab('${tabName}')"]`);
+    if (clickedButton) {
+        clickedButton.classList.add('active');
+    }
+    
+    // Load and display tab content
+    const container = document.getElementById('reputation-tabs');
+    container.innerHTML = '<div class="loading-state">Loading...</div>';
+    
+    const content = await loadReputationTabContent(tabName);
+    container.innerHTML = content;
+    
+    // Initialize tab-specific features
+    initializeReputationTabFeatures(tabName);
+}
+
+// Initialize features for specific tabs
+function initializeReputationTabFeatures(tabName) {
+    switch(tabName) {
+        case 'overview':
+            // Initialize overview features if needed
+            if (typeof initializeReputationOverview === 'function') {
+                initializeReputationOverview();
+            }
+            break;
+        case 'reviews':
+            // Initialize reviews features if needed
+            if (typeof initializeReviewsManagement === 'function') {
+                initializeReviewsManagement();
+            }
+            break;
+        case 'citations':
+            // Initialize citations features if needed
+            if (typeof initializeCitationsManagement === 'function') {
+                initializeCitationsManagement();
+            }
+            break;
+    }
+}
+
+// Load initial tab when section loads
+showReputationTab('overview');
+
+// Make showReputationTab globally available
+window.showReputationTab = showReputationTab;
 </script>
+
+<style>
+/* Tab Navigation - Mobile First */
+.tab-navigation {
+    display: flex;
+    gap: 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border, #333);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 0;
+}
+
+.tab-navigation::-webkit-scrollbar {
+    display: none;
+}
+
+.tab-button {
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    color: var(--text-muted, #888);
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-size: 0.875rem;
+    border-radius: 0;
+    min-width: auto;
+}
+
+.tab-button:hover {
+    color: var(--text-primary, #fff);
+    background: var(--primary-light, rgba(26, 115, 232, 0.1));
+}
+
+.tab-button.active {
+    color: var(--primary, #1a73e8);
+    background: var(--primary-light, rgba(26, 115, 232, 0.1));
+}
+
+.tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary, #1a73e8);
+}
+
+.loading-state {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--text-muted, #888);
+    font-size: 0.875rem;
+}
+
+.error-state {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--danger, #ff4444);
+    font-size: 0.875rem;
+    background: var(--surface, #1a1a1a);
+    border: 1px solid var(--border, #333);
+    border-radius: 8px;
+}
+
+/* Responsive adjustments */
+@media (min-width: 576px) {
+    .tab-button {
+        padding: 0.875rem 1.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .tab-navigation {
+        overflow-x: visible;
+        gap: 0;
+    }
+    
+    .tab-button {
+        padding: 1rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .loading-state {
+        padding: 3rem;
+    }
+    
+    .error-state {
+        padding: 3rem;
+    }
+}
+
+/* Ensure tab content is visible */
+#reputation-tabs {
+    width: 100%;
+    min-height: 200px;
+}
+</style>
