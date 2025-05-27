@@ -93,8 +93,8 @@
 </div>
 
 <script>
-// Define loadReputationTab globally so onclick can access it
-window.loadReputationTab = function(tabName) {
+// Define loadReputationTab globally
+window.loadReputationTab = async function(tabName) {
     console.log('Loading reputation tab:', tabName);
     
     // Update active tab styling
@@ -122,76 +122,75 @@ window.loadReputationTab = function(tabName) {
         return;
     }
     
-    // For GitHub Pages/Netlify, the path structure is different
-    // The sections folder is at the root level when deployed
-    let filePath = '';
+    // Try different paths - matching what dashboard.js does
+    const paths = [
+        `sections/reputation/${fileName}`,
+        `./sections/reputation/${fileName}`,
+        `/sections/reputation/${fileName}`,
+        `https://echoaisystem.com/sections/reputation/${fileName}`
+    ];
     
-    // Check if we're on the deployed site or local
-    if (window.location.hostname === 'echoaisystem.com' || window.location.hostname.includes('netlify')) {
-        filePath = `/sections/reputation/${fileName}`;
-    } else {
-        filePath = `sections/reputation/${fileName}`;
+    let loaded = false;
+    
+    for (const path of paths) {
+        if (loaded) break;
+        
+        try {
+            console.log('Trying path:', path);
+            const response = await fetch(path);
+            
+            if (response.ok) {
+                const html = await response.text();
+                console.log('Successfully loaded from:', path);
+                contentDiv.innerHTML = html;
+                
+                // Execute any scripts in the loaded content
+                const scripts = contentDiv.querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    newScript.textContent = script.textContent;
+                    document.body.appendChild(newScript);
+                    document.body.removeChild(newScript);
+                });
+                
+                loaded = true;
+            }
+        } catch (e) {
+            console.log('Failed to load from:', path, e.message);
+        }
     }
     
-    console.log('Attempting to load file from:', filePath);
-    
-    fetch(filePath)
-        .then(response => {
-            console.log('Response status:', response.status);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.text();
-        })
-        .then(html => {
-            console.log('Successfully loaded content');
-            contentDiv.innerHTML = html;
-            
-            // Execute any scripts in the loaded content
-            const scripts = contentDiv.querySelectorAll('script');
-            scripts.forEach(script => {
-                const newScript = document.createElement('script');
-                newScript.textContent = script.textContent;
-                document.head.appendChild(newScript);
-                document.head.removeChild(newScript);
-            });
-        })
-        .catch(error => {
-            console.error('Error loading tab content:', error);
-            
-            // Try alternative path if first attempt fails
-            const altPath = `./sections/reputation/${fileName}`;
-            console.log('Trying alternative path:', altPath);
-            
-            fetch(altPath)
-                .then(response => response.text())
-                .then(html => {
-                    contentDiv.innerHTML = html;
-                })
-                .catch(err => {
-                    contentDiv.innerHTML = `
-                        <div class="error-state">
-                            <h3>Unable to Load Content</h3>
-                            <p>Could not load ${fileName}</p>
-                            <p style="font-size: 0.85rem; color: #666; margin-top: 1rem;">
-                                Tried paths:<br>
-                                ${filePath}<br>
-                                ${altPath}
-                            </p>
-                        </div>
-                    `;
-                });
-        });
+    if (!loaded) {
+        console.error('Could not load content from any path');
+        contentDiv.innerHTML = `
+            <div class="error-state">
+                <h3>Unable to Load Content</h3>
+                <p>Could not load ${fileName}</p>
+                <p style="font-size: 0.85rem; color: #666; margin-top: 1rem;">
+                    Please check the browser console for more details.
+                </p>
+                <p style="font-size: 0.85rem; color: #666;">
+                    Attempted paths:<br>
+                    ${paths.join('<br>')}
+                </p>
+            </div>
+        `;
+    }
 };
 
-// Load the overview tab initially
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, loading initial tab');
+// Initialize when ready
+function initializeReputation() {
+    console.log('Initializing reputation section');
+    
+    // Load the overview tab
     window.loadReputationTab('overview');
-});
+}
 
-// Also load immediately if DOM is already ready
-if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    window.loadReputationTab('overview');
+// Check if DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeReputation);
+} else {
+    // DOM is already ready
+    initializeReputation();
 }
 </script>
