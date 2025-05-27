@@ -1,0 +1,530 @@
+<!-- Website Backlinks Tab -->
+<div id="website-backlinks" class="tab-content" data-section="website_backlinks">
+    <div class="content-header">
+        <h2>Backlinks Monitor</h2>
+        <button class="btn-primary" onclick="showAddBacklinkModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Add Backlink
+        </button>
+    </div>
+
+    <!-- Backlinks Summary -->
+    <div class="backlink-summary">
+        <div class="summary-card">
+            <h3>Total Backlinks</h3>
+            <div class="summary-value" id="total-backlinks">0</div>
+            <div class="summary-change positive">+0 this month</div>
+        </div>
+        <div class="summary-card">
+            <h3>Referring Domains</h3>
+            <div class="summary-value" id="referring-domains">0</div>
+            <div class="summary-change">+0 new</div>
+        </div>
+        <div class="summary-card">
+            <h3>Domain Authority</h3>
+            <div class="summary-value" id="avg-domain-authority">0</div>
+            <div class="summary-change">Average DA</div>
+        </div>
+        <div class="summary-card">
+            <h3>Link Status</h3>
+            <div class="link-status-breakdown">
+                <div class="status-item">
+                    <span class="status-dot active"></span>
+                    <span id="active-links">0 Active</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-dot lost"></span>
+                    <span id="lost-links">0 Lost</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Backlinks Filter -->
+    <div class="backlinks-filter">
+        <input type="text" class="search-input" placeholder="Search by domain or anchor text..." id="backlink-search">
+        <select class="filter-select" id="backlink-status-filter">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="lost">Lost</option>
+            <option value="pending">Pending</option>
+        </select>
+        <select class="filter-select" id="backlink-type-filter">
+            <option value="">All Types</option>
+            <option value="dofollow">DoFollow</option>
+            <option value="nofollow">NoFollow</option>
+        </select>
+    </div>
+
+    <!-- Backlinks Table -->
+    <div class="backlinks-table-container">
+        <table class="backlinks-table">
+            <thead>
+                <tr>
+                    <th>Source Page</th>
+                    <th>Anchor Text</th>
+                    <th>Type</th>
+                    <th>DA</th>
+                    <th>Status</th>
+                    <th>First Seen</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="backlinks-list">
+                <tr>
+                    <td colspan="7" class="loading-state">Loading backlinks...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="backlinks-pagination">
+        <!-- Pagination will be generated here -->
+    </div>
+</div>
+
+<!-- Add/Edit Backlink Modal -->
+<div class="modal" id="backlink-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="backlink-modal-title">Add New Backlink</h3>
+            <button class="modal-close" onclick="closeBacklinkModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <form id="backlink-form">
+                <input type="hidden" id="backlink-id">
+                
+                <div class="form-group">
+                    <label for="backlink-source-url">Source URL</label>
+                    <input type="url" id="backlink-source-url" class="form-input" required placeholder="https://example.com/page">
+                </div>
+                
+                <div class="form-group">
+                    <label for="backlink-source-domain">Source Domain</label>
+                    <input type="text" id="backlink-source-domain" class="form-input" placeholder="example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="backlink-target-url">Target URL</label>
+                    <input type="url" id="backlink-target-url" class="form-input" required placeholder="https://yoursite.com/page">
+                </div>
+                
+                <div class="form-group">
+                    <label for="backlink-anchor-text">Anchor Text</label>
+                    <input type="text" id="backlink-anchor-text" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="backlink-type">Link Type</label>
+                    <select id="backlink-type" class="form-input">
+                        <option value="dofollow">DoFollow</option>
+                        <option value="nofollow">NoFollow</option>
+                        <option value="ugc">UGC</option>
+                        <option value="sponsored">Sponsored</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="backlink-da">Domain Authority (DA)</label>
+                    <input type="number" id="backlink-da" class="form-input" min="0" max="100" placeholder="0-100">
+                </div>
+                
+                <div class="form-group">
+                    <label for="backlink-status">Status</label>
+                    <select id="backlink-status" class="form-input">
+                        <option value="active">Active</option>
+                        <option value="lost">Lost</option>
+                        <option value="pending">Pending</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeBacklinkModal()">Cancel</button>
+            <button class="btn-primary" onclick="saveBacklink()">Save Backlink</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Backlinks management
+window.backlinksPage = 1;
+window.backlinksPerPage = 20;
+
+// Initialize backlinks when tab loads
+(function() {
+    console.log('Website backlinks tab loaded');
+    loadBacklinks();
+})();
+
+async function loadBacklinks() {
+    if (!window.user) return;
+    
+    try {
+        // Load backlinks from Supabase
+        const { data, error, count } = await window.supabase
+            .from('website_backlinks')
+            .select('*', { count: 'exact' })
+            .eq('user_id', window.user.id)
+            .order('created_at', { ascending: false })
+            .range((window.backlinksPage - 1) * window.backlinksPerPage, window.backlinksPage * window.backlinksPerPage - 1);
+        
+        if (error) throw error;
+        
+        displayBacklinks(data || []);
+        updateBacklinksSummary(data || []);
+        updateBacklinksPagination(count || 0);
+        
+    } catch (error) {
+        console.error('Error loading backlinks:', error);
+        document.getElementById('backlinks-list').innerHTML = '<tr><td colspan="7" class="error-state">Failed to load backlinks</td></tr>';
+    }
+}
+
+function displayBacklinks(backlinks) {
+    const backlinksList = document.getElementById('backlinks-list');
+    
+    if (backlinks.length === 0) {
+        backlinksList.innerHTML = `
+            <tr>
+                <td colspan="7" class="empty-state">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+                        <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+                    </svg>
+                    <p>No backlinks tracked yet</p>
+                    <button class="btn-primary" onclick="showAddBacklinkModal()">Add Your First Backlink</button>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    backlinksList.innerHTML = backlinks.map(link => `
+        <tr>
+            <td>
+                <a href="${link.source_url}" target="_blank" rel="noopener" class="link-external">
+                    ${link.source_domain || new URL(link.source_url).hostname}
+                </a>
+            </td>
+            <td>${link.anchor_text || 'No anchor'}</td>
+            <td><span class="link-type ${link.link_type}">${link.link_type || 'dofollow'}</span></td>
+            <td><span class="da-score">${link.domain_authority || '-'}</span></td>
+            <td><span class="status-badge ${link.status}">${link.status || 'active'}</span></td>
+            <td>${formatDate(link.first_seen || link.created_at)}</td>
+            <td>
+                <div class="table-actions">
+                    <button class="btn-icon" onclick="checkBacklinkStatus('${link.id}')" title="Check Status">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </button>
+                    <button class="btn-icon" onclick="editBacklink('${link.id}')" title="Edit">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                    </button>
+                    <button class="btn-icon danger" onclick="deleteBacklink('${link.id}')" title="Delete">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                        </svg>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function updateBacklinksSummary(backlinks) {
+    const activeLinks = backlinks.filter(l => l.status === 'active').length;
+    const lostLinks = backlinks.filter(l => l.status === 'lost').length;
+    const uniqueDomains = [...new Set(backlinks.map(l => l.source_domain))].length;
+    const avgDA = backlinks.length > 0 
+        ? Math.round(backlinks.reduce((sum, l) => sum + (l.domain_authority || 0), 0) / backlinks.length)
+        : 0;
+    
+    document.getElementById('total-backlinks').textContent = backlinks.length;
+    document.getElementById('referring-domains').textContent = uniqueDomains;
+    document.getElementById('avg-domain-authority').textContent = avgDA;
+    document.getElementById('active-links').textContent = `${activeLinks} Active`;
+    document.getElementById('lost-links').textContent = `${lostLinks} Lost`;
+}
+
+function showAddBacklinkModal() {
+    document.getElementById('backlink-modal-title').textContent = 'Add New Backlink';
+    document.getElementById('backlink-form').reset();
+    document.getElementById('backlink-id').value = '';
+    document.getElementById('backlink-modal').classList.add('show');
+}
+
+function closeBacklinkModal() {
+    document.getElementById('backlink-modal').classList.remove('show');
+}
+
+async function saveBacklink() {
+    const id = document.getElementById('backlink-id').value;
+    const sourceUrl = document.getElementById('backlink-source-url').value;
+    
+    // Extract domain from URL
+    let sourceDomain = document.getElementById('backlink-source-domain').value;
+    if (!sourceDomain && sourceUrl) {
+        try {
+            sourceDomain = new URL(sourceUrl).hostname;
+        } catch (e) {
+            sourceDomain = '';
+        }
+    }
+    
+    const backlinkData = {
+        source_url: sourceUrl,
+        source_domain: sourceDomain,
+        target_url: document.getElementById('backlink-target-url').value,
+        anchor_text: document.getElementById('backlink-anchor-text').value,
+        link_type: document.getElementById('backlink-type').value,
+        domain_authority: parseInt(document.getElementById('backlink-da').value) || null,
+        status: document.getElementById('backlink-status').value,
+        user_id: window.user.id,
+        first_seen: new Date().toISOString()
+    };
+    
+    try {
+        if (id) {
+            // Update existing
+            const { error } = await window.supabase
+                .from('website_backlinks')
+                .update(backlinkData)
+                .eq('id', id);
+            
+            if (error) throw error;
+        } else {
+            // Create new
+            const { error } = await window.supabase
+                .from('website_backlinks')
+                .insert([backlinkData]);
+            
+            if (error) throw error;
+        }
+        
+        closeBacklinkModal();
+        loadBacklinks();
+        window.showNotification('Backlink saved successfully', 'success');
+        
+    } catch (error) {
+        console.error('Error saving backlink:', error);
+        window.showNotification('Failed to save backlink', 'error');
+    }
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric', 
+        year: 'numeric' 
+    });
+}
+
+// Make functions global
+window.loadBacklinks = loadBacklinks;
+window.showAddBacklinkModal = showAddBacklinkModal;
+window.closeBacklinkModal = closeBacklinkModal;
+window.saveBacklink = saveBacklink;
+</script>
+
+<style>
+/* Backlink Summary */
+.backlink-summary {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.summary-card h3 {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0 0 0.5rem 0;
+}
+
+.summary-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.summary-change {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.summary-change.positive {
+    color: var(--success);
+}
+
+.link-status-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.status-dot.active {
+    background: var(--success);
+}
+
+.status-dot.lost {
+    background: var(--danger);
+}
+
+/* Backlinks Filter */
+.backlinks-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Backlinks Table */
+.backlinks-table-container {
+    overflow-x: auto;
+    margin-bottom: 2rem;
+}
+
+.backlinks-table {
+    width: 100%;
+    min-width: 700px;
+    border-collapse: collapse;
+}
+
+.backlinks-table th {
+    text-align: left;
+    padding: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.875rem;
+}
+
+.backlinks-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.link-external {
+    color: var(--primary);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.link-external:hover {
+    text-decoration: underline;
+}
+
+.link-type {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.link-type.dofollow {
+    background: var(--success-light);
+    color: var(--success);
+}
+
+.link-type.nofollow {
+    background: var(--warning-light);
+    color: var(--warning);
+}
+
+.da-score {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-badge.active {
+    background: var(--success-light);
+    color: var(--success);
+}
+
+.status-badge.lost {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+.status-badge.pending {
+    background: var(--warning-light);
+    color: var(--warning);
+}
+
+.table-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted);
+}
+
+.empty-state svg {
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+/* Responsive */
+@media (min-width: 576px) {
+    .backlink-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .backlinks-filter {
+        flex-direction: row;
+    }
+    
+    .search-input {
+        flex: 1;
+    }
+}
+
+@media (min-width: 768px) {
+    .backlink-summary {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+</style>
