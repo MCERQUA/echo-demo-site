@@ -1,83 +1,220 @@
-<div class="welcome-section">
+<!-- Website Section Main Container - Mobile First -->
+<div class="section-header">
     <h1>Website Management</h1>
-    <p>Monitor and optimize your website performance.</p>
+    <p>Monitor your website performance, content, backlinks, and SEO metrics.</p>
 </div>
 
-<div class="info-grid">
-    <div class="info-card">
-        <h3>Website Details</h3>
-        <div class="info-item">
-            <span class="info-label">Domain</span>
-            <span class="info-value">Not configured</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">SSL Certificate</span>
-            <span class="info-value">-</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">CMS Platform</span>
-            <span class="info-value">Not specified</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">Last Updated</span>
-            <span class="info-value">-</span>
-        </div>
-    </div>
-    
-    <div class="info-card">
-        <h3>Performance Metrics</h3>
-        <div class="info-item">
-            <span class="info-label">Page Load Speed</span>
-            <span class="info-value">-</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">Mobile Score</span>
-            <span class="info-value">-</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">SEO Score</span>
-            <span class="info-value">-</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">Accessibility</span>
-            <span class="info-value">-</span>
-        </div>
-    </div>
-    
-    <div class="info-card">
-        <h3>Content Overview</h3>
-        <div class="info-item">
-            <span class="info-label">Total Pages</span>
-            <span class="info-value">-</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">Blog Posts</span>
-            <span class="info-value">-</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">Products/Services</span>
-            <span class="info-value">-</span>
-        </div>
-        <div class="info-item">
-            <span class="info-label">Forms</span>
-            <span class="info-value">-</span>
-        </div>
-    </div>
+<div class="tab-navigation">
+    <button class="tab-button active" onclick="showWebsiteTab('overview')">Overview</button>
+    <button class="tab-button" onclick="showWebsiteTab('content')">Content</button>
+    <button class="tab-button" onclick="showWebsiteTab('backlinks')">Backlinks</button>
+    <button class="tab-button" onclick="showWebsiteTab('performance')">Performance</button>
+    <button class="tab-button" onclick="showWebsiteTab('seo-metrics')">SEO Metrics</button>
 </div>
 
-<div class="quick-actions">
-    <button class="action-button">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 20h9"/>
-            <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
-        </svg>
-        Update Website Info
-    </button>
-    <button class="action-button secondary">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
-            <polyline points="22 4 12 14.01 9 11.01"/>
-        </svg>
-        Run Performance Test
-    </button>
+<!-- Tab Content Container -->
+<div id="website-tabs">
+    <!-- Tabs will be loaded here dynamically -->
 </div>
+
+<script>
+// Store loaded tabs to avoid reloading
+const loadedWebsiteTabs = {};
+
+// Load tab content dynamically
+async function loadWebsiteTabContent(tabName) {
+    if (loadedWebsiteTabs[tabName]) {
+        return loadedWebsiteTabs[tabName];
+    }
+    
+    try {
+        const response = await fetch(`/sections/website/${tabName}.html`);
+        if (!response.ok) throw new Error('Failed to load tab');
+        
+        const content = await response.text();
+        loadedWebsiteTabs[tabName] = content;
+        return content;
+    } catch (error) {
+        console.error(`Error loading ${tabName} tab:`, error);
+        return '<div class="error-state">Failed to load content. Please refresh the page.</div>';
+    }
+}
+
+// Show specific tab
+async function showWebsiteTab(tabName) {
+    // Update button states
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    // Find the clicked button
+    const clickedButton = event?.target || document.querySelector(`[onclick="showWebsiteTab('${tabName}')"]`);
+    if (clickedButton) {
+        clickedButton.classList.add('active');
+    }
+    
+    // Load and display tab content
+    const container = document.getElementById('website-tabs');
+    container.innerHTML = '<div class="loading-state">Loading...</div>';
+    
+    const content = await loadWebsiteTabContent(tabName);
+    container.innerHTML = content;
+    
+    // Initialize tab-specific features
+    initializeWebsiteTabFeatures(tabName);
+}
+
+// Initialize features for specific tabs
+function initializeWebsiteTabFeatures(tabName) {
+    switch(tabName) {
+        case 'overview':
+            if (typeof loadWebsiteOverview === 'function') {
+                loadWebsiteOverview();
+            }
+            break;
+        case 'content':
+            if (typeof loadWebsiteContent === 'function') {
+                loadWebsiteContent();
+            }
+            break;
+        case 'backlinks':
+            if (typeof loadBacklinks === 'function') {
+                loadBacklinks();
+            }
+            break;
+        case 'performance':
+            if (typeof loadPerformanceMetrics === 'function') {
+                loadPerformanceMetrics();
+            }
+            break;
+        case 'seo-metrics':
+            if (typeof loadSeoMetrics === 'function') {
+                loadSeoMetrics();
+            }
+            break;
+    }
+}
+
+// Load initial tab on page load
+document.addEventListener('DOMContentLoaded', async () => {
+    await showWebsiteTab('overview');
+});
+
+// Make showWebsiteTab globally available
+window.showWebsiteTab = showWebsiteTab;
+</script>
+
+<style>
+/* Tab Navigation - Mobile First */
+.tab-navigation {
+    display: flex;
+    gap: 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 0;
+}
+
+.tab-navigation::-webkit-scrollbar {
+    display: none;
+}
+
+.tab-button {
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-size: 0.875rem;
+    border-radius: 0;
+    min-width: auto;
+}
+
+.tab-button:hover {
+    color: var(--text-primary);
+    background: var(--primary-light);
+}
+
+.tab-button.active {
+    color: var(--primary);
+    background: var(--primary-light);
+}
+
+.tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary);
+}
+
+.loading-state {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.error-state {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--danger);
+    font-size: 0.875rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+/* Responsive adjustments */
+@media (min-width: 576px) {
+    .tab-button {
+        padding: 0.875rem 1.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .tab-navigation {
+        overflow-x: visible;
+        gap: 0;
+    }
+    
+    .tab-button {
+        padding: 1rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .loading-state {
+        padding: 3rem;
+    }
+    
+    .error-state {
+        padding: 3rem;
+    }
+}
+
+/* Ensure tab content is visible */
+#website-tabs {
+    width: 100%;
+    min-height: 200px;
+}
+
+/* Tab content specific styles */
+.tab-content {
+    width: 100%;
+}
+
+.tab-content.active {
+    display: block;
+}
+</style>
