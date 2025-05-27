@@ -80,9 +80,9 @@
     <p>Monitor and manage your online reputation across review platforms and directory listings.</p>
     
     <nav class="reputation-tabs" id="reputationTabs">
-        <button class="reputation-tab active" data-tab="overview" onclick="loadReputationTab('overview')">Overview</button>
-        <button class="reputation-tab" data-tab="reviews" onclick="loadReputationTab('reviews')">Reviews</button>
-        <button class="reputation-tab" data-tab="citations" onclick="loadReputationTab('citations')">Directory Citations</button>
+        <button class="reputation-tab active" data-tab="overview">Overview</button>
+        <button class="reputation-tab" data-tab="reviews">Reviews</button>
+        <button class="reputation-tab" data-tab="citations">Directory Citations</button>
     </nav>
     
     <div class="tab-content" id="reputationContent">
@@ -93,104 +93,117 @@
 </div>
 
 <script>
-// Define loadReputationTab globally
-window.loadReputationTab = async function(tabName) {
-    console.log('Loading reputation tab:', tabName);
+(function() {
+    console.log('Reputation script starting...');
     
-    // Update active tab styling
-    document.querySelectorAll('.reputation-tab').forEach(tab => {
-        tab.classList.remove('active');
-        if (tab.dataset.tab === tabName) {
-            tab.classList.add('active');
-        }
-    });
-    
-    // Show loading state
-    const contentDiv = document.getElementById('reputationContent');
-    contentDiv.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div></div>';
-    
-    // Map tab names to actual file names
-    const fileMap = {
-        'overview': 'reputation-overview.html',
-        'reviews': 'reviews.html',
-        'citations': 'citations.html'
-    };
-    
-    const fileName = fileMap[tabName];
-    if (!fileName) {
-        contentDiv.innerHTML = '<div class="error-state"><h3>Error</h3><p>Invalid tab selected</p></div>';
-        return;
-    }
-    
-    // Try different paths - matching what dashboard.js does
-    const paths = [
-        `sections/reputation/${fileName}`,
-        `./sections/reputation/${fileName}`,
-        `/sections/reputation/${fileName}`,
-        `https://echoaisystem.com/sections/reputation/${fileName}`
-    ];
-    
-    let loaded = false;
-    
-    for (const path of paths) {
-        if (loaded) break;
+    async function loadReputationTab(tabName) {
+        console.log('Loading reputation tab:', tabName);
         
-        try {
-            console.log('Trying path:', path);
-            const response = await fetch(path);
-            
-            if (response.ok) {
-                const html = await response.text();
-                console.log('Successfully loaded from:', path);
-                contentDiv.innerHTML = html;
-                
-                // Execute any scripts in the loaded content
-                const scripts = contentDiv.querySelectorAll('script');
-                scripts.forEach(script => {
-                    const newScript = document.createElement('script');
-                    newScript.textContent = script.textContent;
-                    document.body.appendChild(newScript);
-                    document.body.removeChild(newScript);
-                });
-                
-                loaded = true;
+        // Update active tab styling
+        document.querySelectorAll('.reputation-tab').forEach(tab => {
+            tab.classList.remove('active');
+            if (tab.dataset.tab === tabName) {
+                tab.classList.add('active');
             }
-        } catch (e) {
-            console.log('Failed to load from:', path, e.message);
+        });
+        
+        // Show loading state
+        const contentDiv = document.getElementById('reputationContent');
+        contentDiv.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div></div>';
+        
+        // Map tab names to actual file names
+        const fileMap = {
+            'overview': 'reputation-overview.html',
+            'reviews': 'reviews.html',
+            'citations': 'citations.html'
+        };
+        
+        const fileName = fileMap[tabName];
+        if (!fileName) {
+            contentDiv.innerHTML = '<div class="error-state"><h3>Error</h3><p>Invalid tab selected</p></div>';
+            return;
+        }
+        
+        // Try different paths - matching what dashboard.js does
+        const paths = [
+            `sections/reputation/${fileName}`,
+            `./sections/reputation/${fileName}`,
+            `/sections/reputation/${fileName}`,
+            `https://echoaisystem.com/sections/reputation/${fileName}`
+        ];
+        
+        let loaded = false;
+        
+        for (const path of paths) {
+            if (loaded) break;
+            
+            try {
+                console.log('Trying path:', path);
+                const response = await fetch(path);
+                
+                if (response.ok) {
+                    const html = await response.text();
+                    console.log('Successfully loaded from:', path);
+                    contentDiv.innerHTML = html;
+                    
+                    // Execute any scripts in the loaded content
+                    const scripts = contentDiv.querySelectorAll('script');
+                    scripts.forEach(script => {
+                        const newScript = document.createElement('script');
+                        newScript.textContent = script.textContent;
+                        document.body.appendChild(newScript);
+                        document.body.removeChild(newScript);
+                    });
+                    
+                    loaded = true;
+                }
+            } catch (e) {
+                console.log('Failed to load from:', path, e.message);
+            }
+        }
+        
+        if (!loaded) {
+            console.error('Could not load content from any path');
+            contentDiv.innerHTML = `
+                <div class="error-state">
+                    <h3>Unable to Load Content</h3>
+                    <p>Could not load ${fileName}</p>
+                    <p style="font-size: 0.85rem; color: #666; margin-top: 1rem;">
+                        Please check the browser console for more details.
+                    </p>
+                    <p style="font-size: 0.85rem; color: #666;">
+                        Attempted paths:<br>
+                        ${paths.join('<br>')}
+                    </p>
+                </div>
+            `;
         }
     }
     
-    if (!loaded) {
-        console.error('Could not load content from any path');
-        contentDiv.innerHTML = `
-            <div class="error-state">
-                <h3>Unable to Load Content</h3>
-                <p>Could not load ${fileName}</p>
-                <p style="font-size: 0.85rem; color: #666; margin-top: 1rem;">
-                    Please check the browser console for more details.
-                </p>
-                <p style="font-size: 0.85rem; color: #666;">
-                    Attempted paths:<br>
-                    ${paths.join('<br>')}
-                </p>
-            </div>
-        `;
+    // Initialize tabs with event listeners
+    function initializeTabs() {
+        console.log('Initializing reputation tabs...');
+        
+        // Get all tab buttons
+        const tabButtons = document.querySelectorAll('.reputation-tab');
+        console.log('Found', tabButtons.length, 'tab buttons');
+        
+        // Add click listener to each button
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const tabName = this.dataset.tab;
+                console.log('Tab clicked:', tabName);
+                loadReputationTab(tabName);
+            });
+        });
+        
+        // Load the overview tab initially
+        loadReputationTab('overview');
     }
-};
-
-// Initialize when ready
-function initializeReputation() {
-    console.log('Initializing reputation section');
     
-    // Load the overview tab
-    window.loadReputationTab('overview');
-}
-
-// Check if DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeReputation);
-} else {
-    // DOM is already ready
-    initializeReputation();
-}
+    // Initialize immediately
+    console.log('Setting up reputation tabs...');
+    initializeTabs();
+})();
 </script>
