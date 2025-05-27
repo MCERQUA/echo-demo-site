@@ -43,36 +43,62 @@
             position: relative;
         }
         
-        .loading-state {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 200px;
-            color: var(--text-secondary, #888);
+        .tab-pane {
+            display: none;
         }
         
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--surface, #2a2a2a);
-            border-top-color: var(--primary, #1a73e8);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        .tab-pane.active {
+            display: block;
         }
         
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .reputation-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
         }
         
-        .error-state {
+        .metric-card {
+            background: var(--surface-light, #2a2a2a);
+            padding: 1.5rem;
+            border-radius: 8px;
             text-align: center;
-            padding: 2rem;
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary, #1a73e8);
+            margin: 0.5rem 0;
+        }
+        
+        .metric-label {
+            color: var(--text-secondary, #888);
+            font-size: 0.875rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
             color: var(--text-secondary, #888);
         }
         
-        .error-state h3 {
-            color: #ff4444;
-            margin-bottom: 1rem;
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: var(--primary, #1a73e8);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark, #1557b0);
         }
     </style>
     
@@ -85,125 +111,81 @@
         <button class="reputation-tab" data-tab="citations">Directory Citations</button>
     </nav>
     
-    <div class="tab-content" id="reputationContent">
-        <div class="loading-state">
-            <div class="loading-spinner"></div>
+    <div class="tab-content">
+        <!-- Overview Tab -->
+        <div id="overview-tab" class="tab-pane active">
+            <div class="reputation-metrics">
+                <div class="metric-card">
+                    <div class="metric-label">Total Reviews</div>
+                    <div class="metric-value">0</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Average Rating</div>
+                    <div class="metric-value">--</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Response Rate</div>
+                    <div class="metric-value">0%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Active Citations</div>
+                    <div class="metric-value">0</div>
+                </div>
+            </div>
+            
+            <div class="empty-state">
+                <p>No reputation data available yet.</p>
+                <p>Start monitoring your online presence to see metrics here.</p>
+                <button class="btn btn-primary" onclick="window.triggerAIResearch('reputation')">Start AI Research</button>
+            </div>
+        </div>
+        
+        <!-- Reviews Tab -->
+        <div id="reviews-tab" class="tab-pane">
+            <h3>Review Management</h3>
+            <p style="color: var(--text-secondary, #888); margin-bottom: 2rem;">Monitor and respond to reviews across all platforms.</p>
+            
+            <div class="empty-state">
+                <p>No reviews to display yet.</p>
+                <button class="btn btn-primary">Connect Review Platforms</button>
+            </div>
+        </div>
+        
+        <!-- Citations Tab -->
+        <div id="citations-tab" class="tab-pane">
+            <h3>Directory Citations</h3>
+            <p style="color: var(--text-secondary, #888); margin-bottom: 2rem;">Track your business listings across online directories.</p>
+            
+            <div class="empty-state">
+                <p>No directory citations tracked yet.</p>
+                <button class="btn btn-primary">Start Citation Scan</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
+// Simple tab switching without external file loading
 (function() {
-    console.log('Reputation script starting...');
+    const tabs = document.querySelectorAll('.reputation-tab');
+    const panes = document.querySelectorAll('.tab-pane');
     
-    async function loadReputationTab(tabName) {
-        console.log('Loading reputation tab:', tabName);
-        
-        // Update active tab styling
-        document.querySelectorAll('.reputation-tab').forEach(tab => {
-            tab.classList.remove('active');
-            if (tab.dataset.tab === tabName) {
-                tab.classList.add('active');
-            }
-        });
-        
-        // Show loading state
-        const contentDiv = document.getElementById('reputationContent');
-        contentDiv.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div></div>';
-        
-        // Map tab names to actual file names
-        const fileMap = {
-            'overview': 'reputation-overview.html',
-            'reviews': 'reviews.html',
-            'citations': 'citations.html'
-        };
-        
-        const fileName = fileMap[tabName];
-        if (!fileName) {
-            contentDiv.innerHTML = '<div class="error-state"><h3>Error</h3><p>Invalid tab selected</p></div>';
-            return;
-        }
-        
-        // Try different paths - matching what dashboard.js does
-        const paths = [
-            `sections/reputation/${fileName}`,
-            `./sections/reputation/${fileName}`,
-            `/sections/reputation/${fileName}`,
-            `https://echoaisystem.com/sections/reputation/${fileName}`
-        ];
-        
-        let loaded = false;
-        
-        for (const path of paths) {
-            if (loaded) break;
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const targetTab = this.dataset.tab;
             
-            try {
-                console.log('Trying path:', path);
-                const response = await fetch(path);
-                
-                if (response.ok) {
-                    const html = await response.text();
-                    console.log('Successfully loaded from:', path);
-                    contentDiv.innerHTML = html;
-                    
-                    // Execute any scripts in the loaded content
-                    const scripts = contentDiv.querySelectorAll('script');
-                    scripts.forEach(script => {
-                        const newScript = document.createElement('script');
-                        newScript.textContent = script.textContent;
-                        document.body.appendChild(newScript);
-                        document.body.removeChild(newScript);
-                    });
-                    
-                    loaded = true;
+            // Update active tab
+            tabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update active pane
+            panes.forEach(pane => {
+                pane.classList.remove('active');
+                if (pane.id === targetTab + '-tab') {
+                    pane.classList.add('active');
                 }
-            } catch (e) {
-                console.log('Failed to load from:', path, e.message);
-            }
-        }
-        
-        if (!loaded) {
-            console.error('Could not load content from any path');
-            contentDiv.innerHTML = `
-                <div class="error-state">
-                    <h3>Unable to Load Content</h3>
-                    <p>Could not load ${fileName}</p>
-                    <p style="font-size: 0.85rem; color: #666; margin-top: 1rem;">
-                        Please check the browser console for more details.
-                    </p>
-                    <p style="font-size: 0.85rem; color: #666;">
-                        Attempted paths:<br>
-                        ${paths.join('<br>')}
-                    </p>
-                </div>
-            `;
-        }
-    }
-    
-    // Initialize tabs with event listeners
-    function initializeTabs() {
-        console.log('Initializing reputation tabs...');
-        
-        // Get all tab buttons
-        const tabButtons = document.querySelectorAll('.reputation-tab');
-        console.log('Found', tabButtons.length, 'tab buttons');
-        
-        // Add click listener to each button
-        tabButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const tabName = this.dataset.tab;
-                console.log('Tab clicked:', tabName);
-                loadReputationTab(tabName);
             });
         });
-        
-        // Load the overview tab initially
-        loadReputationTab('overview');
-    }
-    
-    // Initialize immediately
-    console.log('Setting up reputation tabs...');
-    initializeTabs();
+    });
 })();
 </script>
