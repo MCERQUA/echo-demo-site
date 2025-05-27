@@ -1,5 +1,5 @@
 # Dashboard Implementation Guide - NEW MODULAR SYSTEM
-*Updated: May 26, 2025*
+*Updated: May 27, 2025*
 
 ## 🚨 ARCHITECTURE CHANGE
 
@@ -26,12 +26,12 @@ dist/
 ### Section Modules (Add as needed)
 ```
 js/sections/
-├── overview.js             # Dashboard home
-├── brand-info.js          # Brand management
+├── overview.js             # Dashboard home ✅
+├── brand-info.js          # Brand management ✅
+├── reputation.js          # Review management ✅ (Fixed May 27)
 ├── social-media.js        # Social accounts
 ├── website.js             # Website settings
 ├── google-business.js     # Google Business Profile
-├── reputation.js          # Review management
 ├── reports.js             # Analytics/reports
 ├── billing.js             # Payment/subscription
 └── support.js             # Help/documentation
@@ -40,29 +40,33 @@ js/sections/
 ### Tab Modules (Granular features)
 ```
 js/tabs/
-├── contact-info.js        # Contact form
+├── contact-info.js        # Contact form ✅
 ├── business-details.js    # Company info
 ├── brand-assets.js        # Logo/media
-└── certifications.js     # Credentials
+└── certifications.js      # Credentials
 ```
 
 ### HTML Templates
 ```
 sections/
-├── overview.html
-├── brand-info.html
+├── overview.html ✅
+├── brand-info.html ✅
+├── reputation.html ✅
 ├── social-media.html
 ├── website.html
 ├── google-business.html
-├── reputation.html
 ├── reports.html
 ├── billing.html
 ├── support.html
-└── brand-info/
-    ├── contact-info.html
-    ├── business-details.html
-    ├── brand-assets.html
-    └── certifications.html
+├── brand-info/
+│   ├── contact-info.html ✅
+│   ├── business-details.html
+│   ├── brand-assets.html
+│   └── certifications.html
+└── reputation/
+    ├── reputation-overview.html ✅
+    ├── reviews.html ✅
+    └── citations.html ✅ (Fixed May 27)
 ```
 
 ## 🛠️ IMPLEMENTATION STEPS
@@ -89,7 +93,7 @@ js/sections/new-section.js
 // 1. Create tab HTML
 sections/section-name/new-tab.html
 
-// 2. Create tab JS
+// 2. Create tab JS (optional)
 js/tabs/new-tab.js
 
 // 3. Add tab button to section HTML
@@ -98,86 +102,84 @@ js/tabs/new-tab.js
 
 ## 📝 CODE TEMPLATES
 
-### Section Module Template
+### Section Module Template (With Tabs)
 ```javascript
 // js/sections/[section-name].js
 console.log('[SectionName] module loaded');
 
-document.addEventListener('DOMContentLoaded', init);
-
-function init() {
-    console.log('Initializing [section-name] section');
-    loadData();
-    setupInteractions();
+// Initialize when this section loads
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init[SectionName]);
+} else {
+    init[SectionName]();
 }
 
-async function loadData() {
-    if (!window.user) return;
+function init[SectionName]() {
+    console.log('Initializing [section-name] section');
     
-    try {
-        const { data } = await window.supabase
-            .from('[table_name]')
-            .select('*')
-            .eq('user_id', window.user.id)
-            .maybeSingle();
-        
-        if (data) {
-            window.userData.[sectionName] = data;
-            populateFields(data);
-        }
-    } catch (error) {
-        console.error('Error loading [section] data:', error);
+    // Load default tab if section has tabs
+    if (typeof window.show[SectionName]Tab === 'function') {
+        window.show[SectionName]Tab('default-tab');
     }
 }
 
-function setupInteractions() {
-    // Setup section-specific interactions
+// Tab management for sections with tabs
+const loaded[SectionName]Tabs = {};
+
+async function load[SectionName]TabContent(tabName) {
+    if (loaded[SectionName]Tabs[tabName]) {
+        return loaded[SectionName]Tabs[tabName];
+    }
+    
+    try {
+        const response = await fetch(`/sections/[section-name]/${tabName}.html`);
+        if (!response.ok) throw new Error('Failed to load tab');
+        
+        const content = await response.text();
+        loaded[SectionName]Tabs[tabName] = content;
+        return content;
+    } catch (error) {
+        console.error(`Error loading ${tabName} tab:`, error);
+        return '<div class="error-state">Failed to load content.</div>';
+    }
 }
 
-function populateFields(data) {
-    // Fill in form fields/display data
+async function show[SectionName]Tab(tabName) {
+    // Update button states
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    const clickedButton = document.querySelector(`[onclick="show[SectionName]Tab('${tabName}')"]`);
+    if (clickedButton) {
+        clickedButton.classList.add('active');
+    }
+    
+    // Load and display tab content
+    const container = document.getElementById('[section-name]-tabs');
+    container.innerHTML = '<div class="loading-state">Loading...</div>';
+    
+    const content = await load[SectionName]TabContent(tabName);
+    container.innerHTML = content;
+    
+    // Initialize tab-specific features
+    initialize[SectionName]TabFeatures(tabName);
 }
 
-// Export functions if needed by other modules
-window.[functionName] = [functionName];
-```
-
-### Tab Module Template
-```javascript
-// js/tabs/[tab-name].js
-console.log('[TabName] tab module loaded');
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initTab);
-} else {
-    initTab();
-}
-
-function initTab() {
-    console.log('Initializing [tab-name] tab');
-    loadTabData();
-}
-
-let isEditMode = false;
-
-function toggleEditMode() {
-    isEditMode = !isEditMode;
-    // Handle edit/save toggle
-}
-
-async function saveData() {
-    // Save tab data to Supabase
-}
-
-function loadTabData() {
-    // Load and populate tab data
+function initialize[SectionName]TabFeatures(tabName) {
+    // Add tab-specific initialization
+    // Example: load data when citations tab is shown
+    if (tabName === 'specific-tab' && typeof window.loadSpecificData === 'function') {
+        setTimeout(() => window.loadSpecificData(), 100);
+    }
 }
 
 // Export functions
-window.toggle[TabName]EditMode = toggleEditMode;
+window.show[SectionName]Tab = show[SectionName]Tab;
+window.init[SectionName] = init[SectionName];
 ```
 
-### HTML Template
+### HTML Template (Section with Tabs)
 ```html
 <!-- sections/[section-name].html -->
 <div class="section-header">
@@ -185,24 +187,58 @@ window.toggle[TabName]EditMode = toggleEditMode;
     <p>Description of what this section does</p>
 </div>
 
-<!-- For sections with tabs -->
+<!-- Tab Navigation -->
 <div class="tab-navigation">
-    <button class="tab-button active" onclick="showTab('tab1')">Tab 1</button>
-    <button class="tab-button" onclick="showTab('tab2')">Tab 2</button>
+    <button class="tab-button active" onclick="show[SectionName]Tab('tab1')">Tab 1</button>
+    <button class="tab-button" onclick="show[SectionName]Tab('tab2')">Tab 2</button>
+    <button class="tab-button" onclick="show[SectionName]Tab('tab3')">Tab 3</button>
 </div>
 
-<div id="section-tabs">
-    <!-- Tab content loaded here -->
+<!-- Tab Content Container -->
+<div id="[section-name]-tabs">
+    <!-- Tabs will be loaded here dynamically -->
 </div>
 
-<!-- For sections without tabs -->
-<div class="section-content">
-    <!-- Direct content here -->
-</div>
+<script>
+// Initialize tab functionality
+// Can be inline for simple cases or in separate JS module
+</script>
 
 <style>
-/* Minimal component-specific styles */
+/* Component-specific styles if needed */
 </style>
+```
+
+### Tab Content Template
+```html
+<!-- sections/[section-name]/[tab-name].html -->
+<div class="tab-content">
+    <div class="section-card">
+        <div class="card-header">
+            <h2>Tab Title</h2>
+            <button class="btn-primary" onclick="addNew()">+ Add New</button>
+        </div>
+        
+        <p class="section-description">Description of this tab's purpose.</p>
+        
+        <!-- Tab content here -->
+    </div>
+</div>
+
+<script>
+// Tab-specific functionality
+console.log('[TabName] tab loaded');
+
+// Initialize data loading
+loadTabData();
+
+async function loadTabData() {
+    // Load data from Supabase
+}
+
+// Make functions globally available
+window.loadTabData = loadTabData;
+</script>
 ```
 
 ## 🔧 DEVELOPMENT WORKFLOW
@@ -229,9 +265,13 @@ window.toggle[TabName]EditMode = toggleEditMode;
 
 ### ✅ Complete
 - Dashboard core framework
+- Overview section
 - Brand Info section with tabs
 - Contact Info tab functionality
-- Overview section
+- Reputation section with all tabs (Fixed May 27)
+  - Overview tab
+  - Reviews tab
+  - Citations tab with full CRUD
 - Authentication integration
 - File size compliance
 
@@ -244,7 +284,6 @@ window.toggle[TabName]EditMode = toggleEditMode;
 - Social Media section
 - Website section
 - Google Business section
-- Reputation section
 - Reports section
 - Billing section
 - Support section
@@ -278,5 +317,18 @@ window.toggle[TabName]EditMode = toggleEditMode;
 3. **Team Collaboration**: Multiple developers can work simultaneously
 4. **Maintenance**: Small files are easy to understand and modify
 5. **Scalability**: Add unlimited sections without complexity
+
+## 🎯 RECENT FIXES (May 27, 2025)
+
+### Reputation Tab Fix
+- **Problem**: Citations tab wasn't loading data properly
+- **Solution**: Created reputation.js module to handle initialization
+- **Result**: Full CRUD functionality now working
+
+### Key Learnings
+- Tab content scripts need time to load before calling functions
+- Use setTimeout to ensure scripts are parsed
+- Consistent patterns across all sections improve reliability
+- Error messages should guide users to solutions
 
 This modular approach ensures the dashboard can grow to handle all Echo AI Systems features while remaining maintainable!
