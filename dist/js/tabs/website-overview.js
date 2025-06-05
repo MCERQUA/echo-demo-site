@@ -3,19 +3,19 @@ console.log('Website overview module loaded');
 
 // Load website overview data
 async function loadWebsiteOverview() {
-    if (!window.user) {
-        console.log('No user logged in');
+    if (!window.user || !window.clientId) {
+        console.log('No user or clientId available');
         return;
     }
     
-    console.log('Loading website overview data...');
+    console.log('Loading website overview data for client:', window.clientId);
     
     try {
         // Load website info
         const { data: websiteInfo, error: infoError } = await window.supabase
             .from('website_info')
             .select('*')
-            .eq('user_id', window.user.id)
+            .eq('client_id', window.clientId)
             .maybeSingle();
         
         if (infoError && infoError.code !== 'PGRST116') {
@@ -28,17 +28,15 @@ async function loadWebsiteOverview() {
             console.log('No website info found, showing defaults');
             setDefaultWebsiteInfo();
             
-            // If this is a new user, offer to help set up their website info
-            if (window.user.email !== 'mikecerqua@gmail.com') {
-                showNotification('Welcome! Click "Edit" to add your website information.', 'info');
-            }
+            // Offer to help set up website info
+            showNotification('Welcome! Click "Edit" to add your website information.', 'info');
         }
         
         // Load website analytics
         const { data: analytics, error: analyticsError } = await window.supabase
             .from('website_analytics')
             .select('*')
-            .eq('user_id', window.user.id)
+            .eq('client_id', window.clientId)
             .order('created_at', { ascending: false })
             .limit(1)
             .maybeSingle();
@@ -203,16 +201,17 @@ function selectAllText(element) {
 
 // Save website data
 async function saveWebsiteData(tableName) {
+    if (!window.clientId) {
+        console.error('No client ID available');
+        showNotification('Unable to save data. Please refresh the page.', 'error');
+        return;
+    }
+    
     const fields = document.querySelectorAll(`[data-field][data-table="${tableName}"]`);
     const data = {
-        user_id: window.user.id,
+        client_id: window.clientId,
         updated_at: new Date().toISOString()
     };
-    
-    // Add client_id if available
-    if (window.clientId) {
-        data.client_id = window.clientId;
-    }
     
     fields.forEach(field => {
         field.contentEditable = false;
@@ -237,7 +236,7 @@ async function saveWebsiteData(tableName) {
         const { data: existing } = await window.supabase
             .from(tableName)
             .select('id')
-            .eq('user_id', window.user.id)
+            .eq('client_id', window.clientId)
             .maybeSingle();
         
         let result;
@@ -246,7 +245,7 @@ async function saveWebsiteData(tableName) {
             result = await window.supabase
                 .from(tableName)
                 .update(data)
-                .eq('user_id', window.user.id);
+                .eq('client_id', window.clientId);
         } else {
             // Insert new record
             result = await window.supabase
