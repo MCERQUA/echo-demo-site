@@ -35,7 +35,8 @@ async function loadReputationTabContent(tabName) {
     const fileName = fileMap[tabName] || tabName + '.html';
     
     try {
-        const response = await fetch(`/sections/reputation/${fileName}`);
+        // Use relative path
+        const response = await fetch(`sections/reputation/${fileName}`);
         if (!response.ok) throw new Error('Failed to load tab');
         
         const content = await response.text();
@@ -67,6 +68,16 @@ async function showReputationTab(tabName) {
     const content = await loadReputationTabContent(tabName);
     container.innerHTML = content;
     
+    // Execute any inline scripts in the loaded content
+    const scripts = container.getElementsByTagName('script');
+    for (let script of scripts) {
+        try {
+            eval(script.innerHTML);
+        } catch (e) {
+            console.error('Error executing inline script:', e);
+        }
+    }
+    
     // Initialize tab-specific features
     initializeReputationTabFeatures(tabName);
 }
@@ -75,31 +86,45 @@ async function showReputationTab(tabName) {
 function initializeReputationTabFeatures(tabName) {
     console.log('Initializing features for:', tabName);
     
-    // Add any tab-specific initialization here
-    if (tabName === 'citations') {
-        // The citations.html file has its own script that defines loadCitationsData
-        // We need to wait a bit for the script to be parsed and executed
-        setTimeout(() => {
-            if (typeof window.loadCitationsData === 'function') {
-                console.log('Loading citations data...');
-                window.loadCitationsData();
-            } else {
-                console.error('loadCitationsData function not found');
+    // Call specific initialization functions based on tab
+    switch(tabName) {
+        case 'overview':
+            if (typeof loadReputationOverview === 'function') {
+                setTimeout(() => loadReputationOverview(), 100);
             }
-        }, 100);
+            break;
+        case 'reviews':
+            if (typeof loadReviewsData === 'function') {
+                setTimeout(() => loadReviewsData(), 100);
+            }
+            break;
+        case 'citations':
+            if (typeof loadCitationsData === 'function') {
+                setTimeout(() => loadCitationsData(), 100);
+            }
+            break;
     }
 }
 
-// Load initial tab on page load
-document.addEventListener('DOMContentLoaded', async () => {
-    // Only load if we're in the reputation section
-    if (document.querySelector('.section-header h1')?.textContent === 'Reputation Management') {
-        await showReputationTab('overview');
-    }
-});
+// Initialize reputation section
+function initReputationSection() {
+    console.log('Initializing reputation section');
+    // Load default tab
+    showReputationTab('overview');
+}
 
-// Make showReputationTab globally available
+// Make functions globally available
 window.showReputationTab = showReputationTab;
+window.initReputationSection = initReputationSection;
+
+// Initialize when loaded
+(function() {
+    console.log('Reputation section loaded');
+    // Wait for DOM to be ready
+    setTimeout(() => {
+        initReputationSection();
+    }, 100);
+})();
 </script>
 
 <style>
