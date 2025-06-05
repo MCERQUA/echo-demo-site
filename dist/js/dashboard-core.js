@@ -7,6 +7,7 @@ const { createClient } = supabase;
 window.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 window.user = null;
 window.userData = {};
+window.clientId = null;
 
 // Mobile sidebar state
 let isMobile = window.innerWidth <= 768;
@@ -24,6 +25,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         window.user = session.user;
         updateUserDisplay();
+        
+        // Ensure client record exists
+        await ensureClientRecord();
         
         // Load user data from Supabase
         await loadUserData();
@@ -46,6 +50,58 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = 'login.html';
     }
 });
+
+// Ensure client record exists for the user
+async function ensureClientRecord() {
+    if (!window.user) return;
+    
+    console.log('Checking client record for:', window.user.email);
+    
+    try {
+        // Check if client record exists
+        const { data: clientData, error: fetchError } = await window.supabase
+            .from('clients')
+            .select('id')
+            .eq('user_id', window.user.id)
+            .maybeSingle();
+        
+        if (fetchError && fetchError.code !== 'PGRST116') {
+            console.error('Error checking client record:', fetchError);
+            return;
+        }
+        
+        if (!clientData) {
+            console.log('Creating client record for new user');
+            
+            // Create new client record
+            const { data: newClient, error: createError } = await window.supabase
+                .from('clients')
+                .insert([{
+                    user_id: window.user.id,
+                    status: 'active',
+                    onboarding_completed: false,
+                    ai_research_enabled: true
+                }])
+                .select('id')
+                .single();
+            
+            if (createError) {
+                console.error('Error creating client record:', createError);
+                showNotification('Error setting up account. Some features may not work.', 'error');
+                return;
+            }
+            
+            window.clientId = newClient.id;
+            console.log('Client record created:', newClient.id);
+            showNotification('Welcome to Echo AI Systems! Your account has been set up.', 'success');
+        } else {
+            window.clientId = clientData.id;
+            console.log('Client record found:', clientData.id);
+        }
+    } catch (error) {
+        console.error('Error in ensureClientRecord:', error);
+    }
+}
 
 // Load user data from Supabase
 async function loadUserData() {
@@ -86,7 +142,8 @@ async function loadUserData() {
         const { data: brandData, error: brandError } = await window.supabase
             .from('brand_assets')
             .select('*')
-            .eq('user_id', window.user.id);
+            .eq('user_id', window.user.id)
+            .maybeSingle();
         
         if (brandError && brandError.code !== 'PGRST116') {
             console.error('Error loading brand assets:', brandError);
@@ -370,14 +427,38 @@ function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     notification.textContent = message;
-    notification.style.zIndex = '10000';
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 16px 24px;
+        background: var(--${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'primary'});
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        max-width: 400px;
+        animation: slideIn 0.3s ease-out;
+    `;
+    
+    // Add animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
     
     document.body.appendChild(notification);
     
     // Auto remove after 3 seconds
     setTimeout(() => {
         if (notification.parentNode) {
-            notification.remove();
+            notification.style.animation = 'slideOut 0.3s ease-in';
+            notification.style.animationFillMode = 'forwards';
+            setTimeout(() => notification.remove(), 300);
         }
     }, 3000);
     
@@ -396,6 +477,7 @@ window.toggleDropdown = toggleDropdown;
 window.signOut = signOut;
 window.showNotification = showNotification;
 window.loadUserData = loadUserData;
+window.ensureClientRecord = ensureClientRecord;
 
 // Add touch class for better mobile interactions
 if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
