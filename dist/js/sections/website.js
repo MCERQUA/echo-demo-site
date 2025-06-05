@@ -93,4 +93,74 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
+// ACTUALLY INSERT SOMETHING INTO THE DOM!
+const websiteContent = document.getElementById('website-config');
+if (websiteContent) {
+    console.log('Found website-config container, inserting content...');
+    websiteContent.innerHTML = `
+        <div class="card">
+            <div class="card-header">
+                <h3>Website Configuration</h3>
+                <button class="btn-edit" onclick="alert('Edit clicked!')">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Domain</label>
+                            <input type="text" placeholder="www.example.com" value="">
+                        </div>
+                        <div class="form-group">
+                            <label>Platform</label>
+                            <input type="text" placeholder="WordPress, Shopify, etc." value="">
+                        </div>
+                        <div class="form-group">
+                            <label>SSL Status</label>
+                            <select>
+                                <option>Active</option>
+                                <option>Inactive</option>
+                                <option>Unknown</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    `;
+} else {
+    console.error('website-config container not found!');
+}
+
+// Also check for analytics container
+const analyticsContent = document.getElementById('website-analytics');
+if (analyticsContent) {
+    console.log('Found website-analytics container, inserting content...');
+    analyticsContent.innerHTML = `
+        <div class="card">
+            <div class="card-header">
+                <h3>Website Analytics</h3>
+            </div>
+            <div class="card-body">
+                <div class="analytics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">0</div>
+                        <div class="metric-label">Monthly Visitors</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">0</div>
+                        <div class="metric-label">Page Views</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">0%</div>
+                        <div class="metric-label">Bounce Rate</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
 console.log('Website section initialization complete');
