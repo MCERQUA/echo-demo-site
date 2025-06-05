@@ -297,10 +297,28 @@ async function loadSection(sectionName) {
                     // Trigger data loading for specific sections
                     if (sectionName === 'brand-info' && window.loadBrandData) {
                         setTimeout(() => window.loadBrandData(), 100);
-                    } else if (sectionName === 'website' && window.initWebsiteSection) {
-                        setTimeout(() => window.initWebsiteSection(), 100);
-                    } else if (sectionName === 'reputation' && window.initReputationSection) {
-                        setTimeout(() => window.initReputationSection(), 100);
+                    } else if (sectionName === 'website') {
+                        // Initialize the enhanced website manager
+                        setTimeout(() => {
+                            if (window.initializeWebsiteManager) {
+                                window.initializeWebsiteManager();
+                            } else if (window.initWebsiteSection) {
+                                window.initWebsiteSection();
+                            }
+                        }, 200);
+                    } else if (sectionName === 'reputation') {
+                        // Initialize the enhanced reputation manager
+                        setTimeout(() => {
+                            if (window.initializeReputationManager) {
+                                window.initializeReputationManager();
+                            } else if (window.initReputationSection) {
+                                window.initReputationSection();
+                            }
+                        }, 200);
+                    } else if (sectionName === 'google-business' && window.initializeGoogleBusinessManager) {
+                        setTimeout(() => window.initializeGoogleBusinessManager(), 200);
+                    } else if (sectionName === 'social-media' && window.initializeSocialMediaManager) {
+                        setTimeout(() => window.initializeSocialMediaManager(), 200);
                     }
                 };
                 script.onerror = () => console.log(`No JS module for ${sectionName} (this is normal)`);

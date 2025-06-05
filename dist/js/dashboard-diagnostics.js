@@ -149,22 +149,55 @@ async function testDashboard() {
 async function initializeModules() {
     console.log('\n[Dashboard Diagnostics] Manually initializing modules...');
     
-    // Load website manager if on website section
-    const websiteSection = document.querySelector('#website-config');
-    if (websiteSection && !window.websiteManager) {
-        console.log('Loading WebsiteManager...');
-        const script = document.createElement('script');
-        script.src = '/js/dashboard-website.js';
-        document.head.appendChild(script);
+    // Check which section is active
+    const activeSection = document.querySelector('.nav-link.active');
+    const sectionName = activeSection ? activeSection.textContent.trim().toLowerCase() : '';
+    
+    console.log('Active section:', sectionName);
+    
+    // Initialize based on current section
+    if (sectionName.includes('website')) {
+        if (window.initializeWebsiteManager) {
+            console.log('Initializing WebsiteManager...');
+            window.initializeWebsiteManager();
+        } else {
+            console.log('WebsiteManager not found');
+        }
+    } else if (sectionName.includes('reputation')) {
+        if (window.initializeReputationManager) {
+            console.log('Initializing ReputationManager...');
+            window.initializeReputationManager();
+        } else {
+            console.log('ReputationManager not found');
+        }
+    } else if (sectionName.includes('google')) {
+        if (window.initializeGoogleBusinessManager) {
+            console.log('Initializing GoogleBusinessManager...');
+            window.initializeGoogleBusinessManager();
+        } else {
+            console.log('GoogleBusinessManager not found');
+        }
+    } else if (sectionName.includes('social')) {
+        if (window.initializeSocialMediaManager) {
+            console.log('Initializing SocialMediaManager...');
+            window.initializeSocialMediaManager();
+        } else {
+            console.log('SocialMediaManager not found');
+        }
     }
     
-    // Load reputation manager if on reputation section
-    const reputationSection = document.querySelector('#reputation-overview');
-    if (reputationSection && !window.reputationManager) {
-        console.log('Loading ReputationManager...');
-        const script = document.createElement('script');
-        script.src = '/js/dashboard-reputation.js';
-        document.head.appendChild(script);
+    // Also check for containers and initialize if present
+    if (document.querySelector('#website-config') && window.initializeWebsiteManager) {
+        window.initializeWebsiteManager();
+    }
+    if (document.querySelector('#reputation-overview') && window.initializeReputationManager) {
+        window.initializeReputationManager();
+    }
+    if (document.querySelector('#google-business-content') && window.initializeGoogleBusinessManager) {
+        window.initializeGoogleBusinessManager();
+    }
+    if (document.querySelector('#social-media-content') && window.initializeSocialMediaManager) {
+        window.initializeSocialMediaManager();
     }
 }
 

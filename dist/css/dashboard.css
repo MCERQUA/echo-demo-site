@@ -1692,3 +1692,112 @@ nav {
     }
 }
 EOF < /dev/null
+
+/* Google Business Section Styles */
+.profile-stats {
+    margin-top: 2rem;
+}
+
+.profile-stats h4 {
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+/* Social Media Section Styles */
+.social-accounts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.social-account-card {
+    background: var(--surface);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.account-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.account-header i {
+    font-size: 2rem;
+}
+
+.account-header .fa-facebook {
+    color: #1877f2;
+}
+
+.account-header .fa-instagram {
+    color: #e4405f;
+}
+
+.account-header .fa-twitter {
+    color: #1da1f2;
+}
+
+.account-header .fa-linkedin {
+    color: #0077b5;
+}
+
+.account-header .fa-youtube {
+    color: #ff0000;
+}
+
+.account-header .fa-tiktok {
+    color: #000000;
+}
+
+.account-info .info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.account-info .label {
+    color: var(--text-muted);
+}
+
+.account-info .value {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.verified-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #1da1f2;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.account-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted);
+}
+
+.empty-state p {
+    margin-bottom: 1rem;
+}
+EOF < /dev/null

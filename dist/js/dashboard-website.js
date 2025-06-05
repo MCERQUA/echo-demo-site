@@ -4,7 +4,8 @@ class WebsiteManager {
         this.clientId = null;
         this.websiteData = null;
         this.analyticsData = null;
-        this.init();
+        // Don't initialize immediately - wait for DOM
+        console.log('[WebsiteManager] Created, waiting for initialization...');
     }
 
     async init() {
@@ -335,7 +336,25 @@ class WebsiteManager {
     }
 }
 
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', () => {
-    window.websiteManager = new WebsiteManager();
-});
+// Create manager immediately but initialize later
+window.websiteManager = new WebsiteManager();
+
+// Initialize when DOM is ready or when called explicitly
+function initializeWebsiteManager() {
+    if (window.websiteManager && !window.websiteManager.initialized) {
+        console.log('[Website] DOM ready, initializing manager...');
+        window.websiteManager.initialized = true;
+        window.websiteManager.init();
+    }
+}
+
+// Try to initialize on various events
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeWebsiteManager);
+} else {
+    // DOM already loaded, but wait a bit for containers to be created
+    setTimeout(initializeWebsiteManager, 100);
+}
+
+// Also expose for manual initialization
+window.initializeWebsiteManager = initializeWebsiteManager;

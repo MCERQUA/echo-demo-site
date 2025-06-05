@@ -4,7 +4,13 @@
     <p>Connect and manage all your social media accounts in one place.</p>
 </div>
 
-<div class="social-overview-grid">
+<!-- Social Media Content Container -->
+<div id="social-media-content">
+    <!-- Content will be inserted here by dashboard-social-media.js -->
+</div>
+
+<!-- Legacy content (hidden) -->
+<div class="social-overview-grid" style="display: none;">
     <div class="social-card">
         <div class="card-header">
             <h3>Connected Accounts</h3>
@@ -519,3 +525,6 @@ window.connectAccount = connectAccount;
 window.createPost = createPost;
 window.viewAnalytics = viewAnalytics;
 </script>
+
+<\!-- Load the dashboard-social-media.js script -->
+<script src="js/dashboard-social-media.js"></script>

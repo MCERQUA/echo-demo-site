@@ -1,9 +1,15 @@
-<div class="welcome-section">
+<div class="section-header">
     <h1>Google Business Profile</h1>
     <p>Manage your Google Business listing and local search presence.</p>
 </div>
 
-<div class="info-grid">
+<!-- Google Business Content Container -->
+<div id="google-business-content">
+    <!-- Content will be inserted here by dashboard-google-business.js -->
+</div>
+
+<!-- Legacy content (hidden) -->
+<div class="info-grid" style="display: none;">
     <div class="info-card">
         <h3>Business Information</h3>
         <div class="info-item">
@@ -80,3 +86,5 @@
         Update Business Info
     </button>
 </div>
+<\!-- Load the dashboard-google-business.js script -->
+<script src="js/dashboard-google-business.js"></script>

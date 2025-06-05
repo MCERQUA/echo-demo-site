@@ -4,7 +4,8 @@ class ReputationManager {
         this.clientId = null;
         this.reputationData = null;
         this.citationsData = [];
-        this.init();
+        // Don't initialize immediately - wait for DOM
+        console.log('[ReputationManager] Created, waiting for initialization...');
     }
 
     async init() {
@@ -29,13 +30,14 @@ class ReputationManager {
     }
 
     async loadReputationData() {
-        // Load reputation_management data
+        // Load online_reputation data  
         const { data: reputation } = await window.supabase
-            .from('reputation_management')
+            .from('online_reputation')
             .select('*')
-            .eq('client_id', this.clientId);
+            .eq('client_id', this.clientId)
+            .single();
 
-        this.reputationData = reputation || [];
+        this.reputationData = reputation || null;
 
         // Load directory citations
         const { data: citations } = await window.supabase
@@ -51,10 +53,25 @@ class ReputationManager {
 
     populateReputationUI() {
         const overviewSection = document.querySelector('#reputation-overview');
-        if (!overviewSection) return;
+        if (!overviewSection) {
+            console.log('[Reputation] Overview section not found in DOM');
+            return;
+        }
 
-        // Calculate aggregate stats
-        const stats = this.calculateAggregateStats();
+        // Get stats from online_reputation record
+        const stats = {
+            averageRating: this.reputationData?.average_rating || 0,
+            totalReviews: this.reputationData?.total_reviews || 0,
+            responseRate: this.reputationData?.response_rate || 0,
+            platformCount: 0
+        };
+
+        // Count platforms with reviews
+        if (this.reputationData) {
+            if (this.reputationData.google_review_count > 0) stats.platformCount++;
+            if (this.reputationData.facebook_review_count > 0) stats.platformCount++;
+            if (this.reputationData.yelp_review_count > 0) stats.platformCount++;
+        }
 
         overviewSection.innerHTML = `
             <div class="card">
@@ -87,9 +104,9 @@ class ReputationManager {
 
                     <div class="platform-breakdown">
                         <h4>Platform Performance</h4>
-                        ${this.reputationData.length ? 
-                            this.reputationData.map(platform => this.renderPlatformCard(platform)).join('') :
-                            '<p class="no-data">No platforms tracked yet. Add your first platform to get started!</p>'
+                        ${this.reputationData ? 
+                            this.renderPlatformCards() :
+                            '<p class="no-data">No reputation data available yet.</p>'
                         }
                     </div>
                 </div>
@@ -120,29 +137,46 @@ class ReputationManager {
         }
     }
 
-    calculateAggregateStats() {
-        if (!this.reputationData.length) {
-            return {
-                averageRating: 0,
-                totalReviews: 0,
-                responseRate: 0,
-                platformCount: 0
-            };
+    renderPlatformCards() {
+        const platforms = [];
+        
+        // Google
+        if (this.reputationData.google_review_count > 0) {
+            platforms.push(this.renderPlatformCard({
+                platform_name: 'Google',
+                average_rating: this.reputationData.google_rating,
+                total_reviews: this.reputationData.google_review_count,
+                profile_url: this.reputationData.google_profile_url,
+                response_rate: this.reputationData.response_rate || 0,
+                trending: 'stable'
+            }));
         }
-
-        const totalReviews = this.reputationData.reduce((sum, p) => sum + (p.total_reviews || 0), 0);
-        const weightedRatingSum = this.reputationData.reduce((sum, p) => 
-            sum + ((p.average_rating || 0) * (p.total_reviews || 0)), 0
-        );
-        const averageRating = totalReviews > 0 ? weightedRatingSum / totalReviews : 0;
-        const avgResponseRate = this.reputationData.reduce((sum, p) => sum + (p.response_rate || 0), 0) / this.reputationData.length;
-
-        return {
-            averageRating,
-            totalReviews,
-            responseRate: Math.round(avgResponseRate),
-            platformCount: this.reputationData.length
-        };
+        
+        // Facebook
+        if (this.reputationData.facebook_review_count > 0) {
+            platforms.push(this.renderPlatformCard({
+                platform_name: 'Facebook',
+                average_rating: this.reputationData.facebook_rating,
+                total_reviews: this.reputationData.facebook_review_count,
+                profile_url: this.reputationData.facebook_profile_url,
+                response_rate: this.reputationData.response_rate || 0,
+                trending: 'stable'
+            }));
+        }
+        
+        // Yelp
+        if (this.reputationData.yelp_review_count > 0) {
+            platforms.push(this.renderPlatformCard({
+                platform_name: 'Yelp',
+                average_rating: this.reputationData.yelp_rating,
+                total_reviews: this.reputationData.yelp_review_count,
+                profile_url: this.reputationData.yelp_profile_url,
+                response_rate: this.reputationData.response_rate || 0,
+                trending: 'stable'
+            }));
+        }
+        
+        return platforms.length > 0 ? platforms.join('') : '<p class="no-data">No review platforms connected yet.</p>';
     }
 
     renderStars(rating) {
@@ -187,9 +221,11 @@ class ReputationManager {
                         </div>
                     </div>
                     <div class="platform-actions">
-                        <a href="${platform.profile_url}" target="_blank" class="btn-link">View Profile</a>
-                        <button class="btn-link" onclick="reputationManager.editPlatform('${platform.id}')">Edit</button>
-                        <button class="btn-link danger" onclick="reputationManager.deletePlatform('${platform.id}')">Remove</button>
+                        ${platform.profile_url ? 
+                            `<a href="${platform.profile_url}" target="_blank" class="btn-link">View Profile</a>` :
+                            '<span class="btn-link disabled">No Profile URL</span>'
+                        }
+                        <button class="btn-link" onclick="reputationManager.editPlatformData('${platform.platform_name}')">Edit</button>
                     </div>
                 </div>
             </div>
@@ -355,26 +391,29 @@ class ReputationManager {
 
     async addPlatform(formData) {
         try {
+            const platformName = formData.get('platform_name').toLowerCase();
+            const profileUrl = formData.get('profile_url');
+            
+            // Update the online_reputation record with the platform URL
+            const updateData = {};
+            updateData[`${platformName}_profile_url`] = profileUrl;
+            
             const { error } = await window.supabase
-                .from('reputation_management')
-                .insert({
+                .from('online_reputation')
+                .upsert({
                     client_id: this.clientId,
-                    platform_name: formData.get('platform_name'),
-                    profile_url: formData.get('profile_url'),
-                    total_reviews: 0,
-                    average_rating: 0,
-                    response_rate: 0,
-                    trending: 'stable'
+                    ...updateData,
+                    updated_at: new Date().toISOString()
                 });
 
             if (error) throw error;
 
             this.closeModal();
             await this.loadReputationData();
-            this.showNotification('Platform added successfully!', 'success');
+            this.showNotification('Platform URL added successfully!', 'success');
         } catch (error) {
             console.error('[Reputation] Error adding platform:', error);
-            this.showNotification('Error adding platform', 'error');
+            this.showNotification('Error adding platform URL', 'error');
         }
     }
 
@@ -404,27 +443,8 @@ class ReputationManager {
         }
     }
 
-    async editPlatform(id) {
+    async editPlatformData(platformName) {
         this.showNotification('Edit platform feature coming soon!', 'info');
-    }
-
-    async deletePlatform(id) {
-        if (confirm('Are you sure you want to remove this platform?')) {
-            try {
-                const { error } = await window.supabase
-                    .from('reputation_management')
-                    .delete()
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                await this.loadReputationData();
-                this.showNotification('Platform removed successfully!', 'success');
-            } catch (error) {
-                console.error('[Reputation] Error deleting platform:', error);
-                this.showNotification('Error removing platform', 'error');
-            }
-        }
     }
 
     async editCitation(id) {
@@ -439,7 +459,25 @@ class ReputationManager {
     }
 }
 
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', () => {
-    window.reputationManager = new ReputationManager();
-});
+// Create manager immediately but initialize later
+window.reputationManager = new ReputationManager();
+
+// Initialize when DOM is ready or when called explicitly
+function initializeReputationManager() {
+    if (window.reputationManager && !window.reputationManager.initialized) {
+        console.log('[Reputation] DOM ready, initializing manager...');
+        window.reputationManager.initialized = true;
+        window.reputationManager.init();
+    }
+}
+
+// Try to initialize on various events
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeReputationManager);
+} else {
+    // DOM already loaded, but wait a bit for containers to be created
+    setTimeout(initializeReputationManager, 100);
+}
+
+// Also expose for manual initialization
+window.initializeReputationManager = initializeReputationManager;
