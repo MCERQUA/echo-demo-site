@@ -20,12 +20,18 @@ async function loadWebsiteOverview() {
         
         if (infoError && infoError.code !== 'PGRST116') {
             console.error('Error loading website info:', infoError);
+            showNotification('Error loading website information', 'error');
         } else if (websiteInfo) {
             console.log('Website info loaded:', websiteInfo);
             populateWebsiteFields(websiteInfo, 'website_info');
         } else {
             console.log('No website info found, showing defaults');
             setDefaultWebsiteInfo();
+            
+            // If this is a new user, offer to help set up their website info
+            if (window.user.email !== 'mikecerqua@gmail.com') {
+                showNotification('Welcome! Click "Edit" to add your website information.', 'info');
+            }
         }
         
         // Load website analytics
@@ -116,6 +122,10 @@ function formatFieldValue(key, value) {
         return new Date(value).toLocaleDateString();
     }
     
+    if (key === 'last_updated' && value) {
+        return new Date(value).toLocaleDateString();
+    }
+    
     if (typeof value === 'number' && (key.includes('visitors') || key.includes('pageviews'))) {
         return value.toLocaleString();
     }
@@ -167,6 +177,11 @@ function enableEditMode(tableName) {
         field.style.cursor = 'text';
         field.style.backgroundColor = 'var(--primary-light)';
         
+        // Clear "Not set" placeholder when editing
+        if (field.textContent === 'Not set' || field.textContent === 'Unknown' || field.textContent === 'Not configured') {
+            field.textContent = '';
+        }
+        
         field.addEventListener('focus', function() {
             selectAllText(this);
         });
@@ -194,6 +209,11 @@ async function saveWebsiteData(tableName) {
         updated_at: new Date().toISOString()
     };
     
+    // Add client_id if available
+    if (window.clientId) {
+        data.client_id = window.clientId;
+    }
+    
     fields.forEach(field => {
         field.contentEditable = false;
         field.style.cursor = 'default';
@@ -203,8 +223,12 @@ async function saveWebsiteData(tableName) {
         const value = field.textContent.trim();
         
         // Don't save display values like "Not set"
-        if (value && value !== 'Not set' && value !== 'Unknown' && value !== 'Not configured') {
+        if (value && value !== 'Not set' && value !== 'Unknown' && value !== 'Not configured' && value !== '') {
             data[fieldName] = value;
+        } else {
+            // Reset to placeholder if empty
+            field.textContent = fieldName.includes('status') ? 'Unknown' : 'Not set';
+            field.style.color = 'var(--text-muted)';
         }
     });
     
@@ -218,11 +242,13 @@ async function saveWebsiteData(tableName) {
         
         let result;
         if (existing) {
+            // Update existing record
             result = await window.supabase
                 .from(tableName)
                 .update(data)
                 .eq('user_id', window.user.id);
         } else {
+            // Insert new record
             result = await window.supabase
                 .from(tableName)
                 .insert([data]);
@@ -231,12 +257,16 @@ async function saveWebsiteData(tableName) {
         if (result.error) throw result.error;
         
         if (window.showNotification) {
-            window.showNotification('Website information saved', 'success');
+            window.showNotification('Website information saved successfully', 'success');
         }
+        
+        // Reload data to ensure display is accurate
+        setTimeout(() => loadWebsiteOverview(), 500);
+        
     } catch (error) {
         console.error('Error saving website data:', error);
         if (window.showNotification) {
-            window.showNotification('Failed to save changes', 'error');
+            window.showNotification('Failed to save changes. Please try again.', 'error');
         }
     }
 }
