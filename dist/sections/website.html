@@ -4,7 +4,18 @@
     <p>Monitor your website performance, content, backlinks, and SEO metrics.</p>
 </div>
 
-<div class="tab-navigation">
+<!-- Website Configuration Container -->
+<div id="website-config">
+    <!-- Website configuration form will be inserted here by dashboard-website.js -->
+</div>
+
+<!-- Website Analytics Container -->
+<div id="website-analytics">
+    <!-- Analytics data will be inserted here by dashboard-website.js -->
+</div>
+
+<!-- Legacy tab navigation (to be replaced) -->
+<div class="tab-navigation" style="display: none;">
     <button class="tab-button active" onclick="showWebsiteTab('overview')">Overview</button>
     <button class="tab-button" onclick="showWebsiteTab('content')">Content</button>
     <button class="tab-button" onclick="showWebsiteTab('backlinks')">Backlinks</button>
@@ -13,12 +24,13 @@
 </div>
 
 <!-- Tab Content Container -->
-<div id="website-tabs">
+<div id="website-tabs" style="display: none;">
     <!-- Tabs will be loaded here dynamically -->
 </div>
 
-<!-- Load the website section script -->
+<!-- Load the website section scripts -->
 <script src="js/sections/website.js"></script>
+<script src="js/dashboard-website.js"></script>
 
 <script>
 // Store loaded tabs to avoid reloading

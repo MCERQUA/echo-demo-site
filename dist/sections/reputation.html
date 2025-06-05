@@ -4,16 +4,30 @@
     <p>Monitor and manage your online reputation across review platforms and directory listings.</p>
 </div>
 
-<div class="tab-navigation">
+<!-- Reputation Overview Container -->
+<div id="reputation-overview">
+    <!-- Reputation overview will be inserted here by dashboard-reputation.js -->
+</div>
+
+<!-- Citations List Container -->
+<div id="citations-list">
+    <!-- Directory citations will be inserted here by dashboard-reputation.js -->
+</div>
+
+<!-- Legacy tab navigation (to be replaced) -->
+<div class="tab-navigation" style="display: none;">
     <button class="tab-button active" onclick="showReputationTab('overview')">Overview</button>
     <button class="tab-button" onclick="showReputationTab('reviews')">Reviews</button>
     <button class="tab-button" onclick="showReputationTab('citations')">Directory Citations</button>
 </div>
 
 <!-- Tab Content Container -->
-<div id="reputation-tabs">
+<div id="reputation-tabs" style="display: none;">
     <!-- Tabs will be loaded here dynamically -->
 </div>
+
+<!-- Load the dashboard-reputation.js script -->
+<script src="js/dashboard-reputation.js"></script>
 
 <script>
 // Store loaded tabs to avoid reloading
