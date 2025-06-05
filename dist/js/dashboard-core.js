@@ -103,18 +103,18 @@ async function ensureClientRecord() {
     }
 }
 
-// Load user data from Supabase
+// Load user data from Supabase - ENHANCED to use client_id
 async function loadUserData() {
-    if (!window.user) return;
+    if (!window.user || !window.clientId) return;
     
-    console.log('Loading user data for:', window.user.email);
+    console.log('Loading user data for client:', window.clientId);
     
     try {
         // Load business info
         const { data: businessData, error: businessError } = await window.supabase
             .from('business_info')
             .select('*')
-            .eq('user_id', window.user.id)
+            .eq('client_id', window.clientId)
             .maybeSingle();
         
         if (businessError && businessError.code !== 'PGRST116') {
@@ -128,7 +128,7 @@ async function loadUserData() {
         const { data: contactData, error: contactError } = await window.supabase
             .from('contact_info')
             .select('*')
-            .eq('user_id', window.user.id)
+            .eq('client_id', window.clientId)
             .maybeSingle();
         
         if (contactError && contactError.code !== 'PGRST116') {
@@ -142,7 +142,7 @@ async function loadUserData() {
         const { data: brandData, error: brandError } = await window.supabase
             .from('brand_assets')
             .select('*')
-            .eq('user_id', window.user.id)
+            .eq('client_id', window.clientId)
             .maybeSingle();
         
         if (brandError && brandError.code !== 'PGRST116') {
@@ -150,6 +150,34 @@ async function loadUserData() {
         } else if (brandData) {
             window.userData.brandAssets = brandData;
             console.log('Loaded brand assets:', brandData);
+        }
+        
+        // Load website info
+        const { data: websiteData, error: websiteError } = await window.supabase
+            .from('website_info')
+            .select('*')
+            .eq('client_id', window.clientId)
+            .maybeSingle();
+        
+        if (websiteError && websiteError.code !== 'PGRST116') {
+            console.error('Error loading website info:', websiteError);
+        } else if (websiteData) {
+            window.userData.websiteInfo = websiteData;
+            console.log('Loaded website info:', websiteData);
+        }
+        
+        // Load online reputation
+        const { data: reputationData, error: reputationError } = await window.supabase
+            .from('online_reputation')
+            .select('*')
+            .eq('client_id', window.clientId)
+            .maybeSingle();
+        
+        if (reputationError && reputationError.code !== 'PGRST116') {
+            console.error('Error loading reputation data:', reputationError);
+        } else if (reputationData) {
+            window.userData.reputation = reputationData;
+            console.log('Loaded reputation data:', reputationData);
         }
         
         console.log('User data loaded successfully:', window.userData);
@@ -266,9 +294,13 @@ async function loadSection(sectionName) {
                 script.src = `js/sections/${sectionName}.js`;
                 script.onload = () => {
                     console.log(`Loaded ${sectionName} module`);
-                    // Trigger data loading for brand-info section
+                    // Trigger data loading for specific sections
                     if (sectionName === 'brand-info' && window.loadBrandData) {
                         setTimeout(() => window.loadBrandData(), 100);
+                    } else if (sectionName === 'website' && window.initWebsiteSection) {
+                        setTimeout(() => window.initWebsiteSection(), 100);
+                    } else if (sectionName === 'reputation' && window.initReputationSection) {
+                        setTimeout(() => window.initReputationSection(), 100);
                     }
                 };
                 script.onerror = () => console.log(`No JS module for ${sectionName} (this is normal)`);
