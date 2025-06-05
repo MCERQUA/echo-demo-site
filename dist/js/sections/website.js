@@ -5,6 +5,13 @@ console.log('Website section module loaded');
 function initWebsiteSection() {
     console.log('Initializing website section');
     
+    // Get the already loaded data
+    const websiteData = window.userData?.websiteInfo || {};
+    console.log('Using website data:', websiteData);
+    
+    // Insert content with actual data
+    insertWebsiteContent(websiteData);
+    
     // Check if we have the required tables
     checkWebsiteTables();
 }
@@ -52,12 +59,8 @@ function showWebsiteSetupMessage() {
     }
 }
 
-// Initialize when loaded
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initWebsiteSection);
-} else {
-    initWebsiteSection();
-}
+// Don't initialize automatically - wait for dashboard-core to call initWebsiteSection
+// This prevents race conditions where the module loads before the data
 
 // Export functions
 window.initWebsiteSection = initWebsiteSection;
@@ -93,74 +96,149 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// ACTUALLY INSERT SOMETHING INTO THE DOM!
-const websiteContent = document.getElementById('website-config');
-if (websiteContent) {
-    console.log('Found website-config container, inserting content...');
-    websiteContent.innerHTML = `
-        <div class="card">
-            <div class="card-header">
-                <h3>Website Configuration</h3>
-                <button class="btn-edit" onclick="alert('Edit clicked!')">
-                    <i class="fas fa-edit"></i> Edit
-                </button>
+// Function to insert website content with data
+function insertWebsiteContent(websiteData) {
+    console.log('Inserting website content with data:', websiteData);
+    
+    // Insert configuration section
+    const websiteContent = document.getElementById('website-config');
+    if (websiteContent) {
+        console.log('Found website-config container, inserting content...');
+        websiteContent.innerHTML = `
+            <div class="card">
+                <div class="card-header">
+                    <h3>Website Configuration</h3>
+                    <button class="btn-edit" onclick="toggleWebsiteEdit()">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                </div>
+                <div class="card-body">
+                    <form id="website-config-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Website URL</label>
+                                <input type="url" name="website_url" 
+                                       placeholder="https://www.example.com" 
+                                       value="${websiteData.website_url || ''}" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label>Primary Domain</label>
+                                <input type="text" name="primary_domain" 
+                                       placeholder="example.com" 
+                                       value="${websiteData.primary_domain || ''}" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label>Platform</label>
+                                <input type="text" name="platform" 
+                                       placeholder="WordPress, Shopify, etc." 
+                                       value="${websiteData.platform || ''}" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label>SSL Status</label>
+                                <select name="ssl_status" disabled>
+                                    <option value="Active" ${websiteData.ssl_status === 'Active' ? 'selected' : ''}>Active</option>
+                                    <option value="Inactive" ${websiteData.ssl_status === 'Inactive' ? 'selected' : ''}>Inactive</option>
+                                    <option value="Unknown" ${!websiteData.ssl_status || websiteData.ssl_status === 'Unknown' ? 'selected' : ''}>Unknown</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Mobile Responsive</label>
+                                <select name="mobile_responsive" disabled>
+                                    <option value="Yes" ${websiteData.mobile_responsive === 'Yes' ? 'selected' : ''}>Yes</option>
+                                    <option value="No" ${websiteData.mobile_responsive === 'No' ? 'selected' : ''}>No</option>
+                                    <option value="Unknown" ${!websiteData.mobile_responsive || websiteData.mobile_responsive === 'Unknown' ? 'selected' : ''}>Unknown</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Analytics ID</label>
+                                <input type="text" name="analytics_id" 
+                                       placeholder="UA-XXXXXXXX-X" 
+                                       value="${websiteData.analytics_id || ''}" disabled>
+                            </div>
+                        </div>
+                        <div class="form-actions" style="display: none;">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="button" class="btn btn-secondary" onclick="cancelWebsiteEdit()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="card-body">
-                <form>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Domain</label>
-                            <input type="text" placeholder="www.example.com" value="">
-                        </div>
-                        <div class="form-group">
-                            <label>Platform</label>
-                            <input type="text" placeholder="WordPress, Shopify, etc." value="">
-                        </div>
-                        <div class="form-group">
-                            <label>SSL Status</label>
-                            <select>
-                                <option>Active</option>
-                                <option>Inactive</option>
-                                <option>Unknown</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                </form>
-            </div>
-        </div>
-    `;
-} else {
-    console.error('website-config container not found!');
-}
+        `;
+    } else {
+        console.error('website-config container not found!');
+    }
 
-// Also check for analytics container
-const analyticsContent = document.getElementById('website-analytics');
-if (analyticsContent) {
-    console.log('Found website-analytics container, inserting content...');
-    analyticsContent.innerHTML = `
-        <div class="card">
-            <div class="card-header">
-                <h3>Website Analytics</h3>
-            </div>
-            <div class="card-body">
-                <div class="analytics-grid">
-                    <div class="metric-card">
-                        <div class="metric-value">0</div>
-                        <div class="metric-label">Monthly Visitors</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value">0</div>
-                        <div class="metric-label">Page Views</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value">0%</div>
-                        <div class="metric-label">Bounce Rate</div>
+    // Insert analytics section
+    const analyticsContent = document.getElementById('website-analytics');
+    if (analyticsContent) {
+        console.log('Found website-analytics container, inserting analytics...');
+        
+        // Get analytics data if available
+        const analyticsData = window.userData?.websiteAnalytics || [];
+        const latestAnalytics = analyticsData[0] || {};
+        
+        analyticsContent.innerHTML = `
+            <div class="card">
+                <div class="card-header">
+                    <h3>Website Analytics</h3>
+                </div>
+                <div class="card-body">
+                    <div class="analytics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value">${formatNumber(latestAnalytics.monthly_visitors || 0)}</div>
+                            <div class="metric-label">Monthly Visitors</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">${formatNumber(latestAnalytics.monthly_pageviews || 0)}</div>
+                            <div class="metric-label">Page Views</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">${latestAnalytics.bounce_rate || 0}%</div>
+                            <div class="metric-label">Bounce Rate</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">${latestAnalytics.seo_score || 0}</div>
+                            <div class="metric-label">SEO Score</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    `;
+        `;
+    }
 }
+
+// Helper function to format numbers
+function formatNumber(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+// Toggle edit mode
+function toggleWebsiteEdit() {
+    const form = document.getElementById('website-config-form');
+    const inputs = form.querySelectorAll('input, select');
+    const actions = form.querySelector('.form-actions');
+    const editBtn = form.closest('.card').querySelector('.btn-edit');
+    
+    const isEditing = !inputs[0].disabled;
+    
+    inputs.forEach(input => {
+        input.disabled = isEditing;
+    });
+    
+    actions.style.display = isEditing ? 'none' : 'flex';
+    editBtn.innerHTML = isEditing ? '<i class="fas fa-edit"></i> Edit' : '<i class="fas fa-save"></i> Editing';
+}
+
+// Cancel edit
+function cancelWebsiteEdit() {
+    // Re-insert content with original data
+    const websiteData = window.userData?.websiteInfo || {};
+    insertWebsiteContent(websiteData);
+}
+
+// Make functions globally available
+window.toggleWebsiteEdit = toggleWebsiteEdit;
+window.cancelWebsiteEdit = cancelWebsiteEdit;
+window.insertWebsiteContent = insertWebsiteContent;
 
 console.log('Website section initialization complete');
