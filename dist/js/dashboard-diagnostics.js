@@ -78,9 +78,8 @@ async function testDashboard() {
     const tables = [
         'website_info',
         'website_analytics',
-        'reputation_management',
-        'directory_citations',
         'online_reputation',
+        'directory_citations',
         'reviews'
     ];
     
@@ -219,12 +218,8 @@ function showTableCreationInstructions() {
             console.log('- docs/website_tables.sql');
         }
         
-        if (missingTables.includes('reputation_management') || missingTables.includes('directory_citations')) {
-            console.log('- docs/reputation_setup_with_data.sql');
-        }
-        
-        if (missingTables.includes('online_reputation') || missingTables.includes('reviews')) {
-            console.log('- Create online_reputation and reviews tables');
+        if (missingTables.includes('online_reputation') || missingTables.includes('reviews') || missingTables.includes('directory_citations')) {
+            console.log('- docs/reputation_setup_with_data.sql or docs/online_reputation_tables.sql');
         }
     }
 }
