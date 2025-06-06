@@ -157,7 +157,7 @@ function insertWebsiteContent(websiteData) {
                             </div>
                         </div>
                         <div class="form-actions" style="display: none;">
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="button" class="btn btn-primary" onclick="saveWebsiteConfig()">Save Changes</button>
                             <button type="button" class="btn btn-secondary" onclick="cancelWebsiteEdit()">Cancel</button>
                         </div>
                     </form>
@@ -236,9 +236,94 @@ function cancelWebsiteEdit() {
     insertWebsiteContent(websiteData);
 }
 
+// Save website configuration
+async function saveWebsiteConfig() {
+    console.log('Saving website configuration...');
+    
+    const form = document.getElementById('website-config-form');
+    if (!form) {
+        console.error('Website config form not found');
+        return;
+    }
+    
+    // Get form data
+    const formData = new FormData(form);
+    const updates = {
+        website_url: formData.get('website_url') || null,
+        primary_domain: formData.get('primary_domain') || null,
+        platform: formData.get('platform') || null,
+        ssl_status: formData.get('ssl_status') || 'Unknown',
+        mobile_responsive: formData.get('mobile_responsive') || 'Unknown',
+        analytics_id: formData.get('analytics_id') || null,
+        updated_at: new Date().toISOString()
+    };
+    
+    console.log('Updates to save:', updates);
+    
+    try {
+        // Get the current website info ID if it exists
+        const websiteData = window.userData?.websiteInfo || {};
+        
+        if (websiteData.id) {
+            // Update existing record
+            console.log('Updating existing website record:', websiteData.id);
+            const { data, error } = await window.supabase
+                .from('website_info')
+                .update(updates)
+                .eq('id', websiteData.id);
+                
+            if (error) throw error;
+            console.log('Update successful:', data);
+        } else {
+            // Create new record
+            console.log('Creating new website record');
+            updates.client_id = window.clientId;
+            
+            const { data, error } = await window.supabase
+                .from('website_info')
+                .insert(updates)
+                .select()
+                .single();
+                
+            if (error) throw error;
+            console.log('Insert successful:', data);
+            
+            // Store the new ID
+            if (data) {
+                window.userData.websiteInfo = { ...window.userData.websiteInfo, id: data.id };
+            }
+        }
+        
+        // Update local cache
+        window.userData.websiteInfo = { ...window.userData.websiteInfo, ...updates };
+        
+        // Update UI to show saved values
+        insertWebsiteContent(window.userData.websiteInfo);
+        
+        // Show success notification
+        if (window.showNotification) {
+            window.showNotification('Website configuration saved successfully!', 'success');
+        }
+        
+    } catch (error) {
+        console.error('Save failed:', error);
+        console.error('Error details:', {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code
+        });
+        
+        if (window.showNotification) {
+            window.showNotification('Failed to save: ' + (error.message || 'Unknown error'), 'error');
+        }
+    }
+}
+
 // Make functions globally available
 window.toggleWebsiteEdit = toggleWebsiteEdit;
 window.cancelWebsiteEdit = cancelWebsiteEdit;
 window.insertWebsiteContent = insertWebsiteContent;
+window.saveWebsiteConfig = saveWebsiteConfig;
 
 console.log('Website section initialization complete');

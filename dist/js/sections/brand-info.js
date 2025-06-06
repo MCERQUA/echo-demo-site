@@ -406,18 +406,9 @@ async function saveContactInfo() {
         }
     });
     
-    // Handle complex fields
-    // For headquarters_address - just save as a string for now
-    const addressInput = document.getElementById('headquarters_address');
-    if (addressInput && addressInput.value.trim()) {
-        formData.headquarters_address = addressInput.value.trim();
-    }
-    
-    // For business_hours - just save as a string for now
-    const hoursInput = document.getElementById('business_hours');
-    if (hoursInput && hoursInput.value.trim()) {
-        formData.business_hours = hoursInput.value.trim();
-    }
+    // Skip complex fields for now - they're causing 400 errors
+    // TODO: Handle headquarters_address and business_hours properly
+    console.log('Skipping complex fields (headquarters_address, business_hours) to avoid 400 error');
     
     // Add metadata
     formData.client_id = window.clientId;
@@ -426,9 +417,28 @@ async function saveContactInfo() {
     console.log('Form data to save:', formData);
     
     try {
-        const { data, error } = await window.supabase
-            .from('contact_info')
-            .upsert(formData);
+        // Check if we have an existing contact_info record
+        const existingData = window.userData?.contactInfo || {};
+        
+        let result;
+        if (existingData.id) {
+            // Update existing record
+            console.log('Updating existing contact record:', existingData.id);
+            result = await window.supabase
+                .from('contact_info')
+                .update(formData)
+                .eq('id', existingData.id);
+        } else {
+            // Insert new record
+            console.log('Creating new contact record');
+            result = await window.supabase
+                .from('contact_info')
+                .insert(formData)
+                .select()
+                .single();
+        }
+        
+        const { data, error } = result;
         
         if (error) {
             console.error('Save error details:', error.message, error.details, error.hint);
@@ -437,11 +447,16 @@ async function saveContactInfo() {
         
         console.log('Save successful:', data);
         
+        // If it was an insert, store the new ID
+        if (data && !existingData.id) {
+            window.userData.contactInfo = { ...window.userData.contactInfo, id: data.id };
+        }
+        
         // Update local data
         window.userData.contactInfo = { ...window.userData.contactInfo, ...formData };
         
-        // Update displays with new values
-        [...simpleFields, 'headquarters_address', 'business_hours'].forEach(field => {
+        // Update displays with new values (only simple fields)
+        simpleFields.forEach(field => {
             const display = document.getElementById(field + '_display');
             if (display) {
                 display.textContent = formData[field] || 'Click Edit to add';
@@ -500,9 +515,91 @@ window.toggleContactEditMode = function() {
     }
 };
 
+// Save function for business_info section
+async function saveSection(tableName) {
+    console.log(`Saving ${tableName} section...`);
+    
+    if (tableName === 'business_info') {
+        await saveBusinessInfo();
+    } else if (tableName === 'contact_info') {
+        await saveContactInfo();
+    }
+}
+
+// Save business info
+async function saveBusinessInfo() {
+    console.log('Saving business information...');
+    
+    // Collect data from all editable fields
+    const fields = document.querySelectorAll('[data-table="business_info"][data-field]');
+    const formData = {};
+    
+    fields.forEach(field => {
+        const fieldName = field.dataset.field;
+        const value = field.textContent.trim();
+        if (value && value !== 'Click Edit to add') {
+            formData[fieldName] = value;
+        }
+    });
+    
+    // Add metadata
+    formData.client_id = window.clientId;
+    formData.updated_at = new Date().toISOString();
+    
+    console.log('Business info to save:', formData);
+    
+    try {
+        const existingData = window.userData?.businessInfo || {};
+        
+        let result;
+        if (existingData.id) {
+            // Update existing record
+            console.log('Updating existing business record:', existingData.id);
+            result = await window.supabase
+                .from('business_info')
+                .update(formData)
+                .eq('id', existingData.id);
+        } else {
+            // Insert new record
+            console.log('Creating new business record');
+            result = await window.supabase
+                .from('business_info')
+                .insert(formData)
+                .select()
+                .single();
+        }
+        
+        const { data, error } = result;
+        
+        if (error) {
+            console.error('Save error:', error.message, error.details);
+            throw error;
+        }
+        
+        console.log('Business info saved successfully:', data);
+        
+        // Update local cache
+        if (data && !existingData.id) {
+            window.userData.businessInfo = { ...window.userData.businessInfo, id: data.id };
+        }
+        window.userData.businessInfo = { ...window.userData.businessInfo, ...formData };
+        
+        if (window.showNotification) {
+            window.showNotification('Business information saved successfully!', 'success');
+        }
+    } catch (error) {
+        console.error('Failed to save business info:', error);
+        if (window.showNotification) {
+            window.showNotification('Failed to save: ' + (error.message || 'Unknown error'), 'error');
+        }
+    }
+}
+
 // Make functions global for tab switching and edit mode
 window.showTab = showTab;
 window.toggleBrandEditMode = toggleBrandEditMode;
 window.loadBrandData = loadBrandData;
 window.populateContactInfoTab = populateContactInfoTab;
 window.saveContactInfo = saveContactInfo;
+window.saveSection = saveSection;
+window.saveBusinessInfo = saveBusinessInfo;
