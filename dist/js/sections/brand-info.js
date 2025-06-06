@@ -19,6 +19,12 @@ async function initBrandInfo() {
     
     // Set up tab functionality if tabs exist
     setupTabs();
+    
+    // If we're on the contact-info tab, populate it
+    const activeTab = document.querySelector('.tab-button.active');
+    if (activeTab && activeTab.textContent.includes('Contact')) {
+        setTimeout(() => populateContactInfoTab(), 100);
+    }
 }
 
 async function loadBrandData() {
@@ -171,6 +177,15 @@ async function showTab(tabName) {
                 setTimeout(() => {
                     loadBrandData();
                     setupFieldClickHandlers();
+                    
+                    // Initialize tab-specific modules
+                    if (tabName === 'contact-info') {
+                        // Load contact info data into the form
+                        populateContactInfoTab();
+                        if (window.initContactInfo) {
+                            window.initContactInfo();
+                        }
+                    }
                 }, 100);
                 
                 console.log(`Loaded ${tabName} tab successfully`);
@@ -256,7 +271,166 @@ function toggleBrandEditMode(section) {
     }
 }
 
+// Function to populate contact info tab with actual data
+function populateContactInfoTab() {
+    console.log('Populating contact info tab');
+    
+    // Get the pre-loaded contact data
+    const contactData = window.userData?.contactInfo || {};
+    console.log('Contact data to populate:', contactData);
+    
+    // Fields to populate
+    const fields = [
+        'primary_phone',
+        'secondary_phone', 
+        'primary_email',
+        'support_email',
+        'headquarters_address',
+        'business_hours',
+        'website_url',
+        'linkedin_url',
+        'facebook_url',
+        'twitter_url',
+        'instagram_url',
+        'youtube_url'
+    ];
+    
+    // Populate each field
+    fields.forEach(field => {
+        // Update the display span
+        const display = document.getElementById(field + '_display');
+        if (display && contactData[field]) {
+            display.textContent = contactData[field];
+            console.log(`Set ${field}_display to:`, contactData[field]);
+        }
+        
+        // Update the input value
+        const input = document.getElementById(field);
+        if (input && contactData[field]) {
+            input.value = contactData[field];
+            console.log(`Set ${field} input to:`, contactData[field]);
+        }
+    });
+    
+    // Special handling for address fields if they're stored separately
+    if (contactData.address_line1 || contactData.city || contactData.state || contactData.postal_code) {
+        const fullAddress = [
+            contactData.address_line1,
+            contactData.address_line2,
+            [contactData.city, contactData.state].filter(Boolean).join(', '),
+            contactData.postal_code,
+            contactData.country
+        ].filter(Boolean).join('\n');
+        
+        const addressDisplay = document.getElementById('headquarters_address_display');
+        const addressInput = document.getElementById('headquarters_address');
+        
+        if (addressDisplay && fullAddress) {
+            addressDisplay.textContent = fullAddress;
+        }
+        if (addressInput && fullAddress) {
+            addressInput.value = fullAddress;
+        }
+    }
+}
+
+// Enhanced save function for contact info
+async function saveContactInfo() {
+    console.log('Saving contact information...');
+    
+    const formData = {};
+    const fields = [
+        'primary_phone',
+        'secondary_phone',
+        'primary_email',
+        'support_email',
+        'headquarters_address',
+        'business_hours',
+        'website_url',
+        'linkedin_url',
+        'facebook_url',
+        'twitter_url',
+        'instagram_url',
+        'youtube_url'
+    ];
+    
+    // Collect all field values
+    fields.forEach(field => {
+        const input = document.getElementById(field);
+        if (input) {
+            formData[field] = input.value || null;
+        }
+    });
+    
+    // Add metadata
+    formData.client_id = window.clientId;
+    formData.updated_at = new Date().toISOString();
+    
+    try {
+        const { error } = await window.supabase
+            .from('contact_info')
+            .upsert(formData);
+        
+        if (error) throw error;
+        
+        // Update local data
+        window.userData.contactInfo = { ...window.userData.contactInfo, ...formData };
+        
+        // Update displays with new values
+        fields.forEach(field => {
+            const display = document.getElementById(field + '_display');
+            if (display) {
+                display.textContent = formData[field] || 'Click Edit to add';
+            }
+        });
+        
+        if (window.showNotification) {
+            window.showNotification('Contact information saved successfully!', 'success');
+        }
+    } catch (error) {
+        console.error('Error saving contact info:', error);
+        if (window.showNotification) {
+            window.showNotification('Error saving contact information', 'error');
+        }
+    }
+}
+
+// Override the toggle function from the HTML
+window.toggleContactEditMode = function() {
+    const editButton = document.querySelector('.edit-button');
+    const cards = document.querySelectorAll('.section-card');
+    
+    const isEditMode = editButton.textContent === 'Edit';
+    
+    if (isEditMode) {
+        // Enter edit mode
+        cards.forEach(card => card.classList.add('edit-mode'));
+        editButton.textContent = 'Save';
+        editButton.classList.add('btn-success');
+        editButton.classList.remove('btn-secondary');
+        
+        // Show all inputs, hide displays
+        document.querySelectorAll('.field-value').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.field-input').forEach(el => el.style.display = 'block');
+    } else {
+        // Exit edit mode and save
+        cards.forEach(card => card.classList.remove('edit-mode'));
+        editButton.textContent = 'Edit';
+        editButton.classList.remove('btn-success');
+        editButton.classList.add('btn-secondary');
+        
+        // Hide inputs, show displays
+        document.querySelectorAll('.field-value').forEach(el => el.style.display = 'block');
+        document.querySelectorAll('.field-input').forEach(el => el.style.display = 'none');
+        
+        // Save the data
+        saveContactInfo();
+    }
+};
+
 // Make functions global for tab switching and edit mode
 window.showTab = showTab;
 window.toggleBrandEditMode = toggleBrandEditMode;
 window.loadBrandData = loadBrandData;
+window.populateContactInfoTab = populateContactInfoTab;
+window.saveContactInfo = saveContactInfo;
