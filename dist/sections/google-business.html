@@ -3,13 +3,8 @@
     <p>Manage your Google Business listing and local search presence.</p>
 </div>
 
-<!-- Google Business Content Container -->
-<div id="google-business-content">
-    <!-- Content will be inserted here by dashboard-google-business.js -->
-</div>
-
-<!-- Legacy content (hidden) -->
-<div class="info-grid" style="display: none;">
+<!-- Google Business Info -->
+<div class="info-grid">
     <div class="info-card">
         <h3>Business Information</h3>
         <div class="info-item">
@@ -72,19 +67,154 @@
 </div>
 
 <div class="quick-actions">
-    <button class="action-button">
+    <button class="action-button" disabled>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>
         </svg>
         Connect Google Account
+        <span class="badge">Coming Soon</span>
     </button>
-    <button class="action-button secondary">
+    <button class="action-button secondary" disabled>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 20h9"/>
             <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
         </svg>
         Update Business Info
+        <span class="badge">Coming Soon</span>
     </button>
 </div>
-<\!-- Load the dashboard-google-business.js script -->
-<script src="js/dashboard-google-business.js"></script>
+
+<style>
+/* Coming Soon Badge Styles */
+.badge {
+    display: inline-block;
+    background: #f97316;
+    color: white;
+    font-size: 0.625rem;
+    font-weight: 600;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    margin-left: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    vertical-align: middle;
+}
+
+/* Disabled Button Styles */
+button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed !important;
+}
+
+button:disabled:hover {
+    background: var(--primary) !important;
+    transform: none !important;
+}
+
+.action-button.secondary:disabled:hover {
+    background: var(--surface) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border) !important;
+}
+
+/* Google Business Page Styles */
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.info-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.info-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.info-value {
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.quick-actions {
+    margin-top: 2rem;
+}
+
+.action-button {
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.875rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.action-button:hover {
+    background: var(--primary-dark);
+}
+
+.action-button.secondary {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.action-button.secondary:hover {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+@media (min-width: 768px) {
+    .info-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 576px) {
+    .quick-actions {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .action-button {
+        flex: 1;
+        margin-bottom: 0;
+    }
+}
+</style>
+<!-- Google Business functionality coming soon -->

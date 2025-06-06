@@ -4,23 +4,19 @@
     <p>Connect and manage all your social media accounts in one place.</p>
 </div>
 
-<!-- Social Media Content Container -->
-<div id="social-media-content">
-    <!-- Content will be inserted here by dashboard-social-media.js -->
-</div>
-
-<!-- Legacy content (hidden) -->
-<div class="social-overview-grid" style="display: none;">
+<!-- Social Media Overview -->
+<div class="social-overview-grid">
     <div class="social-card">
         <div class="card-header">
             <h3>Connected Accounts</h3>
-            <button class="btn-primary" onclick="connectAccount()">
+            <button class="btn-primary" onclick="connectAccount()" disabled>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
                     <polyline points="15 3 21 3 21 9"/>
                     <line x1="10" y1="14" x2="21" y2="3"/>
                 </svg>
                 Connect Account
+                <span class="badge">Coming Soon</span>
             </button>
         </div>
         <div class="social-accounts-list">
@@ -36,7 +32,7 @@
                         <span class="connection-status">Not connected</span>
                     </div>
                 </div>
-                <button class="connect-btn">Connect</button>
+                <button class="connect-btn" disabled>Connect <span class="badge-small">Soon</span></button>
             </div>
             
             <div class="social-account-item">
@@ -51,7 +47,7 @@
                         <span class="connection-status">Not connected</span>
                     </div>
                 </div>
-                <button class="connect-btn">Connect</button>
+                <button class="connect-btn" disabled>Connect <span class="badge-small">Soon</span></button>
             </div>
             
             <div class="social-account-item">
@@ -66,7 +62,7 @@
                         <span class="connection-status">Not connected</span>
                     </div>
                 </div>
-                <button class="connect-btn">Connect</button>
+                <button class="connect-btn" disabled>Connect <span class="badge-small">Soon</span></button>
             </div>
             
             <div class="social-account-item">
@@ -81,7 +77,7 @@
                         <span class="connection-status">Not connected</span>
                     </div>
                 </div>
-                <button class="connect-btn">Connect</button>
+                <button class="connect-btn" disabled>Connect <span class="badge-small">Soon</span></button>
             </div>
         </div>
     </div>
@@ -148,31 +144,84 @@
 <div class="quick-actions">
     <h2>Quick Actions</h2>
     <div class="action-buttons">
-        <button class="action-button" onclick="connectAccount()">
+        <button class="action-button" onclick="connectAccount()" disabled>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
                 <polyline points="15 3 21 3 21 9"/>
                 <line x1="10" y1="14" x2="21" y2="3"/>
             </svg>
             Connect Account
+            <span class="badge">Coming Soon</span>
         </button>
-        <button class="action-button secondary" onclick="createPost()">
+        <button class="action-button secondary" onclick="createPost()" disabled>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="12" y1="5" x2="12" y2="19"/>
                 <line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
             Create Post
+            <span class="badge">Coming Soon</span>
         </button>
-        <button class="action-button secondary" onclick="viewAnalytics()">
+        <button class="action-button secondary" onclick="viewAnalytics()" disabled>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
             </svg>
             View Analytics
+            <span class="badge">Coming Soon</span>
         </button>
     </div>
 </div>
 
 <style>
+/* Coming Soon Badge Styles */
+.badge {
+    display: inline-block;
+    background: #f97316;
+    color: white;
+    font-size: 0.625rem;
+    font-weight: 600;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    margin-left: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    vertical-align: middle;
+}
+
+.badge-small {
+    display: inline-block;
+    background: #f97316;
+    color: white;
+    font-size: 0.5rem;
+    font-weight: 600;
+    padding: 0.125rem 0.375rem;
+    border-radius: 10px;
+    margin-left: 0.375rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    vertical-align: middle;
+}
+
+/* Disabled Button Styles */
+button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed !important;
+}
+
+button:disabled:hover {
+    background: var(--primary) !important;
+    transform: none !important;
+}
+
+.connect-btn:disabled:hover {
+    background: var(--primary) !important;
+}
+
+.action-button.secondary:disabled:hover {
+    background: var(--surface) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border) !important;
+}
+
 /* Social Media Page - Mobile First */
 .social-overview-grid {
     display: flex;
@@ -526,5 +575,4 @@ window.createPost = createPost;
 window.viewAnalytics = viewAnalytics;
 </script>
 
-<\!-- Load the dashboard-social-media.js script -->
-<script src="js/dashboard-social-media.js"></script>
+<!-- Social Media functionality coming soon -->
