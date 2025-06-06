@@ -297,18 +297,51 @@ function populateContactInfoTab() {
     
     // Populate each field
     fields.forEach(field => {
+        let value = contactData[field];
+        
+        // Handle complex fields that might be objects
+        if (value && typeof value === 'object') {
+            console.log(`Field ${field} is an object:`, value);
+            
+            if (field === 'headquarters_address') {
+                // Convert address object to string
+                value = [
+                    value.street || value.address_line1,
+                    value.address_line2,
+                    [value.city, value.state].filter(Boolean).join(', '),
+                    value.postal_code || value.zip,
+                    value.country
+                ].filter(Boolean).join('\n');
+            } else if (field === 'business_hours') {
+                // Convert hours object to string
+                if (value.monday || value.tuesday || value.wednesday) {
+                    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+                    value = days
+                        .map(day => value[day] ? `${day.charAt(0).toUpperCase() + day.slice(1)}: ${value[day]}` : null)
+                        .filter(Boolean)
+                        .join('\n');
+                } else {
+                    // If it's already a string, use it as is
+                    value = typeof value === 'string' ? value : JSON.stringify(value);
+                }
+            } else {
+                // For other objects, convert to string
+                value = JSON.stringify(value);
+            }
+        }
+        
         // Update the display span
         const display = document.getElementById(field + '_display');
-        if (display && contactData[field]) {
-            display.textContent = contactData[field];
-            console.log(`Set ${field}_display to:`, contactData[field]);
+        if (display && value) {
+            display.textContent = value;
+            console.log(`Set ${field}_display to:`, value);
         }
         
         // Update the input value
         const input = document.getElementById(field);
-        if (input && contactData[field]) {
-            input.value = contactData[field];
-            console.log(`Set ${field} input to:`, contactData[field]);
+        if (input && value) {
+            input.value = value;
+            console.log(`Set ${field} input to:`, value);
         }
     });
     
@@ -339,13 +372,13 @@ async function saveContactInfo() {
     console.log('Saving contact information...');
     
     const formData = {};
-    const fields = [
+    
+    // Simple text fields that can be saved directly
+    const simpleFields = [
         'primary_phone',
         'secondary_phone',
         'primary_email',
         'support_email',
-        'headquarters_address',
-        'business_hours',
         'website_url',
         'linkedin_url',
         'facebook_url',
@@ -354,30 +387,61 @@ async function saveContactInfo() {
         'youtube_url'
     ];
     
-    // Collect all field values
-    fields.forEach(field => {
+    // Complex fields that need special handling
+    const complexFields = [
+        'headquarters_address',
+        'business_hours'
+    ];
+    
+    // Collect simple field values
+    simpleFields.forEach(field => {
         const input = document.getElementById(field);
         if (input) {
-            formData[field] = input.value || null;
+            const value = input.value.trim();
+            if (value) {
+                formData[field] = value;
+            } else {
+                formData[field] = null;
+            }
         }
     });
+    
+    // Handle complex fields
+    // For headquarters_address - just save as a string for now
+    const addressInput = document.getElementById('headquarters_address');
+    if (addressInput && addressInput.value.trim()) {
+        formData.headquarters_address = addressInput.value.trim();
+    }
+    
+    // For business_hours - just save as a string for now
+    const hoursInput = document.getElementById('business_hours');
+    if (hoursInput && hoursInput.value.trim()) {
+        formData.business_hours = hoursInput.value.trim();
+    }
     
     // Add metadata
     formData.client_id = window.clientId;
     formData.updated_at = new Date().toISOString();
     
+    console.log('Form data to save:', formData);
+    
     try {
-        const { error } = await window.supabase
+        const { data, error } = await window.supabase
             .from('contact_info')
             .upsert(formData);
         
-        if (error) throw error;
+        if (error) {
+            console.error('Save error details:', error.message, error.details, error.hint);
+            throw error;
+        }
+        
+        console.log('Save successful:', data);
         
         // Update local data
         window.userData.contactInfo = { ...window.userData.contactInfo, ...formData };
         
         // Update displays with new values
-        fields.forEach(field => {
+        [...simpleFields, 'headquarters_address', 'business_hours'].forEach(field => {
             const display = document.getElementById(field + '_display');
             if (display) {
                 display.textContent = formData[field] || 'Click Edit to add';
@@ -389,8 +453,16 @@ async function saveContactInfo() {
         }
     } catch (error) {
         console.error('Error saving contact info:', error);
+        console.error('Error details:', {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code
+        });
+        
         if (window.showNotification) {
-            window.showNotification('Error saving contact information', 'error');
+            const errorMsg = error.message || 'Error saving contact information';
+            window.showNotification(errorMsg, 'error');
         }
     }
 }
