@@ -183,9 +183,11 @@ window.initReputationSection = initReputationSection;
 window.showAddReviewModal = showAddReviewModal;
 window.editPlatformStats = editPlatformStats;
 
-// Add styles for reputation section
-const style = document.createElement('style');
-style.textContent = `
+// Add styles for reputation section (only once)
+if (!document.getElementById('reputation-styles')) {
+    const style = document.createElement('style');
+    style.id = 'reputation-styles';
+    style.textContent = `
     /* Reputation Section Styles */
     .reputation-stats {
         display: grid;
@@ -350,7 +352,8 @@ style.textContent = `
         cursor: not-allowed;
     }
 `;
-document.head.appendChild(style);
+    document.head.appendChild(style);
+}
 
 // Make sure the reputation functions are available globally
 if (!window.showReputationTab) {
