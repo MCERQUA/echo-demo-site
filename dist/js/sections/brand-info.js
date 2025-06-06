@@ -682,88 +682,63 @@ async function saveBusinessInfo() {
 
 // Brand Assets functionality
 async function saveBrandAssets() {
-    console.log('Saving brand assets...');
-    
-    // Get the actual record ID from pre-loaded data
-    const brandAssetsRecord = window.userData?.brandAssets;
-    const brandAssetsId = brandAssetsRecord?.id;
-    const userId = brandAssetsRecord?.user_id || window.user?.id;
-    
-    if (!brandAssetsId && !userId) {
-        console.error('No brand assets record found and no user ID');
-        if (window.showNotification) {
-            window.showNotification('Error: Unable to identify brand assets record', 'error');
-        }
-        return;
-    }
-    
-    // Collect ALL form data - check for proper input fields
-    const brandData = {
-        tagline: document.getElementById('tagline')?.value || 
-                 document.querySelector('[data-field="tagline"]')?.textContent || '',
-        brand_story: document.getElementById('brand-story')?.value || 
-                     document.querySelector('[data-field="brand_story"]')?.textContent || '',
-        mission_statement: document.getElementById('mission-statement')?.value || 
-                          document.querySelector('[data-field="mission_statement"]')?.textContent || '',
-        vision_statement: document.getElementById('vision-statement')?.value || 
-                         document.querySelector('[data-field="vision_statement"]')?.textContent || '',
-        brand_colors: getBrandColorsArray(),
-        logo_primary_url: document.getElementById('logo_primary_url')?.value || '',
-        logo_secondary_url: document.getElementById('logo_secondary_url')?.value || '',
-        logo_icon_url: document.getElementById('logo_icon_url')?.value || '',
-        updated_at: new Date().toISOString()
-    };
-    
-    console.log('Saving brand data:', brandData); // DEBUG log
-    
     try {
-        let result;
+        // Get current brand assets record from pre-loaded data
+        const brandAssetsId = window.userData?.brandAssets?.id;
         
-        if (brandAssetsId) {
-            // Update existing record using ID
-            console.log('Updating existing brand assets record:', brandAssetsId);
-            result = await window.supabase
-                .from('brand_assets')
-                .update(brandData)
-                .eq('id', brandAssetsId)
-                .select();
-        } else {
-            // Create new record if none exists
-            console.log('Creating new brand assets record for user:', userId);
-            result = await window.supabase
-                .from('brand_assets')
-                .insert({
-                    ...brandData,
-                    user_id: userId,
-                    client_id: window.clientId // Include client_id if available
-                })
-                .select();
-        }
-        
-        const { data, error } = result;
-        
-        if (error) {
-            console.error('Save error:', error);
+        if (!brandAssetsId) {
             if (window.showNotification) {
-                window.showNotification('Error saving: ' + error.message, 'error');
+                window.showNotification('No brand assets record found', 'error');
             }
             return;
         }
         
-        console.log('Save successful, returned data:', data);
+        // Collect all data including uploaded logos
+        const brandData = {
+            tagline: document.getElementById('tagline')?.value || '',
+            brand_story: document.getElementById('brand-story')?.value || '',
+            mission_statement: document.getElementById('mission-statement')?.value || '',
+            vision_statement: document.getElementById('vision-statement')?.value || '',
+            logo_primary_url: document.getElementById('logo_primary_url')?.value || '',
+            logo_secondary_url: document.getElementById('logo_secondary_url')?.value || '',
+            logo_icon_url: document.getElementById('logo_icon_url')?.value || '',
+            brand_colors: getBrandColorsArray ? getBrandColorsArray() : brandColors,
+            updated_at: new Date().toISOString()
+        };
         
-        // Update local cache with new data
+        console.log('Saving brand assets:', brandData); // DEBUG
+        
+        // Save to database
+        const { data, error } = await window.supabase
+            .from('brand_assets')
+            .update(brandData)
+            .eq('id', brandAssetsId)
+            .select()
+            .single();
+        
+        if (error) {
+            console.error('Save error:', error);
+            if (window.showNotification) {
+                window.showNotification('Save failed: ' + error.message, 'error');
+            }
+            return;
+        }
+        
+        console.log('Save successful:', data); // DEBUG
+        
+        // Update local cache
         if (window.userData) {
-            window.userData.brandAssets = data[0] || { ...window.userData.brandAssets, ...brandData };
+            window.userData.brandAssets = data;
         }
         
         if (window.showNotification) {
             window.showNotification('Brand assets saved successfully!', 'success');
         }
+        
     } catch (error) {
-        console.error('Error saving brand assets:', error);
+        console.error('Save error:', error);
         if (window.showNotification) {
-            window.showNotification('Failed to save brand assets: ' + error.message, 'error');
+            window.showNotification('Save failed: ' + error.message, 'error');
         }
     }
 }
@@ -1081,30 +1056,8 @@ async function saveInsurancePolicies() {
     }
 }
 
-// Storage bucket creation
-async function createStorageBuckets() {
-    // Create buckets for file storage
-    const buckets = ['brand-logos', 'certificates', 'brand-assets'];
-    
-    for (const bucketName of buckets) {
-        try {
-            const { data, error } = await window.supabase.storage.createBucket(bucketName, {
-                public: true,
-                allowedMimeTypes: ['image/png', 'image/jpeg', 'image/svg+xml', 'application/pdf'],
-                fileSizeLimit: 5242880 // 5MB
-            });
-            
-            if (error && !error.message.includes('already exists')) {
-                console.error(`Error creating bucket ${bucketName}:`, error);
-            } else {
-                console.log(`Bucket ${bucketName} ready`);
-            }
-        } catch (e) {
-            // Bucket might already exist
-            console.log(`Bucket ${bucketName} setup:`, e.message);
-        }
-    }
-}
+// Storage buckets are already created in Supabase
+// No need for bucket creation function
 
 // File upload functionality
 async function uploadLogo(type) {
@@ -1112,22 +1065,45 @@ async function uploadLogo(type) {
     const file = fileInput?.files[0];
     
     if (!file) {
-        console.log('No file selected');
-        return;
-    }
-    
-    // Check file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
         if (window.showNotification) {
-            window.showNotification('File too large. Max 5MB', 'error');
+            window.showNotification('Please select a file', 'error');
         }
         return;
     }
     
-    const userId = window.userData?.brandAssets?.user_id || window.user?.id;
-    const fileName = `${userId}/${type}-logo-${Date.now()}.${file.name.split('.').pop()}`;
+    // Validate file type
+    const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+        if (window.showNotification) {
+            window.showNotification('Invalid file type. Please upload PNG, JPG, SVG, or WebP', 'error');
+        }
+        return;
+    }
+    
+    // Check file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+        if (window.showNotification) {
+            window.showNotification('File too large. Maximum 5MB', 'error');
+        }
+        return;
+    }
     
     try {
+        // Get current user ID
+        const { data: { user } } = await window.supabase.auth.getUser();
+        if (!user) {
+            if (window.showNotification) {
+                window.showNotification('Not authenticated', 'error');
+            }
+            return;
+        }
+        
+        // Create file path: userId/logo-type-timestamp.extension
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${user.id}/${type}-logo-${Date.now()}.${fileExt}`;
+        
+        console.log('Uploading to:', fileName); // DEBUG
+        
         // Upload to Supabase Storage
         const { data, error } = await window.supabase.storage
             .from('brand-logos')
@@ -1136,14 +1112,22 @@ async function uploadLogo(type) {
                 upsert: true
             });
         
-        if (error) throw error;
+        if (error) {
+            console.error('Upload error:', error);
+            if (window.showNotification) {
+                window.showNotification('Upload failed: ' + error.message, 'error');
+            }
+            return;
+        }
+        
+        console.log('Upload successful:', data); // DEBUG
         
         // Get public URL
         const { data: { publicUrl } } = window.supabase.storage
             .from('brand-logos')
             .getPublicUrl(fileName);
         
-        console.log('File uploaded, public URL:', publicUrl);
+        console.log('Public URL:', publicUrl); // DEBUG
         
         // Update preview
         const preview = document.getElementById(`logo-${type}-preview`);
@@ -1152,18 +1136,19 @@ async function uploadLogo(type) {
             preview.style.display = 'block';
         }
         
-        // Store URL in hidden input
+        // Store URL in hidden input for saving
         const urlInput = document.getElementById(`logo_${type}_url`);
         if (urlInput) {
             urlInput.value = publicUrl;
         }
         
-        // Add to uploaded files list
-        addToUploadedFiles(type, publicUrl, file.name);
+        // Add to uploaded files display
+        displayUploadedLogo(type, publicUrl, file.name);
         
         if (window.showNotification) {
-            window.showNotification('Logo uploaded successfully!', 'success');
+            window.showNotification(`${type} logo uploaded successfully!`, 'success');
         }
+        
     } catch (error) {
         console.error('Upload error:', error);
         if (window.showNotification) {
@@ -1172,18 +1157,54 @@ async function uploadLogo(type) {
     }
 }
 
-function addToUploadedFiles(type, url, filename) {
+function displayUploadedLogo(type, url, filename) {
     const container = document.getElementById('uploaded-logos');
     if (!container) return;
     
+    // Check if already displayed
+    const existing = container.querySelector(`[data-type="${type}"]`);
+    if (existing) {
+        existing.remove();
+    }
+    
     const item = document.createElement('div');
-    item.className = 'uploaded-item';
+    item.className = 'uploaded-logo-item';
+    item.setAttribute('data-type', type);
     item.innerHTML = `
-        <img src="${url}" alt="${filename}" style="max-width: 100px; margin-right: 10px;">
-        <span>${type}: ${filename}</span>
-        <button onclick="this.parentElement.remove()" class="btn btn-sm btn-danger" style="margin-left: 10px;">Remove</button>
+        <div class="logo-preview">
+            <img src="${url}" alt="${filename}">
+        </div>
+        <div class="logo-info">
+            <strong>${type.charAt(0).toUpperCase() + type.slice(1)} Logo</strong>
+            <small>${filename}</small>
+        </div>
+        <button onclick="removeLogo('${type}')" class="btn btn-sm btn-danger">Remove</button>
     `;
     container.appendChild(item);
+}
+
+function removeLogo(type) {
+    // Clear the preview and input
+    const preview = document.getElementById(`logo-${type}-preview`);
+    const urlInput = document.getElementById(`logo_${type}_url`);
+    const fileInput = document.getElementById(`logo-${type}-file`);
+    
+    if (preview) {
+        preview.src = '';
+        preview.style.display = 'none';
+    }
+    if (urlInput) {
+        urlInput.value = '';
+    }
+    if (fileInput) {
+        fileInput.value = '';
+    }
+    
+    // Remove from display
+    const item = document.querySelector(`[data-type="${type}"]`);
+    if (item) {
+        item.remove();
+    }
 }
 
 // Make functions global for tab switching and edit mode
@@ -1205,9 +1226,9 @@ window.addCertification = addCertification;
 window.removeCertification = removeCertification;
 window.loadInsurancePolicies = loadInsurancePolicies;
 window.addInsurancePolicy = addInsurancePolicy;
-window.createStorageBuckets = createStorageBuckets;
 window.uploadLogo = uploadLogo;
-window.addToUploadedFiles = addToUploadedFiles;
+window.displayUploadedLogo = displayUploadedLogo;
+window.removeLogo = removeLogo;
 window.initBrandColors = initBrandColors;
 window.renderColorPicker = renderColorPicker;
 window.addNewColor = addNewColor;

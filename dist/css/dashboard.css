@@ -1957,4 +1957,39 @@ EOF < /dev/null
     display: flex;
     gap: 0.5rem;
 }
+
+/* Uploaded logos display */
+.uploaded-logo-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.logo-preview img {
+    max-width: 80px;
+    max-height: 80px;
+    object-fit: contain;
+}
+
+.logo-info {
+    flex: 1;
+}
+
+.logo-info strong {
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.logo-info small {
+    color: var(--text-secondary);
+}
+
+#uploaded-logos {
+    margin-top: 1rem;
+}
 EOF < /dev/null
