@@ -2,18 +2,12 @@
   # This will be your default build command
   command = ""
   # This is the directory that you want to publish
-  publish = "."
+  publish = "dist"
 
 [build.environment]
   NODE_VERSION = "16"
 
-# Specific redirects for dashboard files - these should be served directly
-[[redirects]]
-  from = "/dist/*"
-  to = "/dist/:splat"
-  status = 200
-
-# Redirect other paths to homepage
+# Redirect paths to index for SPA behavior
 [[redirects]]
   from = "/*"
   to = "/index.html"
