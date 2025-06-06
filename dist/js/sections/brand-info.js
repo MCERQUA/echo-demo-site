@@ -279,92 +279,109 @@ function populateContactInfoTab() {
     const contactData = window.userData?.contactInfo || {};
     console.log('Contact data to populate:', contactData);
     
-    // Fields to populate
+    // Simple fields to populate
     const fields = [
         'primary_phone',
         'secondary_phone', 
         'primary_email',
-        'support_email',
-        'headquarters_address',
-        'business_hours',
-        'website_url',
-        'linkedin_url',
-        'facebook_url',
-        'twitter_url',
-        'instagram_url',
-        'youtube_url'
+        'secondary_email',  // DB field name
+        'website_url'
     ];
     
-    // Populate each field
+    // Social media fields are stored in social_media_links JSONB
+    const socialFields = ['linkedin', 'facebook', 'twitter', 'instagram', 'youtube'];
+    
+    // Populate each simple field
     fields.forEach(field => {
         let value = contactData[field];
+        let inputId = field;
+        let displayId = field + '_display';
         
-        // Handle complex fields that might be objects
-        if (value && typeof value === 'object') {
-            console.log(`Field ${field} is an object:`, value);
-            
-            if (field === 'headquarters_address') {
-                // Convert address object to string
-                value = [
-                    value.street || value.address_line1,
-                    value.address_line2,
-                    [value.city, value.state].filter(Boolean).join(', '),
-                    value.postal_code || value.zip,
-                    value.country
-                ].filter(Boolean).join('\n');
-            } else if (field === 'business_hours') {
-                // Convert hours object to string
-                if (value.monday || value.tuesday || value.wednesday) {
-                    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-                    value = days
-                        .map(day => value[day] ? `${day.charAt(0).toUpperCase() + day.slice(1)}: ${value[day]}` : null)
-                        .filter(Boolean)
-                        .join('\n');
-                } else {
-                    // If it's already a string, use it as is
-                    value = typeof value === 'string' ? value : JSON.stringify(value);
-                }
-            } else {
-                // For other objects, convert to string
-                value = JSON.stringify(value);
-            }
+        // Handle field mapping
+        if (field === 'secondary_email') {
+            inputId = 'support_email';
+            displayId = 'support_email_display';
         }
         
         // Update the display span
-        const display = document.getElementById(field + '_display');
-        if (display && value) {
-            display.textContent = value;
-            console.log(`Set ${field}_display to:`, value);
+        const display = document.getElementById(displayId);
+        if (display) {
+            display.textContent = value || 'Click Edit to add';
+            console.log(`Set ${displayId} to:`, value || '(empty)');
         }
         
         // Update the input value
-        const input = document.getElementById(field);
-        if (input && value) {
-            input.value = value;
-            console.log(`Set ${field} input to:`, value);
+        const input = document.getElementById(inputId);
+        if (input) {
+            input.value = value || '';
+            console.log(`Set ${inputId} input to:`, value || '(empty)');
         }
     });
     
-    // Special handling for address fields if they're stored separately
-    if (contactData.address_line1 || contactData.city || contactData.state || contactData.postal_code) {
-        const fullAddress = [
-            contactData.address_line1,
-            contactData.address_line2,
-            [contactData.city, contactData.state].filter(Boolean).join(', '),
-            contactData.postal_code,
-            contactData.country
+    // Populate social media fields from JSONB
+    const socialMediaLinks = contactData.social_media_links || {};
+    socialFields.forEach(platform => {
+        const fieldId = platform + '_url';
+        const value = socialMediaLinks[platform] || '';
+        
+        const display = document.getElementById(fieldId + '_display');
+        if (display) {
+            display.textContent = value || 'Click Edit to add';
+        }
+        
+        const input = document.getElementById(fieldId);
+        if (input) {
+            input.value = value || '';
+        }
+    });
+    
+    // Handle complex fields (headquarters_address and business_hours)
+    if (contactData.headquarters_address && typeof contactData.headquarters_address === 'object') {
+        const addr = contactData.headquarters_address;
+        const addressText = [
+            addr.street || addr.address_line1,
+            addr.address_line2,
+            [addr.city, addr.state].filter(Boolean).join(', '),
+            addr.postal_code || addr.zip,
+            addr.country
         ].filter(Boolean).join('\n');
         
-        const addressDisplay = document.getElementById('headquarters_address_display');
-        const addressInput = document.getElementById('headquarters_address');
+        const display = document.getElementById('headquarters_address_display');
+        if (display) display.textContent = addressText || 'Click Edit to add';
         
-        if (addressDisplay && fullAddress) {
-            addressDisplay.textContent = fullAddress;
-        }
-        if (addressInput && fullAddress) {
-            addressInput.value = fullAddress;
-        }
+        const input = document.getElementById('headquarters_address');
+        if (input) input.value = addressText || '';
     }
+    
+    if (contactData.business_hours && typeof contactData.business_hours === 'object') {
+        const hours = contactData.business_hours;
+        let hoursText = '';
+        
+        if (hours.monday || hours.tuesday || hours.wednesday) {
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            hoursText = days
+                .map(day => {
+                    if (hours[day]) {
+                        const dayHours = hours[day];
+                        if (dayHours.closed) {
+                            return `${day.charAt(0).toUpperCase() + day.slice(1)}: Closed`;
+                        } else if (dayHours.open && dayHours.close) {
+                            return `${day.charAt(0).toUpperCase() + day.slice(1)}: ${dayHours.open} - ${dayHours.close}`;
+                        }
+                    }
+                    return null;
+                })
+                .filter(Boolean)
+                .join('\n');
+        }
+        
+        const display = document.getElementById('business_hours_display');
+        if (display) display.textContent = hoursText || 'Click Edit to add';
+        
+        const input = document.getElementById('business_hours');
+        if (input) input.value = hoursText || '';
+    }
+    
 }
 
 // Enhanced save function for contact info
@@ -373,29 +390,24 @@ async function saveContactInfo() {
     
     const formData = {};
     
-    // Simple text fields that can be saved directly
+    // Only include fields that exist in the contact_info table
     const simpleFields = [
         'primary_phone',
         'secondary_phone',
         'primary_email',
-        'support_email',
-        'website_url',
-        'linkedin_url',
-        'facebook_url',
-        'twitter_url',
-        'instagram_url',
-        'youtube_url'
-    ];
-    
-    // Complex fields that need special handling
-    const complexFields = [
-        'headquarters_address',
-        'business_hours'
+        'secondary_email',  // Changed from support_email
+        'website_url'
     ];
     
     // Collect simple field values
     simpleFields.forEach(field => {
-        const input = document.getElementById(field);
+        // Handle field mapping for form elements
+        let inputId = field;
+        if (field === 'secondary_email') {
+            inputId = 'support_email'; // Form uses support_email, DB uses secondary_email
+        }
+        
+        const input = document.getElementById(inputId);
         if (input) {
             const value = input.value.trim();
             if (value) {
@@ -406,12 +418,27 @@ async function saveContactInfo() {
         }
     });
     
+    // Collect social media links into JSONB field
+    const socialMediaLinks = {};
+    const socialFields = ['linkedin_url', 'facebook_url', 'twitter_url', 'instagram_url', 'youtube_url'];
+    socialFields.forEach(field => {
+        const input = document.getElementById(field);
+        if (input && input.value.trim()) {
+            const platform = field.replace('_url', '');
+            socialMediaLinks[platform] = input.value.trim();
+        }
+    });
+    
+    if (Object.keys(socialMediaLinks).length > 0) {
+        formData.social_media_links = socialMediaLinks;
+    }
+    
     // Skip complex fields for now - they're causing 400 errors
     // TODO: Handle headquarters_address and business_hours properly
     console.log('Skipping complex fields (headquarters_address, business_hours) to avoid 400 error');
     
-    // Add metadata
-    formData.client_id = window.clientId;
+    // Add metadata - Note: table uses user_id, not client_id
+    formData.user_id = window.user.id;
     formData.updated_at = new Date().toISOString();
     
     console.log('Form data to save:', formData);
@@ -457,9 +484,23 @@ async function saveContactInfo() {
         
         // Update displays with new values (only simple fields)
         simpleFields.forEach(field => {
-            const display = document.getElementById(field + '_display');
+            let displayId = field + '_display';
+            if (field === 'secondary_email') {
+                displayId = 'support_email_display'; // Form uses support_email
+            }
+            const display = document.getElementById(displayId);
             if (display) {
                 display.textContent = formData[field] || 'Click Edit to add';
+            }
+        });
+        
+        // Update social media displays
+        socialFields.forEach(field => {
+            const display = document.getElementById(field + '_display');
+            if (display) {
+                const platform = field.replace('_url', '');
+                const value = socialMediaLinks[platform] || '';
+                display.textContent = value || 'Click Edit to add';
             }
         });
         

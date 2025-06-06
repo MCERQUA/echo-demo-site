@@ -13,6 +13,9 @@ window.clientId = null;
 let isMobile = window.innerWidth <= 768;
 let sidebarOpen = false;
 
+// Track loaded modules to prevent duplicates
+const loadedModules = new Set();
+
 // Check authentication and initialize
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -305,6 +308,24 @@ async function loadSection(sectionName) {
             
             // Load section JS if exists (optional)
             try {
+                // Check if module already loaded
+                if (loadedModules.has(sectionName)) {
+                    console.log(`Module ${sectionName} already loaded, skipping script load`);
+                    
+                    // Still trigger initialization for specific sections since we changed the HTML
+                    if (sectionName === 'brand-info' && window.loadBrandData) {
+                        setTimeout(() => window.loadBrandData(), 100);
+                    } else if (sectionName === 'website' && window.initWebsiteSection) {
+                        setTimeout(() => window.initWebsiteSection(), 200);
+                    } else if (sectionName === 'reputation' && window.initReputationSection) {
+                        setTimeout(() => window.initReputationSection(), 200);
+                    }
+                    return;
+                }
+                
+                // Mark module as loaded
+                loadedModules.add(sectionName);
+                
                 const script = document.createElement('script');
                 script.src = `js/sections/${sectionName}.js`;
                 script.onload = () => {
@@ -336,7 +357,11 @@ async function loadSection(sectionName) {
                         setTimeout(() => window.initializeSocialMediaManager(), 200);
                     }
                 };
-                script.onerror = () => console.log(`No JS module for ${sectionName} (this is normal)`);
+                script.onerror = () => {
+                    console.log(`No JS module for ${sectionName} (this is normal)`);
+                    // Remove from loaded modules if script failed
+                    loadedModules.delete(sectionName);
+                };
                 
                 // Remove any existing section scripts first
                 const existingScript = document.querySelector(`script[src="js/sections/${sectionName}.js"]`);
@@ -347,6 +372,8 @@ async function loadSection(sectionName) {
                 document.head.appendChild(script);
             } catch (jsError) {
                 console.log(`No JS module for ${sectionName}:`, jsError);
+                // Remove from loaded modules if error occurred
+                loadedModules.delete(sectionName);
             }
         } else {
             throw new Error(`Section not found: ${sectionName}`);
