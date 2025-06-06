@@ -180,6 +180,21 @@ async function loadUserData() {
             console.log('Loaded reputation data:', reputationData);
         }
         
+        // Load reviews
+        const { data: reviewsData, error: reviewsError } = await window.supabase
+            .from('reviews')
+            .select('*')
+            .eq('client_id', window.clientId)
+            .order('review_date', { ascending: false })
+            .limit(10);
+        
+        if (reviewsError && reviewsError.code !== 'PGRST116') {
+            console.error('Error loading reviews:', reviewsError);
+        } else if (reviewsData) {
+            window.userData.reviews = reviewsData || [];
+            console.log('Loaded reviews:', reviewsData);
+        }
+        
         console.log('User data loaded successfully:', window.userData);
         
     } catch (error) {
