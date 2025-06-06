@@ -395,19 +395,13 @@ async function saveContactInfo() {
         'primary_phone',
         'secondary_phone',
         'primary_email',
-        'secondary_email',  // Changed from support_email
+        'support_email',  // Database has support_email column
         'website_url'
     ];
     
     // Collect simple field values
     simpleFields.forEach(field => {
-        // Handle field mapping for form elements
-        let inputId = field;
-        if (field === 'secondary_email') {
-            inputId = 'support_email'; // Form uses support_email, DB uses secondary_email
-        }
-        
-        const input = document.getElementById(inputId);
+        const input = document.getElementById(field);
         if (input) {
             const value = input.value.trim();
             if (value) {
@@ -420,22 +414,57 @@ async function saveContactInfo() {
     
     // Collect social media links into JSONB field
     const socialMediaLinks = {};
-    const socialFields = ['linkedin_url', 'facebook_url', 'twitter_url', 'instagram_url', 'youtube_url'];
-    socialFields.forEach(field => {
-        const input = document.getElementById(field);
+    const socialFields = ['linkedin', 'facebook', 'twitter', 'instagram', 'youtube'];
+    socialFields.forEach(platform => {
+        const input = document.getElementById(platform + '_url');
         if (input && input.value.trim()) {
-            const platform = field.replace('_url', '');
             socialMediaLinks[platform] = input.value.trim();
         }
     });
     
-    if (Object.keys(socialMediaLinks).length > 0) {
-        formData.social_media_links = socialMediaLinks;
+    // Always include social_media_links, even if empty
+    formData.social_media_links = socialMediaLinks;
+    
+    // Handle headquarters_address as JSONB
+    const addressInput = document.getElementById('headquarters_address');
+    if (addressInput && addressInput.value.trim()) {
+        const addressLines = addressInput.value.trim().split('\n');
+        formData.headquarters_address = {
+            street: addressLines[0] || '',
+            city_state_zip: addressLines[1] || '',
+            country: addressLines[2] || 'USA'
+        };
     }
     
-    // Skip complex fields for now - they're causing 400 errors
-    // TODO: Handle headquarters_address and business_hours properly
-    console.log('Skipping complex fields (headquarters_address, business_hours) to avoid 400 error');
+    // Handle business_hours as JSONB
+    const hoursInput = document.getElementById('business_hours');
+    if (hoursInput && hoursInput.value.trim()) {
+        const hoursLines = hoursInput.value.trim().split('\n');
+        const businessHours = {};
+        
+        hoursLines.forEach(line => {
+            const match = line.match(/^(\w+)(?:\s*-\s*\w+)?:\s*(.+)$/i);
+            if (match) {
+                const day = match[1].toLowerCase();
+                const hours = match[2].trim();
+                if (hours.toLowerCase() === 'closed') {
+                    businessHours[day] = { closed: true };
+                } else {
+                    const timeMatch = hours.match(/(\d{1,2}:\d{2}\s*[AP]M)\s*-\s*(\d{1,2}:\d{2}\s*[AP]M)/i);
+                    if (timeMatch) {
+                        businessHours[day] = {
+                            open: timeMatch[1],
+                            close: timeMatch[2]
+                        };
+                    }
+                }
+            }
+        });
+        
+        if (Object.keys(businessHours).length > 0) {
+            formData.business_hours = businessHours;
+        }
+    }
     
     // Add metadata - Note: table uses user_id, not client_id
     formData.user_id = window.user.id;
@@ -482,27 +511,42 @@ async function saveContactInfo() {
         // Update local data
         window.userData.contactInfo = { ...window.userData.contactInfo, ...formData };
         
-        // Update displays with new values (only simple fields)
+        // Update displays with new values
         simpleFields.forEach(field => {
-            let displayId = field + '_display';
-            if (field === 'secondary_email') {
-                displayId = 'support_email_display'; // Form uses support_email
-            }
-            const display = document.getElementById(displayId);
+            const display = document.getElementById(field + '_display');
             if (display) {
                 display.textContent = formData[field] || 'Click Edit to add';
             }
         });
         
         // Update social media displays
-        socialFields.forEach(field => {
-            const display = document.getElementById(field + '_display');
+        socialFields.forEach(platform => {
+            const display = document.getElementById(platform + '_url_display');
             if (display) {
-                const platform = field.replace('_url', '');
                 const value = socialMediaLinks[platform] || '';
                 display.textContent = value || 'Click Edit to add';
             }
         });
+        
+        // Update address display
+        const addressDisplay = document.getElementById('headquarters_address_display');
+        if (addressDisplay && formData.headquarters_address) {
+            const addr = formData.headquarters_address;
+            addressDisplay.textContent = [addr.street, addr.city_state_zip, addr.country].filter(Boolean).join('\n');
+        }
+        
+        // Update hours display
+        const hoursDisplay = document.getElementById('business_hours_display');
+        if (hoursDisplay && formData.business_hours) {
+            const hoursText = Object.entries(formData.business_hours)
+                .map(([day, hours]) => {
+                    const dayName = day.charAt(0).toUpperCase() + day.slice(1);
+                    if (hours.closed) return `${dayName}: Closed`;
+                    return `${dayName}: ${hours.open} - ${hours.close}`;
+                })
+                .join('\n');
+            hoursDisplay.textContent = hoursText;
+        }
         
         if (window.showNotification) {
             window.showNotification('Contact information saved successfully!', 'success');
@@ -636,6 +680,344 @@ async function saveBusinessInfo() {
     }
 }
 
+// Brand Assets functionality
+async function saveBrandAssets() {
+    console.log('Saving brand assets...');
+    
+    const brandData = {
+        logo_primary_url: document.getElementById('logo_primary_url')?.value || '',
+        logo_secondary_url: document.getElementById('logo_secondary_url')?.value || '',
+        logo_icon_url: document.getElementById('logo_icon_url')?.value || '',
+        brand_colors: getBrandColorsArray(),
+        tagline: document.querySelector('[data-field="tagline"]')?.textContent || '',
+        brand_story: document.querySelector('[data-field="brand_story"]')?.textContent || '',
+        mission_statement: document.querySelector('[data-field="mission_statement"]')?.textContent || '',
+        vision_statement: document.querySelector('[data-field="vision_statement"]')?.textContent || ''
+    };
+    
+    try {
+        const { error } = await window.supabase
+            .from('brand_assets')
+            .upsert({
+                ...brandData,
+                user_id: window.user.id,
+                updated_at: new Date().toISOString()
+            })
+            .eq('user_id', window.user.id);
+            
+        if (error) throw error;
+        
+        console.log('Brand assets saved successfully');
+        if (window.showNotification) {
+            window.showNotification('Brand assets saved successfully!', 'success');
+        }
+    } catch (error) {
+        console.error('Error saving brand assets:', error);
+        if (window.showNotification) {
+            window.showNotification('Failed to save brand assets', 'error');
+        }
+    }
+}
+
+// Color picker functionality
+let brandColors = [];
+
+function initColorPicker() {
+    const colorPalette = document.getElementById('brand-colors');
+    if (!colorPalette) return;
+    
+    const addButton = colorPalette.querySelector('.color-add');
+    if (addButton) {
+        addButton.onclick = addColorSwatch;
+    }
+    
+    // Load existing colors
+    const existingColors = window.userData?.brandAssets?.brand_colors || [];
+    brandColors = existingColors;
+    renderColorSwatches();
+}
+
+function addColorSwatch() {
+    const colorId = Date.now();
+    const newColor = {
+        id: colorId,
+        name: '',
+        hex: '#1D4ED8',
+        rgb: hexToRgb('#1D4ED8'),
+        cmyk: rgbToCmyk(29, 78, 216)
+    };
+    
+    brandColors.push(newColor);
+    renderColorSwatches();
+}
+
+function renderColorSwatches() {
+    const colorPalette = document.getElementById('brand-colors');
+    if (!colorPalette) return;
+    
+    // Clear existing swatches except add button
+    const addButton = colorPalette.querySelector('.color-add');
+    colorPalette.innerHTML = '';
+    
+    // Render color swatches
+    brandColors.forEach(color => {
+        const swatch = document.createElement('div');
+        swatch.className = 'color-swatch';
+        swatch.style.backgroundColor = color.hex;
+        swatch.innerHTML = `
+            <div class="color-overlay">
+                <input type="color" value="${color.hex}" onchange="updateColor(${color.id}, this.value)">
+                <input type="text" placeholder="Color name" value="${color.name || ''}" 
+                       onchange="updateColorName(${color.id}, this.value)" class="color-name-input">
+                <button class="btn-remove" onclick="removeColor(${color.id})">×</button>
+            </div>
+        `;
+        colorPalette.appendChild(swatch);
+    });
+    
+    // Re-add the add button
+    if (addButton) {
+        colorPalette.appendChild(addButton);
+    }
+}
+
+function updateColor(colorId, hex) {
+    const color = brandColors.find(c => c.id === colorId);
+    if (!color) return;
+    
+    color.hex = hex;
+    const rgb = hexToRgb(hex);
+    color.rgb = rgb;
+    color.cmyk = rgbToCmyk(rgb.r, rgb.g, rgb.b);
+    
+    renderColorSwatches();
+}
+
+function updateColorName(colorId, name) {
+    const color = brandColors.find(c => c.id === colorId);
+    if (color) {
+        color.name = name;
+    }
+}
+
+function removeColor(colorId) {
+    brandColors = brandColors.filter(c => c.id !== colorId);
+    renderColorSwatches();
+}
+
+function getBrandColorsArray() {
+    return brandColors.map(color => ({
+        name: color.name || '',
+        hex: color.hex,
+        rgb: `${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b}`,
+        cmyk: `${color.cmyk.c}%, ${color.cmyk.m}%, ${color.cmyk.y}%, ${color.cmyk.k}%`
+    }));
+}
+
+// Color conversion utilities
+function hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : { r: 0, g: 0, b: 0 };
+}
+
+function rgbToCmyk(r, g, b) {
+    let c = 1 - (r / 255);
+    let m = 1 - (g / 255);
+    let y = 1 - (b / 255);
+    let k = Math.min(c, Math.min(m, y));
+    
+    c = Math.round(((c - k) / (1 - k)) * 100) || 0;
+    m = Math.round(((m - k) / (1 - k)) * 100) || 0;
+    y = Math.round(((y - k) / (1 - k)) * 100) || 0;
+    k = Math.round(k * 100);
+    
+    return { c, m, y, k };
+}
+
+// Certifications functionality
+let certifications = [];
+
+async function loadCertifications() {
+    const businessInfo = window.userData?.businessInfo || {};
+    certifications = businessInfo.certifications || [];
+    renderCertifications();
+}
+
+function renderCertifications() {
+    const listContainer = document.getElementById('certifications-list');
+    if (!listContainer) return;
+    
+    if (certifications.length === 0) {
+        listContainer.innerHTML = `
+            <div class="empty-state">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="12" y1="18" x2="12" y2="12"/>
+                    <line x1="9" y1="15" x2="15" y2="15"/>
+                </svg>
+                <p>No certifications added yet</p>
+                <p class="text-muted">Upload your business licenses, certifications, and insurance documents</p>
+            </div>
+        `;
+    } else {
+        listContainer.innerHTML = certifications.map(cert => `
+            <div class="certification-card">
+                <div class="cert-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                </div>
+                <div class="cert-info">
+                    <h4>${cert.name}</h4>
+                    <div class="cert-date">
+                        ${cert.number ? `Number: ${cert.number} • ` : ''}
+                        ${cert.issuer ? `Issued by: ${cert.issuer} • ` : ''}
+                        Expires: ${cert.expiryDate || 'N/A'}
+                    </div>
+                </div>
+                <div class="cert-actions">
+                    ${cert.fileUrl ? `<a href="${cert.fileUrl}" target="_blank" class="btn-icon" title="View">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </a>` : ''}
+                    <button class="btn-icon" onclick="removeCertification(${cert.id})" title="Delete">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+}
+
+async function addCertification() {
+    const cert = {
+        id: Date.now(),
+        name: prompt('Certificate name:'),
+        number: prompt('Certificate number (optional):'),
+        issuer: prompt('Issuing organization:'),
+        issueDate: prompt('Issue date (YYYY-MM-DD):'),
+        expiryDate: prompt('Expiry date (YYYY-MM-DD):'),
+        uploadedAt: new Date().toISOString()
+    };
+    
+    if (!cert.name) {
+        alert('Certificate name is required');
+        return;
+    }
+    
+    certifications.push(cert);
+    await saveCertifications();
+    renderCertifications();
+}
+
+async function removeCertification(certId) {
+    if (confirm('Are you sure you want to remove this certification?')) {
+        certifications = certifications.filter(c => c.id !== certId);
+        await saveCertifications();
+        renderCertifications();
+    }
+}
+
+async function saveCertifications() {
+    try {
+        const { error } = await window.supabase
+            .from('business_info')
+            .update({ 
+                certifications: certifications,
+                updated_at: new Date().toISOString()
+            })
+            .eq('user_id', window.user.id);
+            
+        if (error) throw error;
+        
+        // Update local cache
+        if (window.userData && window.userData.businessInfo) {
+            window.userData.businessInfo.certifications = certifications;
+        }
+        
+        if (window.showNotification) {
+            window.showNotification('Certifications updated successfully!', 'success');
+        }
+    } catch (error) {
+        console.error('Error saving certifications:', error);
+        if (window.showNotification) {
+            window.showNotification('Failed to save certifications', 'error');
+        }
+    }
+}
+
+// Insurance policies functionality
+let insurancePolicies = [];
+
+async function loadInsurancePolicies() {
+    const businessInfo = window.userData?.businessInfo || {};
+    insurancePolicies = businessInfo.insurance_policies || [];
+    renderInsurancePolicies();
+}
+
+function renderInsurancePolicies() {
+    // Similar to certifications rendering
+    console.log('Insurance policies:', insurancePolicies);
+}
+
+async function addInsurancePolicy() {
+    const policy = {
+        id: Date.now(),
+        type: prompt('Insurance type (e.g., General Liability):'),
+        provider: prompt('Insurance provider:'),
+        policyNumber: prompt('Policy number:'),
+        coverage: prompt('Coverage amount:'),
+        expiry: prompt('Expiry date (YYYY-MM-DD):'),
+        addedAt: new Date().toISOString()
+    };
+    
+    if (!policy.type || !policy.provider) {
+        alert('Insurance type and provider are required');
+        return;
+    }
+    
+    insurancePolicies.push(policy);
+    await saveInsurancePolicies();
+}
+
+async function saveInsurancePolicies() {
+    try {
+        const { error } = await window.supabase
+            .from('business_info')
+            .update({ 
+                insurance_policies: insurancePolicies,
+                updated_at: new Date().toISOString()
+            })
+            .eq('user_id', window.user.id);
+            
+        if (error) throw error;
+        
+        if (window.userData && window.userData.businessInfo) {
+            window.userData.businessInfo.insurance_policies = insurancePolicies;
+        }
+        
+        if (window.showNotification) {
+            window.showNotification('Insurance policies updated successfully!', 'success');
+        }
+    } catch (error) {
+        console.error('Error saving insurance policies:', error);
+        if (window.showNotification) {
+            window.showNotification('Failed to save insurance policies', 'error');
+        }
+    }
+}
+
 // Make functions global for tab switching and edit mode
 window.showTab = showTab;
 window.toggleBrandEditMode = toggleBrandEditMode;
@@ -644,3 +1026,14 @@ window.populateContactInfoTab = populateContactInfoTab;
 window.saveContactInfo = saveContactInfo;
 window.saveSection = saveSection;
 window.saveBusinessInfo = saveBusinessInfo;
+window.saveBrandAssets = saveBrandAssets;
+window.initColorPicker = initColorPicker;
+window.addColorSwatch = addColorSwatch;
+window.updateColor = updateColor;
+window.updateColorName = updateColorName;
+window.removeColor = removeColor;
+window.loadCertifications = loadCertifications;
+window.addCertification = addCertification;
+window.removeCertification = removeCertification;
+window.loadInsurancePolicies = loadInsurancePolicies;
+window.addInsurancePolicy = addInsurancePolicy;

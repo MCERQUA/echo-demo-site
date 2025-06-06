@@ -3,13 +3,13 @@
     <div class="section-card">
         <div class="card-header">
             <h2>Licenses & Certifications</h2>
-            <button class="btn-primary" id="cert-upload-btn">
+            <button class="btn-primary" id="cert-upload-btn" onclick="addCertification()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h6"/>
                     <polyline points="15 2 21 2 21 8"/>
                     <line x1="10" y1="14" x2="21" y2="3"/>
                 </svg>
-                Upload Certificate
+                Add Certificate
             </button>
         </div>
         
@@ -137,9 +137,7 @@
 
 <script>
 // Initialize certificate upload when this tab loads
-document.addEventListener('DOMContentLoaded', () => {
-    if (window.brandAssetsUpload) {
-        window.brandAssetsUpload.loadBrandAssets();
-    }
-});
+if (window.loadCertifications) {
+    window.loadCertifications();
+}
 </script>
