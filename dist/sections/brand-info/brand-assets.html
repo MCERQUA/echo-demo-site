@@ -1,58 +1,68 @@
 <!-- Brand Assets Tab -->
 <div id="brand-assets" class="tab-content" data-section="brand_assets">
-    <div class="section-card">
-        <div class="card-header">
-            <h2>Visual Identity</h2>
-            <button class="btn-secondary edit-button" onclick="window.toggleBrandEditMode('brand_assets')">Edit</button>
-        </div>
-        
-        <div class="brand-assets-grid">
-            <div class="logo-upload">
-                <label>Primary Logo</label>
-                <div class="upload-area" id="logo-upload">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-                        <polyline points="17 8 12 3 7 8"/>
-                        <line x1="12" y1="3" x2="12" y2="15"/>
-                    </svg>
-                    <p>Click to upload or drag and drop</p>
-                    <span>PNG, JPG up to 10MB</span>
+    <div id="brand-assets-content">
+        <!-- Logo Upload Section -->
+        <div class="section-card">
+            <div class="card-header">
+                <h2>Logo Upload</h2>
+                <button class="btn-primary" onclick="createStorageBuckets()">Initialize Storage</button>
+            </div>
+            <div class="logo-upload-grid">
+                <div class="upload-box">
+                    <label>Primary Logo</label>
+                    <input type="file" id="logo-primary-file" accept="image/*" onchange="uploadLogo('primary')" class="form-control">
+                    <img id="logo-primary-preview" style="max-width: 200px; display: none; margin-top: 10px;">
+                    <input type="hidden" id="logo_primary_url">
+                </div>
+                <div class="upload-box">
+                    <label>Secondary Logo</label>
+                    <input type="file" id="logo-secondary-file" accept="image/*" onchange="uploadLogo('secondary')" class="form-control">
+                    <img id="logo-secondary-preview" style="max-width: 200px; display: none; margin-top: 10px;">
+                    <input type="hidden" id="logo_secondary_url">
+                </div>
+                <div class="upload-box">
+                    <label>Icon/Favicon</label>
+                    <input type="file" id="logo-icon-file" accept="image/*" onchange="uploadLogo('icon')" class="form-control">
+                    <img id="logo-icon-preview" style="max-width: 100px; display: none; margin-top: 10px;">
+                    <input type="hidden" id="logo_icon_url">
                 </div>
             </div>
-            
-            <div class="brand-colors">
-                <label>Brand Colors</label>
-                <div class="color-palette" id="brand-colors">
-                    <div class="color-add">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="12" y1="5" x2="12" y2="19"/>
-                            <line x1="5" y1="12" x2="19" y2="12"/>
-                        </svg>
-                    </div>
+            <div id="uploaded-logos" class="uploaded-files-list"></div>
+        </div>
+        
+        <!-- Brand Colors -->
+        <div class="section-card">
+            <div id="brand-colors-container"></div>
+        </div>
+        
+        <!-- Brand Messaging -->
+        <div class="section-card">
+            <div class="card-header">
+                <h2>Brand Messaging</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Tagline</label>
+                    <input type="text" id="tagline" class="form-control" placeholder="Your memorable tagline">
+                </div>
+                <div class="form-group full-width">
+                    <label>Brand Story</label>
+                    <textarea id="brand-story" rows="4" class="form-control" placeholder="Tell your brand's story..."></textarea>
+                </div>
+                <div class="form-group full-width">
+                    <label>Mission Statement</label>
+                    <textarea id="mission-statement" rows="3" class="form-control" placeholder="What is your mission?"></textarea>
+                </div>
+                <div class="form-group full-width">
+                    <label>Vision Statement</label>
+                    <textarea id="vision-statement" rows="3" class="form-control" placeholder="What is your vision for the future?"></textarea>
                 </div>
             </div>
         </div>
         
-        <div class="form-grid">
-            <div class="form-group full-width">
-                <label>Tagline</label>
-                <div class="field-value" data-field="tagline" data-table="brand_assets"></div>
-            </div>
-            
-            <div class="form-group full-width">
-                <label>Brand Story</label>
-                <div class="field-value" data-field="brand_story" data-table="brand_assets"></div>
-            </div>
-            
-            <div class="form-group full-width">
-                <label>Mission Statement</label>
-                <div class="field-value" data-field="mission_statement" data-table="brand_assets"></div>
-            </div>
-            
-            <div class="form-group full-width">
-                <label>Vision Statement</label>
-                <div class="field-value" data-field="vision_statement" data-table="brand_assets"></div>
-            </div>
+        <div class="action-buttons">
+            <button onclick="saveBrandAssets()" class="btn btn-primary">Save All Brand Assets</button>
+            <button onclick="populateBrandAssets()" class="btn btn-secondary">Reload Data</button>
         </div>
     </div>
 </div>
@@ -135,11 +145,72 @@
 }
 </style>
 
+<style>
+/* Additional styles for brand assets */
+.logo-upload-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.upload-box {
+    padding: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.upload-box label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.uploaded-files-list {
+    margin-top: 1rem;
+}
+
+.uploaded-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+}
+
+.color-row {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+.brand-colors-section h4 {
+    margin-bottom: 1rem;
+}
+</style>
+
 <script>
-// Initialize upload handlers when this tab loads
-document.addEventListener('DOMContentLoaded', () => {
-    if (window.brandAssetsUpload) {
-        window.brandAssetsUpload.loadBrandAssets();
+// Initialize brand assets when this tab loads
+setTimeout(() => {
+    if (window.populateBrandAssets) {
+        window.populateBrandAssets();
     }
-});
+    if (window.initBrandColors) {
+        window.initBrandColors();
+    }
+}, 100);
 </script>

@@ -684,37 +684,86 @@ async function saveBusinessInfo() {
 async function saveBrandAssets() {
     console.log('Saving brand assets...');
     
+    // Get the actual record ID from pre-loaded data
+    const brandAssetsRecord = window.userData?.brandAssets;
+    const brandAssetsId = brandAssetsRecord?.id;
+    const userId = brandAssetsRecord?.user_id || window.user?.id;
+    
+    if (!brandAssetsId && !userId) {
+        console.error('No brand assets record found and no user ID');
+        if (window.showNotification) {
+            window.showNotification('Error: Unable to identify brand assets record', 'error');
+        }
+        return;
+    }
+    
+    // Collect ALL form data - check for proper input fields
     const brandData = {
+        tagline: document.getElementById('tagline')?.value || 
+                 document.querySelector('[data-field="tagline"]')?.textContent || '',
+        brand_story: document.getElementById('brand-story')?.value || 
+                     document.querySelector('[data-field="brand_story"]')?.textContent || '',
+        mission_statement: document.getElementById('mission-statement')?.value || 
+                          document.querySelector('[data-field="mission_statement"]')?.textContent || '',
+        vision_statement: document.getElementById('vision-statement')?.value || 
+                         document.querySelector('[data-field="vision_statement"]')?.textContent || '',
+        brand_colors: getBrandColorsArray(),
         logo_primary_url: document.getElementById('logo_primary_url')?.value || '',
         logo_secondary_url: document.getElementById('logo_secondary_url')?.value || '',
         logo_icon_url: document.getElementById('logo_icon_url')?.value || '',
-        brand_colors: getBrandColorsArray(),
-        tagline: document.querySelector('[data-field="tagline"]')?.textContent || '',
-        brand_story: document.querySelector('[data-field="brand_story"]')?.textContent || '',
-        mission_statement: document.querySelector('[data-field="mission_statement"]')?.textContent || '',
-        vision_statement: document.querySelector('[data-field="vision_statement"]')?.textContent || ''
+        updated_at: new Date().toISOString()
     };
     
+    console.log('Saving brand data:', brandData); // DEBUG log
+    
     try {
-        const { error } = await window.supabase
-            .from('brand_assets')
-            .upsert({
-                ...brandData,
-                user_id: window.user.id,
-                updated_at: new Date().toISOString()
-            })
-            .eq('user_id', window.user.id);
-            
-        if (error) throw error;
+        let result;
         
-        console.log('Brand assets saved successfully');
+        if (brandAssetsId) {
+            // Update existing record using ID
+            console.log('Updating existing brand assets record:', brandAssetsId);
+            result = await window.supabase
+                .from('brand_assets')
+                .update(brandData)
+                .eq('id', brandAssetsId)
+                .select();
+        } else {
+            // Create new record if none exists
+            console.log('Creating new brand assets record for user:', userId);
+            result = await window.supabase
+                .from('brand_assets')
+                .insert({
+                    ...brandData,
+                    user_id: userId,
+                    client_id: window.clientId // Include client_id if available
+                })
+                .select();
+        }
+        
+        const { data, error } = result;
+        
+        if (error) {
+            console.error('Save error:', error);
+            if (window.showNotification) {
+                window.showNotification('Error saving: ' + error.message, 'error');
+            }
+            return;
+        }
+        
+        console.log('Save successful, returned data:', data);
+        
+        // Update local cache with new data
+        if (window.userData) {
+            window.userData.brandAssets = data[0] || { ...window.userData.brandAssets, ...brandData };
+        }
+        
         if (window.showNotification) {
             window.showNotification('Brand assets saved successfully!', 'success');
         }
     } catch (error) {
         console.error('Error saving brand assets:', error);
         if (window.showNotification) {
-            window.showNotification('Failed to save brand assets', 'error');
+            window.showNotification('Failed to save brand assets: ' + error.message, 'error');
         }
     }
 }
@@ -722,95 +771,109 @@ async function saveBrandAssets() {
 // Color picker functionality
 let brandColors = [];
 
-function initColorPicker() {
-    const colorPalette = document.getElementById('brand-colors');
-    if (!colorPalette) return;
-    
-    const addButton = colorPalette.querySelector('.color-add');
-    if (addButton) {
-        addButton.onclick = addColorSwatch;
+// Initialize brand colors from existing data
+function initBrandColors() {
+    brandColors = window.userData?.brandAssets?.brand_colors || [];
+    console.log('Loaded brand colors:', brandColors);
+    renderColorPicker();
+}
+
+function renderColorPicker() {
+    const container = document.getElementById('brand-colors-container');
+    if (!container) {
+        console.log('Brand colors container not found');
+        return;
     }
     
-    // Load existing colors
-    const existingColors = window.userData?.brandAssets?.brand_colors || [];
-    brandColors = existingColors;
-    renderColorSwatches();
-}
-
-function addColorSwatch() {
-    const colorId = Date.now();
-    const newColor = {
-        id: colorId,
-        name: '',
-        hex: '#1D4ED8',
-        rgb: hexToRgb('#1D4ED8'),
-        cmyk: rgbToCmyk(29, 78, 216)
-    };
-    
-    brandColors.push(newColor);
-    renderColorSwatches();
-}
-
-function renderColorSwatches() {
-    const colorPalette = document.getElementById('brand-colors');
-    if (!colorPalette) return;
-    
-    // Clear existing swatches except add button
-    const addButton = colorPalette.querySelector('.color-add');
-    colorPalette.innerHTML = '';
-    
-    // Render color swatches
-    brandColors.forEach(color => {
-        const swatch = document.createElement('div');
-        swatch.className = 'color-swatch';
-        swatch.style.backgroundColor = color.hex;
-        swatch.innerHTML = `
-            <div class="color-overlay">
-                <input type="color" value="${color.hex}" onchange="updateColor(${color.id}, this.value)">
-                <input type="text" placeholder="Color name" value="${color.name || ''}" 
-                       onchange="updateColorName(${color.id}, this.value)" class="color-name-input">
-                <button class="btn-remove" onclick="removeColor(${color.id})">×</button>
+    container.innerHTML = `
+        <div class="brand-colors-section">
+            <h4>Brand Colors</h4>
+            <div id="color-list">
+                ${brandColors.map((color, index) => renderColorRow(color, index)).join('')}
             </div>
-        `;
-        colorPalette.appendChild(swatch);
+            <button onclick="addNewColor()" class="btn btn-secondary">+ Add Color</button>
+        </div>
+    `;
+}
+
+function renderColorRow(color, index) {
+    // Ensure color has all properties
+    if (!color.hex) color.hex = '#000000';
+    if (!color.rgb) color.rgb = hexToRgbString(color.hex);
+    
+    return `
+        <div class="color-row" data-index="${index}" style="margin-bottom: 10px;">
+            <input type="color" value="${color.hex || '#000000'}" 
+                   onchange="updateColorHex(${index}, this.value)"
+                   class="color-picker" style="width: 50px; height: 40px; margin-right: 10px;">
+            <input type="text" value="${color.name || ''}" 
+                   placeholder="Color name"
+                   onchange="updateColorName(${index}, this.value)"
+                   class="color-name" style="width: 150px; margin-right: 10px;">
+            <div class="color-values" style="display: inline-block; margin-right: 10px;">
+                <input type="text" value="${color.hex || ''}" 
+                       placeholder="#000000"
+                       onchange="updateColorFromHex(${index}, this.value)"
+                       class="hex-input" style="width: 80px; margin-right: 5px;">
+                <span class="rgb-display" style="color: #666;">${color.rgb || ''}</span>
+            </div>
+            <button onclick="removeColor(${index})" class="btn btn-sm btn-danger">Remove</button>
+        </div>
+    `;
+}
+
+function addNewColor() {
+    brandColors.push({
+        hex: '#000000',
+        rgb: 'rgb(0, 0, 0)',
+        name: '',
+        usage: ''
     });
-    
-    // Re-add the add button
-    if (addButton) {
-        colorPalette.appendChild(addButton);
+    renderColorPicker();
+}
+
+function updateColorHex(index, hex) {
+    if (brandColors[index]) {
+        brandColors[index].hex = hex;
+        brandColors[index].rgb = hexToRgbString(hex);
+        renderColorPicker();
     }
 }
 
-function updateColor(colorId, hex) {
-    const color = brandColors.find(c => c.id === colorId);
-    if (!color) return;
-    
-    color.hex = hex;
-    const rgb = hexToRgb(hex);
-    color.rgb = rgb;
-    color.cmyk = rgbToCmyk(rgb.r, rgb.g, rgb.b);
-    
-    renderColorSwatches();
-}
-
-function updateColorName(colorId, name) {
-    const color = brandColors.find(c => c.id === colorId);
-    if (color) {
-        color.name = name;
+function updateColorName(index, name) {
+    if (brandColors[index]) {
+        brandColors[index].name = name;
     }
 }
 
-function removeColor(colorId) {
-    brandColors = brandColors.filter(c => c.id !== colorId);
-    renderColorSwatches();
+function updateColorFromHex(index, hex) {
+    // Validate hex format
+    if (!/^#[0-9A-F]{6}$/i.test(hex)) {
+        alert('Please enter a valid hex color (e.g., #FF0000)');
+        return;
+    }
+    updateColorHex(index, hex);
+}
+
+function removeColor(index) {
+    brandColors.splice(index, 1);
+    renderColorPicker();
+}
+
+function hexToRgbString(hex) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgb(${r}, ${g}, ${b})`;
 }
 
 function getBrandColorsArray() {
-    return brandColors.map(color => ({
+    // Return only colors that have at least a hex value and name
+    return brandColors.filter(c => c.hex && c.name).map(color => ({
         name: color.name || '',
         hex: color.hex,
-        rgb: `${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b}`,
-        cmyk: `${color.cmyk.c}%, ${color.cmyk.m}%, ${color.cmyk.y}%, ${color.cmyk.k}%`
+        rgb: color.rgb || hexToRgbString(color.hex),
+        usage: color.usage || ''
     }));
 }
 
@@ -1018,6 +1081,111 @@ async function saveInsurancePolicies() {
     }
 }
 
+// Storage bucket creation
+async function createStorageBuckets() {
+    // Create buckets for file storage
+    const buckets = ['brand-logos', 'certificates', 'brand-assets'];
+    
+    for (const bucketName of buckets) {
+        try {
+            const { data, error } = await window.supabase.storage.createBucket(bucketName, {
+                public: true,
+                allowedMimeTypes: ['image/png', 'image/jpeg', 'image/svg+xml', 'application/pdf'],
+                fileSizeLimit: 5242880 // 5MB
+            });
+            
+            if (error && !error.message.includes('already exists')) {
+                console.error(`Error creating bucket ${bucketName}:`, error);
+            } else {
+                console.log(`Bucket ${bucketName} ready`);
+            }
+        } catch (e) {
+            // Bucket might already exist
+            console.log(`Bucket ${bucketName} setup:`, e.message);
+        }
+    }
+}
+
+// File upload functionality
+async function uploadLogo(type) {
+    const fileInput = document.getElementById(`logo-${type}-file`);
+    const file = fileInput?.files[0];
+    
+    if (!file) {
+        console.log('No file selected');
+        return;
+    }
+    
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        if (window.showNotification) {
+            window.showNotification('File too large. Max 5MB', 'error');
+        }
+        return;
+    }
+    
+    const userId = window.userData?.brandAssets?.user_id || window.user?.id;
+    const fileName = `${userId}/${type}-logo-${Date.now()}.${file.name.split('.').pop()}`;
+    
+    try {
+        // Upload to Supabase Storage
+        const { data, error } = await window.supabase.storage
+            .from('brand-logos')
+            .upload(fileName, file, {
+                cacheControl: '3600',
+                upsert: true
+            });
+        
+        if (error) throw error;
+        
+        // Get public URL
+        const { data: { publicUrl } } = window.supabase.storage
+            .from('brand-logos')
+            .getPublicUrl(fileName);
+        
+        console.log('File uploaded, public URL:', publicUrl);
+        
+        // Update preview
+        const preview = document.getElementById(`logo-${type}-preview`);
+        if (preview) {
+            preview.src = publicUrl;
+            preview.style.display = 'block';
+        }
+        
+        // Store URL in hidden input
+        const urlInput = document.getElementById(`logo_${type}_url`);
+        if (urlInput) {
+            urlInput.value = publicUrl;
+        }
+        
+        // Add to uploaded files list
+        addToUploadedFiles(type, publicUrl, file.name);
+        
+        if (window.showNotification) {
+            window.showNotification('Logo uploaded successfully!', 'success');
+        }
+    } catch (error) {
+        console.error('Upload error:', error);
+        if (window.showNotification) {
+            window.showNotification('Upload failed: ' + error.message, 'error');
+        }
+    }
+}
+
+function addToUploadedFiles(type, url, filename) {
+    const container = document.getElementById('uploaded-logos');
+    if (!container) return;
+    
+    const item = document.createElement('div');
+    item.className = 'uploaded-item';
+    item.innerHTML = `
+        <img src="${url}" alt="${filename}" style="max-width: 100px; margin-right: 10px;">
+        <span>${type}: ${filename}</span>
+        <button onclick="this.parentElement.remove()" class="btn btn-sm btn-danger" style="margin-left: 10px;">Remove</button>
+    `;
+    container.appendChild(item);
+}
+
 // Make functions global for tab switching and edit mode
 window.showTab = showTab;
 window.toggleBrandEditMode = toggleBrandEditMode;
@@ -1037,3 +1205,80 @@ window.addCertification = addCertification;
 window.removeCertification = removeCertification;
 window.loadInsurancePolicies = loadInsurancePolicies;
 window.addInsurancePolicy = addInsurancePolicy;
+window.createStorageBuckets = createStorageBuckets;
+window.uploadLogo = uploadLogo;
+window.addToUploadedFiles = addToUploadedFiles;
+window.initBrandColors = initBrandColors;
+window.renderColorPicker = renderColorPicker;
+window.addNewColor = addNewColor;
+window.updateColorHex = updateColorHex;
+window.updateColorName = updateColorName;
+window.updateColorFromHex = updateColorFromHex;
+
+// Function to populate brand assets form with existing data
+function populateBrandAssets() {
+    console.log('Populating brand assets with existing data...');
+    
+    const brandData = window.userData?.brandAssets || {};
+    console.log('Brand data to populate:', brandData);
+    
+    // Populate text fields
+    const taglineInput = document.getElementById('tagline');
+    if (taglineInput) taglineInput.value = brandData.tagline || '';
+    
+    const brandStoryInput = document.getElementById('brand-story');
+    if (brandStoryInput) brandStoryInput.value = brandData.brand_story || '';
+    
+    const missionInput = document.getElementById('mission-statement');
+    if (missionInput) missionInput.value = brandData.mission_statement || '';
+    
+    const visionInput = document.getElementById('vision-statement');
+    if (visionInput) visionInput.value = brandData.vision_statement || '';
+    
+    // Show existing logos
+    if (brandData.logo_primary_url) {
+        const primaryPreview = document.getElementById('logo-primary-preview');
+        const primaryUrlInput = document.getElementById('logo_primary_url');
+        if (primaryPreview) {
+            primaryPreview.src = brandData.logo_primary_url;
+            primaryPreview.style.display = 'block';
+        }
+        if (primaryUrlInput) {
+            primaryUrlInput.value = brandData.logo_primary_url;
+        }
+    }
+    
+    if (brandData.logo_secondary_url) {
+        const secondaryPreview = document.getElementById('logo-secondary-preview');
+        const secondaryUrlInput = document.getElementById('logo_secondary_url');
+        if (secondaryPreview) {
+            secondaryPreview.src = brandData.logo_secondary_url;
+            secondaryPreview.style.display = 'block';
+        }
+        if (secondaryUrlInput) {
+            secondaryUrlInput.value = brandData.logo_secondary_url;
+        }
+    }
+    
+    if (brandData.logo_icon_url) {
+        const iconPreview = document.getElementById('logo-icon-preview');
+        const iconUrlInput = document.getElementById('logo_icon_url');
+        if (iconPreview) {
+            iconPreview.src = brandData.logo_icon_url;
+            iconPreview.style.display = 'block';
+        }
+        if (iconUrlInput) {
+            iconUrlInput.value = brandData.logo_icon_url;
+        }
+    }
+    
+    // Initialize colors - this will be handled by initBrandColors which reads from window.userData
+    brandColors = brandData.brand_colors || [];
+    if (window.renderColorPicker) {
+        window.renderColorPicker();
+    }
+    
+    console.log('Brand assets populated');
+}
+
+window.populateBrandAssets = populateBrandAssets;
