@@ -468,6 +468,29 @@ async function signOut() {
     }
 }
 
+// Open AI Chat function
+async function openAIChat() {
+    try {
+        // Get current Supabase session
+        const { data: { session } } = await window.supabase.auth.getSession();
+        
+        if (session && session.access_token) {
+            // Open AI chat with authentication token
+            window.open(
+                `https://echo-ai-interface.metamike.workers.dev/?token=${session.access_token}`,
+                'echo-ai-chat',
+                'width=1200,height=800'
+            );
+        } else {
+            // Handle case where user isn't logged in
+            showNotification('Please log in to access the AI Assistant', 'error');
+        }
+    } catch (error) {
+        console.error('Error opening AI chat:', error);
+        showNotification('Error opening AI Assistant. Please try again.', 'error');
+    }
+}
+
 // Close dropdowns when clicking outside
 document.addEventListener('click', (e) => {
     const dropdown = document.getElementById('userDropdown');
@@ -567,6 +590,7 @@ window.openSidebar = openSidebar;
 window.closeSidebar = closeSidebar;
 window.toggleDropdown = toggleDropdown;
 window.signOut = signOut;
+window.openAIChat = openAIChat;
 window.showNotification = showNotification;
 window.loadUserData = loadUserData;
 window.ensureClientRecord = ensureClientRecord;
